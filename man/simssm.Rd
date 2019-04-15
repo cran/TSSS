@@ -1,0 +1,58 @@
+\name{simssm}
+\alias{simssm}
+
+\title{Simulation by Gaussian State Space Model}
+\description{
+  Simulate time series by Gaussian State Space Model.
+}
+\usage{
+simssm(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
+       arcoef = NULL, ar = NULL, tau1 = NULL, tau2 = NULL, tau3 = NULL,
+       sigma2 = 1.0, seed = NULL, plot = TRUE, \dots)
+}
+\arguments{
+  \item{n}{the number of simulated data.}
+  \item{trend}{initial values of trend component of length at most 2.}
+  \item{seasonal.order}{seasonal order. (0 or 1)}
+  \item{seasonal}{if \code{seasonal.order} > 0, initial values of seasonal
+    component of length \eqn{p-1}, where \eqn{p} is the number of season in one
+    period.}
+  \item{arcoef}{AR coefficients.} 
+  \item{ar}{initial values of AR component.}
+  \item{tau1}{variance of trend component model.}
+  \item{tau2}{variance of AR component model.}
+  \item{tau3}{variance of seasonal component model.}
+  \item{sigma2}{variance of the observation noise.}
+  \item{seed}{arbitrary positive integer to generate a sequence of uniform
+    random numbers. The default seed is based on the current time.}
+  \item{plot}{logical. If \code{TRUE} (default), simulated data are plotted.}
+  \item{\dots}{further arguments to be passed to \code{\link{plot.simulate}}.}
+}
+\value{
+  An object of class \code{"simulate"}, giving simulated data of Gaussian state
+  space model.
+}
+\references{
+  Kitagawa, G. (2010)
+  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+}
+\examples{
+# BLSALLFOOD data
+data(BLSALLFOOD)
+m1 <- 2; m2 <- 1; m3 <- 2
+z <- season(BLSALLFOOD, trend.order = m1, seasonal.order = m2, ar.order = m3)
+
+nl <- length(BLSALLFOOD)
+trend <- z$trend[m1:1]
+arcoef <- z$arcoef
+period <- 12
+seasonal <- z$seasonal[(period-1):1]
+ar <- z$ar[m3:1]
+tau1 <- z$tau2[1]
+tau2 <- z$tau2[2]
+tau3 <- z$tau2[3]
+simssm(n = nl, trend, seasonal.order = m2, seasonal, arcoef, ar, tau1, tau2,
+       tau3, sigma2 = z$sigma2, seed = 333)
+}
+
+\keyword{ts}

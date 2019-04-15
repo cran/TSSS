@@ -1,0 +1,18 @@
+Package: TSSS
+Version: 1.2.3
+Title: Time Series Analysis with State Space Model
+Author: The Institute of Statistical Mathematics, based on the program by
+ Genshiro Kitagawa
+Maintainer: Masami Saga <msaga@mtb.biglobe.ne.jp>
+Depends: R (>= 3.4.0), datasets, stats
+Suggests: utils
+Imports: graphics
+Description: Functions for statistical analysis, modeling and simulation of time
+ series with state space model, based on the methodology in Kitagawa
+ (1993, ISBN: 4-00-007703-1 and 2005, ISBN: 4-00-005455-4).
+License: GPL (>= 2)
+MailingList: Please send bug reports to ismrp@jasp.ism.ac.jp
+NeedsCompilation: yes
+Packaged: 2019-04-14 23:38:47 UTC; msaga
+Repository: CRAN
+Date/Publication: 2019-04-15 08:22:42 UTC

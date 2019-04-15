@@ -1,0 +1,53 @@
+
+             *****************************
+
+               Changes in R Package TSSS
+
+             *****************************
+
+ TSSS_1.2.3
+==============
+* Replaced cat() with message()/warning().
+
+ TSSS_1.2.2
+==============
+* Fixed problems in Fortran code according to the warning messages from
+ gfortran-8 with options -fpic -g -O2 -Wall -mtune=native.
+
+ TSSS_1.2.1
+==============
+* Chenged the implementation of random number generator to Mersenne-Twister.
+
+
+ TSSS_1.2.0
+==============
+
+* Fixed bug in arfit(), ngsmth() and trend().
+
+* Fixed problems in Fortran code according to the warning messages from gfortran
+ with options -Wall -pedantic.
+
+* Merged gdensty(), cdensty(), pdensty(), exdensty(), chi2densty(), dexdensty()
+ and udensty() into pdfunc().
+
+* Changed names of function lsar1() and lsar2() to lsar() and lsar.chgpt(),
+ respectively..
+
+* Turned output values of each function into an object of S3 class.
+ Defined print and plot methods for these classes.
+
+
+ TSSS_1.1.0
+============
+
+* Changed dataset "Sunspot" into a part of "sunspot.year" in R's core datasets
+ package.
+
+* Corrected the tile of the dataset 'HAKUSAN'.
+
+
+ TSSS_1.0.1
+============
+* Corrected errors in inst/doc/index.html according to the error message of the
+ W3C Markup Validator service.
+

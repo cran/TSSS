@@ -1,0 +1,43 @@
+useDynLib(TSSS, .registration = TRUE)
+
+import(graphics)
+importFrom("stats", "quantile", "ts", "tsp", "start")
+importFrom("grDevices", "dev.new")
+
+export(unicor, crscor, period, fftper, pdfunc, klinfo, boxcox, lsqr, armaimp,
+ marspc, arfit, marfit, marlsq, lsar, lsar.chgpt, tsmooth, armafit, polreg, 
+ trend, season, tvvar, tvar, tvspc, ngsmth, simssm, ngsim)
+
+S3method(print, klinfo)
+S3method(print, boxcox)
+S3method(print, lsqr)
+S3method(print, maryule)
+S3method(print, marlsq)
+S3method(print, lsar)
+S3method(print, smooth)
+S3method(print, armafit)
+S3method(print, trend)
+S3method(print, season)
+S3method(print, tvvar)
+S3method(print, tvar)
+
+S3method(plot, unicor)
+S3method(plot, crscor)
+S3method(plot, spg)
+S3method(plot, pdfunc)
+S3method(plot, boxcox)
+S3method(plot, lsqr)
+S3method(plot, arma)
+S3method(plot, marspc)
+S3method(plot, arfit)
+S3method(plot, lsar)
+S3method(plot, chgpt)
+S3method(plot, smooth)
+S3method(plot, polreg)
+S3method(plot, trend)
+S3method(plot, season)
+S3method(plot, tvvar)
+S3method(plot, tvspc) 
+S3method(plot, ngsmth)
+S3method(plot, simulate)
+
