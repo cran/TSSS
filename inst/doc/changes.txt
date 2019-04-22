@@ -5,14 +5,23 @@
 
              *****************************
 
+ TSSS_1.2.4
+==============
+* Used the gammafn function provided by R instead of the DGAMMA function in
+ Fortran, because an error was found in TSSS-00install.out on
+ r-patched-solaris-x86.
+
+
  TSSS_1.2.3
 ==============
 * Replaced cat() with message()/warning().
+
 
  TSSS_1.2.2
 ==============
 * Fixed problems in Fortran code according to the warning messages from
  gfortran-8 with options -fpic -g -O2 -Wall -mtune=native.
+
 
  TSSS_1.2.1
 ==============

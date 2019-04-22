@@ -1,5 +1,5 @@
 Package: TSSS
-Version: 1.2.3
+Version: 1.2.4
 Title: Time Series Analysis with State Space Model
 Author: The Institute of Statistical Mathematics, based on the program by
  Genshiro Kitagawa
@@ -13,6 +13,6 @@ Description: Functions for statistical analysis, modeling and simulation of time
 License: GPL (>= 2)
 MailingList: Please send bug reports to ismrp@jasp.ism.ac.jp
 NeedsCompilation: yes
-Packaged: 2019-04-14 23:38:47 UTC; msaga
+Packaged: 2019-04-22 11:03:34 UTC; msaga
 Repository: CRAN
-Date/Publication: 2019-04-15 08:22:42 UTC
+Date/Publication: 2019-04-22 11:40:03 UTC

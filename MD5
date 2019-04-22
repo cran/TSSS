@@ -1,4 +1,4 @@
-c5f0bb77b11393081654952b650ea54b *DESCRIPTION
+457d85003a493f1b2fbc425cd7ff5ff5 *DESCRIPTION
 b3d1ad225a7143e5fa7b8338eaaa47d9 *NAMESPACE
 b56970abf00dcc62a17683e9a50bccac *R/arfit.R
 178c468f6b6a4440a5d90183e1ec97d3 *R/armafit.R
@@ -28,7 +28,7 @@ fbff7a34b1011aa059d66829f7d987e1 *data/HAKUSAN.txt.gz
 c9d33656835341262cb01e3deb173f3d *data/Temperature.rda
 2d2b0c3faf75b4aee7ede2b5b543e38d *data/WHARD.rda
 3599707ca142c7e0a41561f87d8a9548 *inst/AUTHORS
-de8999d491939c7a7ec5eb6c897233be *inst/doc/changes.txt
+2e59069e2b8d891744d1d7883129e7dc *inst/doc/changes.txt
 df02eb314cfd359a835cb1e006d6a859 *man/BLSALLFOOD.Rd
 c558ac3ed6df4ff5a4ad1d5fc933ba1e *man/HAKUSAN.Rd
 b49679f540a0ca51b0b2a3c9ad4d11e9 *man/MYE1F.Rd
@@ -83,16 +83,21 @@ fc805adb35eacf71bcc72822551b83fb *src/armaftf.f
 cb4ef1a96afb91de871d98afdb48fd14 *src/arsp.c
 27b7c38ce495af055a07cb7d40d61323 *src/boxcox.c
 ec03107d1decf2cad0ba3df6342e5e15 *src/boxcoxf.f
-76a4cf03cc23f2667d1a5f2c0fabca3c *src/comsub.f
+661ee1a93f2cf38202d05cd33f471ad3 *src/chebyshev.c
+8ebfde6592254c096cfc4bb3170d285d *src/comsub.f
 edff3386f5e19c300611c140e271759e *src/crscor.c
 e6133ccd4665352127c378a6bcad219e *src/crscorf.f
 b337c2c28cbea1ba6fc38f8f874641d2 *src/densty.c
-27d5c280f02bcb37e64e1253a63d13cf *src/denstyf.f
+6a60a29b7149c296d17bb18d5b613744 *src/denstyf.f
 6746cf34a01b65d256ac3249be28c86d *src/fftper.c
 9bfe6ee2f69fd739ff5404cdf9d302c8 *src/fftperf.f
-b994c2f3d1b7bd3a107f126e97e3b065 *src/init.c
+2e58724934f3dbd1e47b248395f5d562 *src/gamma.c
+262a65d934a8a5d98681a87685a44fa3 *src/gamma.h
+c2689dd94600de3cdae9d24b3db44ae4 *src/init.c
 e083ee8a857f6ba26c70e73d43303246 *src/klinfo.c
 d57842ae8efa1e31c1af2c5ffa91c383 *src/klinfof.f
+93496ebec14006904d170e4ff8642fe8 *src/lgamma.c
+fc934aec0aa823e4e2765a48f8467379 *src/lgammacor.c
 ea2982dfc18e583cb75faa5d01cb43da *src/lsar1.c
 0fabddc74e3ff62457cfed882c3f8205 *src/lsar1f.f
 0f495b20e0f4cd4fb63529ec6e6d70d9 *src/lsar2.c
@@ -121,6 +126,7 @@ b9da20e60e08086580ec2fad3abbcd83 *src/season.c
 e0f03af25e5f39f37aa0df64d38be2ae *src/simssmf.f
 38b58e6d8dc791ba00218d0a155b3aef *src/smooth.c
 2117c4bc72a7b2388b3e6276eb260950 *src/smoothf.f
+ea78282523401270e338f3cc859cfd21 *src/stirlerr.c
 f62737c1aca55847ce6dcbd9a94b8dc5 *src/trend.c
 f07116d4b8fe17658fdc919037a6b630 *src/trendf.f
 47c4d7f6b5898351274548ef8dff9fe8 *src/tvar.c

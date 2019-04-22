@@ -1905,10 +1905,11 @@ C        PEARSN:    density at X
 C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(3)
-      REAL(8) :: X, PARAM(3), PI
+      REAL(8) :: X, PARAM(3), PI, dgammafn
       DATA  PI/3.1415926535D0/
 C
-      PEARSN = DGAMMA(PARAM(3))/DGAMMA(PARAM(3)-0.5D0)
+CXX      PEARSN = DGAMMA(PARAM(3))/DGAMMA(PARAM(3)-0.5D0)
+      PEARSN = dgammafn(PARAM(3))/dgammafn(PARAM(3)-0.5D0)
      *                  /DSQRT(PI)*PARAM(2)**(PARAM(3)-0.5D0)
      *                  /((X-PARAM(1))**2 + PARAM(2))**PARAM(3)
       RETURN

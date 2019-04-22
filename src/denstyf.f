@@ -131,10 +131,11 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cx      DIMENSION  PARAM(*)
 cxx      DIMENSION  PARAM(1)
-      REAL(8) :: X, PARAM(1)
+      REAL(8) :: X, PARAM(1), dgammafn
 C
       IF( X.GT.0.0D0 ) CHISQR = DEXP( -X/2 )*(X/2)**(PARAM(1)/2-1.D0)
-     *                           /(2*DGAMMA(PARAM(1)/2))
+CXX     *                           /(2*DGAMMA(PARAM(1)/2))
+     *                           /(2*dgammafn(PARAM(1)/2))
       IF( X.LE.0.0D0 ) CHISQR = 0.0D0
       RETURN
       E N D
