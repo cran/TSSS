@@ -20,7 +20,7 @@ pdfunc(model = "norm", mean = 0, sigma2 = 1, mu = 0, tau2 = 1, shape,
     \code{"Pearson"})}
   \item{tau2}{dispersion parameter \eqn{\tau^2}. (valid for \code{"Cauchy"} and
     \code{"Pearson"})}
-  \item{shape}{shape parameter (> 0). (valid for \code{"Pearson"})}
+  \item{shape}{shape parameter (> 0.5). (valid for \code{"Pearson"})}
   \item{lambda}{lambda \eqn{\lambda}. (valid for \code{"exp"})}
   \item{side}{1: exponential, 2: two-sided exponential.
     (valid for \code{"exp"})}
@@ -29,18 +29,19 @@ pdfunc(model = "norm", mean = 0, sigma2 = 1, mu = 0, tau2 = 1, shape,
   \item{xmax}{upper bound of the interval.}
   \item{plot}{logical. If \code{TRUE} (default), probability density function is
               plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.pdfunc}.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \value{
-  An object of class \code{"pdfunc"}, which is a list with the following
-  elements:
+  An object of class \code{"pdfunc"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{density}{values of density function.}
   \item{interval}{lower and upper bound of interval.}
   \item{param}{parameters of model.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # normal distribution

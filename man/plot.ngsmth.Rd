@@ -6,7 +6,7 @@
 }
 \usage{
 \method{plot}{ngsmth}(x, type = c("trend", "smt"), theta = 0, phi = 15,
-                      expand = 1, col = "lightblue", ticktype= "detail", \dots)
+          expand = 1, col = "lightblue", ticktype= "detail", \dots)
 }
 \arguments{
   \item{x}{an object of class \code{"ngsmth"}.}

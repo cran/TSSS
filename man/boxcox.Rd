@@ -11,26 +11,27 @@ boxcox(y, plot = TRUE, \dots)
   \item{y}{a univariate time series.}
   \item{plot}{logical. If \code{TRUE} (default), original data and transformed
   data with minimum AIC are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.boxcox}.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.boxcox}}.}
 }
 \value{
   An object of class \code{"boxcox"}, which is a list with the following
-  elements:
+   components:
   \item{mean}{mean of original data.}
   \item{var}{variance of original data.}
   \item{aic}{AIC of the model with respect to the original data.}
   \item{llkhood}{log-likelihood of the model with respect to the original data.}
-  \item{z}{transformed data.}
+  \item{z}{transformed data with the AIC best lambda.}
   \item{aic.z}{AIC of the model with respect to the transformed data.}
   \item{llkhood.z}{log-likelihood of the model with respect to the transformed
                    data.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
-# Sun spot number data
+# Sunspot number data
 data(Sunspot)
 boxcox(Sunspot)
 

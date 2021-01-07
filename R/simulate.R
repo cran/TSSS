@@ -1,7 +1,7 @@
 # PROGRAM 15.1
-simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
-                 arcoef = NULL, ar = NULL, tau1 = NULL, tau2 = NULL,
-                 tau3 = NULL, sigma2 = 1.0, seed = NULL, plot = TRUE, ...)
+simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL, arcoef = NULL,
+                   ar = NULL, tau1 = NULL, tau2 = NULL, tau3 = NULL, 
+                   sigma2 = 1.0, seed = NULL, plot = TRUE, ...)
 {
   k <- 0
   if (is.null(trend)) {
@@ -9,9 +9,11 @@ simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
     x <- NULL
     tau1 <- 0
   } else {
+    m1 <- length(trend)      # trend order   1 or 2
     if (is.null(tau1))
       stop("'tau1' is not specified")
-    m1 <- length(trend)      # trend order
+    if (m1 > 2)
+      stop("trend order is 0, 1 or 2")
     x <- trend
     k <- k + 1
   }
@@ -20,14 +22,16 @@ simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
   if (m2 == 0) {
     period <- 0
     tau2 <- 0
-  } else {
-    if (is.null(tau2))
-      stop("'tau2' is not specified")
+  } else if (m2 == 1 || m2 == 2) {
     if (is.null(seasonal))
       stop("'seasonal' is not specified")
+    if (is.null(tau2))
+      stop("'tau2' is not specified")
     period <- length(seasonal) + 1
     x <- c(x, seasonal)
     k <- k + 1
+  } else {
+    stop("seasonal.order is 0, 1 or 2")
   }
 
   m3 <- length(arcoef)
@@ -82,17 +86,19 @@ simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
 
 
 # PROGRAM 15.2
-ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
-                  arcoef = NULL, ar = NULL, noisew = 1, wminmax = c(-1, 1),
-                  paramw = NULL, noisev = 1, vminmax = c(-1, 1), paramv = NULL,
-                  seed = NULL, plot = TRUE, ... )
+ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL, arcoef = NULL,
+                  ar = NULL, noisew = 1, wminmax = NULL, paramw = NULL,
+                  noisev = 1, vminmax = NULL, paramv = NULL, seed = NULL,
+                  plot = TRUE, ... )
 {
   k <- 0
   if (is.null(trend)) {
     m1 <- 0
     x <- NULL
   } else {
-    m1 <- length(trend)     # trend order
+    m1 <- length(trend)     # trend order   1 or 2
+    if (m1 > 2)
+      stop("trend order is 0, 1 or 2")
     x <- trend
     k <- k + 1
   }
@@ -100,12 +106,14 @@ ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
   m2 <- seasonal.order      # seasonal order
   if (m2 == 0) {
     period <- 0
-  } else { 
+  } else if (m2 == 1 || m2 == 2) { 
     if (is.null(seasonal))
       stop("'seasonal' is not specified") 
     period <- length(seasonal) + 1
     x <- c(x, seasonal)
     k <- k + 1
+  } else {
+    stop("seasonal.order is 0, 1 or 2")
   }
 
   m3 <- length(arcoef)
@@ -137,19 +145,12 @@ ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
   if (noisev < -3 || noisev > 3)
     stop("type of system noise is one of -3, -2, -1, 0, 1, 2, 3")
 
-# wminmax:     lower and upper bound of observational  noise
-  wmin <- wminmax[1]
-  wmax <- wminmax[2]
-# vminmax:     lower and upper bound of system noise
-  vmin <- vminmax[1]
-  vmax <- vminmax[2]
-
 # wparam:      parameter of the observational noise density
 # vparam:      parameter of the system noise density
   pw <- c(0.0, 1.0, 1.0)
   pv <- c(0.0, 1.0, 1.0)
     
-  if (noisew != 2) {
+  if (noisew == 1) {
     if (is.null(paramw))
       stop("'paramw' is not specified")
     if (paramw[1] < 0)
@@ -161,13 +162,15 @@ ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
     if (length(paramw) != 2)
       stop("'paramw' is not specified")
     if ((paramw[1] == 0) || (paramw[1] < 0))
-      stop("values of 'paramw' are greater than 0")
+      stop("dispersion parameter of the observational noise density is greater
+            than 0")
     if ((paramw[2] == 0) || (paramw[2] < 0))
-      stop("values of 'paramw' are greater than 0")
+      stop("shape parameter of the observational noise density is greater than
+            0")
     pw[2:3] <- paramw[1:2]
   }
 
-  if (noisev != 2) {
+  if (noisev == 1) {
     if (is.null(paramv))
       stop("'paramv' is not specified")
     if (paramv[1] < 0)
@@ -179,10 +182,39 @@ ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL,
     if (length(paramv) != 2)
       stop("'paramv' is not specified")
     if ((paramv[1] == 0) || (paramv[1] < 0))
-      stop("values of 'paramv' are greater than 0")
-    if ((paramv[2] == 0) || (paramv[2] < 0))
-      stop("values of 'paramv' are greater than 0")
+      stop("dispersion parameter of the system noise density is greater than 0")
+    if ((paramv[2] == 0.5) || (paramv[2] < 0.5))
+      stop("shape parameter of the system noise density is greater than 0.5")
     pv[2:3] <- paramv[1:2]
+  }
+
+# wminmax:     lower and upper bound of observational  noise
+  if (is.null(wminmax)) {
+    if (pw[3] > 1.6) {
+      sd4 <- 4 * sqrt(pw[2]**2 / (2*pw[3] - 3))
+      wmin <- -sd4
+      wmax <- sd4
+    } else {
+      wmin <- -20
+      wmax <- 20
+    }
+  } else {
+    wmin <- wminmax[1]
+    wmax <- wminmax[2]
+  }
+# vminmax:     lower and upper bound of system noise
+  if (is.null(vminmax)) {
+    if (pv[3] > 1.6) {
+      sd4 <- 4 * sqrt(pv[2]**2 / (2*pv[3] - 3))
+      vmin <- -sd4
+      vmax <- sd4
+    } else {
+      vmin <- -20
+      vmax <- 20
+    }
+  } else {
+    vmin <- vminmax[1]
+    vmax <- vminmax[2]
   }
 
   z <- .Call("NgsimC",

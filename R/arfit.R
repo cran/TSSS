@@ -27,10 +27,10 @@ arfit <- function(y, lag = NULL, method = 1, plot = TRUE, ...)
   aic <- z[[2L]]
   mmin <- z[[3]]
   a <- array(z[[4L]], dim = c(lag, lag))
-  arcoef <- a[1:mmin, mmin]
+  arcoef <- list()
+  for (i in 1:lag)
+    arcoef[[i]] <- a[1:i, i]
   parcor <- z[[5L]]
-  if (method == 2)
-    parcor <- parcor[1:mmin]
   spec <- z[[6L]]
 
   arfit.out <- list(sigma2 = sig2, maice.order = mmin, aic = aic,
@@ -55,20 +55,23 @@ plot.arfit <- function(x, ...)
 
   ylim <- c(-1, 1)
   xmax <- lag
+  mtitle <- c(paste(x$tsname), "Parcor")
   plot(x$parcor, type = "l", xlim = c(0, xmax), ylim = ylim,
-       main = paste(x$tsname), xlab = "", ylab = "", ...)
+       main = mtitle, xlab = "", ylab = "", ...)
   par(new = TRUE)
   plot(x$parcor, type = "h", xlim = c(0, xmax), ylim = ylim, xlab = "lag",
-       ylab = "parcor", ...)
+       ylab = "", ...)
 
   daic <- x$aic - aicmin
   xx <- c(0:lag)
   ymax <- min(max(daic), 50)
+  mtitle <- paste("\nminimum AIC = ", format(round(aicmin, 2), nsmall = 2),
+                  "(at order", morder, ")")
+  ylabel <- paste("aic - aicmin (Truncated at ", ymax, ")")
   if (ymax < quantile(daic, probs = 0.1))
     ymax <- as.integer(quantile(daic, probs = 0.1))
-  plot(xx, daic, type = "l", ylim = c(0, ymax),
-     main = paste("aic(", morder, ") = ", format(round(aicmin, 2), nsmall = 2)),
-     xlab = "Lag", ylab = paste("aic - aicmin (Truncated at ", ymax, ")"), ...)
+  plot(xx, daic, type = "l", ylim = c(0, ymax), main = mtitle, xlab = "Lag",
+       ylab = ylabel, ...)
   par(new = TRUE)
   plot(xx, daic, type = "h", ylim = c(0, ymax), xlab = "", ylab = "", ...)
 
@@ -77,7 +80,7 @@ plot.arfit <- function(x, ...)
   for (i in 1:nf1)
     xx[i] <- (i - 1) / (2 * (nf1-1))
   ylim <- c(floor(min(x$spec)), ceiling(max(x$spec)))
-  plot(xx, x$spec, type = "l", ylim = ylim, main = "Power spectrum in log scale",
+  plot(xx, x$spec, type = "l", ylim = ylim, main = "\nPower spectrum",
        xlab = "f", ylab = "log p(f)", ...)
 
   par(old.par)

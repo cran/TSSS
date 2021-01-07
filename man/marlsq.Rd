@@ -15,15 +15,16 @@ marlsq(y, lag = NULL)
 }
 \value{
   An object of class \code{"marlsq"}, which is a list with the following
-  elements:
+   components:
   \item{maice.order}{order of the MAICE model.}
-  \item{aic}{total AIC of the model.}
+  \item{aic}{AIC of the MAR model with minimum AIC orders.}
   \item{v}{innovation covariance matrix.}
   \item{arcoef}{AR coefficient matrices.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # Yaw rate, rolling, pitching and rudder angle of a ship

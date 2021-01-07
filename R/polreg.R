@@ -53,11 +53,11 @@ plot.polreg <- function(x, rdata = NULL, ...)
     mtitle <- paste(tsname, "and trend component\n minimum aic =", aicmin,
                     " at order", morder)
     plot(rdata, type = "l", ylim = ylim, xlab = "", ylab = "", main = "",
-         xaxs = "i", cex.main = 1.0, xaxt = "n", ...)
+         xaxs = "i", xaxt = "n", ...)
     par(new = TRUE)
   }
 
   plot(trend, type = "l", ylim = ylim, col = 2, xlab = "", main = mtitle,
-       ylab = "", xaxs = "i", ...) 
+       ylab = "", xaxs = "i", cex.main = 1.0, ...) 
   par(old.par)
 }

@@ -13,14 +13,16 @@ tvspc(arcoef, sigma2, var = NULL, span = 20, nf = 200)
   \item{sigma2}{variance of the observational noise.}
   \item{var}{time varying variance.}
   \item{span}{local stationary span.}
-  \item{nf}{number of frequencies in evaluating spectrum.}
+  \item{nf}{number of frequencies in evaluating power spectrum.}
 }
 \value{
-  return an object of class \code{"tvspc"}.
+  return an object of class \code{"tvspc"} giving power spectra, which has a
+  \code{plot} method (\code{\link{plot.tvspc}}).
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 
   Kitagawa, G. and Gersch, W. (1996)
   \emph{Smoothness Priors Analysis of Time Series}. Lecture Notes in Statistics,
@@ -36,7 +38,7 @@ data(MYE1F)
 z <- tvar(MYE1F, trend.order = 2, ar.order = 8, span = 20,
           outlier = c(630, 1026), tau2.ini = 6.6e-06, delta = 1.0e-06)
 spec <- tvspc(z$arcoef, z$sigma2)
-plot(spec, theta = 30, phi = 40, expand = 0.5)
+plot(spec)
 }
 
 \keyword{ts}

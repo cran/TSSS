@@ -1,15 +1,21 @@
 # PROGRAM 3.1
 period <-
-  function(y, window = 1, minmax = c(-1.0e+30, 1.0e+30), plot = TRUE, ...) {
+  function(y, window = 1, lag = NULL, minmax = c(-1.0e+30, 1.0e+30),
+           plot = TRUE, ...) {
 
   n <- length(y)
-  if((window < 0) || (window > 2))
-    stop("'window' is 0, 1 or 2")
 
-  if (window == 0)
-    np <- as.integer(n / 2)
-  if (window > 0)
-    np <- 2 * sqrt(n)
+  if (window == 0) {
+    if (is.null(lag))
+      lag <- n - 1
+    np <- (lag + 1) /2
+  } else if (window == 1 || window == 2) {
+    if (is.null(lag))
+      lag <- as.integer(2 * sqrt(n))
+    np <- lag
+  } else {
+    stop("'window' is 0, 1 or 2")
+  }
 
   outmin <- minmax[1]
   outmax <- minmax[2]
@@ -19,6 +25,7 @@ period <-
              as.integer(n),
              as.integer(np),
              as.integer(window),
+             as.integer(lag),
              as.double(outmin),
              as.double(outmax))
 
@@ -29,8 +36,8 @@ period <-
   if (ifg == 0) log <- "TRUE"
   if (ifg != 0) log <- "FALSE"
 
-  period.out <- list(period = pe, smoothed.period = spe, log.scale = log,
-                     tsname = deparse(substitute(y)))
+  period.out <- list(period = pe, smoothed.period = spe, window = window,
+                     log.scale = log, tsname = deparse(substitute(y)))
   class(period.out) <- "spg"
 
   if (plot) {
@@ -61,8 +68,8 @@ fftper <-
   if (ifg == 0) log <- "TRUE"
   if (ifg != 0) log <- "FALSE"
 
-  fftper.out <- list(period = pe, smoothed.period = spe, log.scale = log,
-                     tsname = deparse(substitute(y)))
+  fftper.out <- list(period = pe, smoothed.period = spe, window = window,
+                     log.scale = log, tsname = deparse(substitute(y)))
   class(fftper.out) <- "spg"
 
   if (plot) {
@@ -71,7 +78,7 @@ fftper <-
   } else fftper.out
 }
 
-plot.spg <- function(x, ...)
+plot.spg <- function(x, type = "vl", ...)
 {
   spe <- x$smoothed.period
   np1 <- length(spe)
@@ -85,13 +92,26 @@ plot.spg <- function(x, ...)
 
   mtitle <- paste(x$tsname)
   if (x$log.scale == "TRUE") {
-    ylabel <- "smoothed log-periodgram"
+    if (x$window == 0)
+      ylabel <- "log-periodgram"
+    if (x$window != 0)
+      ylabel <- "smoothed log-periodgram"
   } else {
-    ylabel <- "smoothed periodgram"
+    if (x$window == 0)
+      ylabel <- "periodgram"
+    if (x$window != 0)
+      ylabel <- "smoothed periodgram"
   }
-  plot(xx, spe, type = "n", xlim = c(0, 0.5), main = mtitle, ylim = ylim,
-       xlab = "f", ylab = ylabel, ...)
-  for (i in 1:np)
-    segments(xx[i], ymin, xx[i], spe[i], lwd = 0.7, ...)
+
+  if (type == "l") {
+    plot(xx, spe, type = "l", xlim = c(0, 0.5), main = mtitle, ylim = ylim,
+         xlab = "f", ylab = ylabel, ...)
+  } else {
+    plot(xx, spe, type = "n", xlim = c(0, 0.5), main = mtitle, ylim = ylim,
+         xlab = "f", ylab = ylabel, ...)
+    for (i in 1:np)
+      segments(xx[i], ymin, xx[i], spe[i], lwd = 0.7, ...)
+  }
+  
 }
 

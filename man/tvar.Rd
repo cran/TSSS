@@ -19,7 +19,7 @@ tvar(y, trend.order = 2, ar.order = 2, span, outlier = NULL, tau2.ini = NULL,
     If \code{tau2.ini} = \code{NULL}, the most suitable value is chosen in
     \eqn{\tau^2 = 2^{-k}}.}
   \item{delta}{search width.} 
-  \item{plot}{logical. If \code{TRUE} (default), '\code{parcor}' is plotted.}
+  \item{plot}{logical. If \code{TRUE} (default), PARCOR is plotted.}
 }
 \details{
   The time-varying coefficients AR model is given by
@@ -31,8 +31,7 @@ tvar(y, trend.order = 2, ar.order = 2, span, outlier = NULL, tau2.ini = NULL,
     and \eqn{u_t}{u(t)} is a zero mean white noise.
 
   The time-varying spectrum can be plotted using AR coefficient \code{arcoef}
-  and variance of the observational noise \code{sigma2} by \link{plot.tvspc}
-  (see \link{tvspc}).
+  and variance of the observational noise \code{sigma2} by \code{\link{tvspc}}.
 }
 \value{
   \item{arcoef}{time varying AR coefficients.}
@@ -40,11 +39,12 @@ tvar(y, trend.order = 2, ar.order = 2, span, outlier = NULL, tau2.ini = NULL,
   \item{tau2}{variance of the system noise \eqn{\tau^2}.}
   \item{llkhood}{log-likelihood of the model.}
   \item{aic}{AIC.}
-  \item{parcor}{partial autocorrelation coefficient.}
+  \item{parcor}{PARCOR.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 
   Kitagawa, G. and Gersch, W. (1996)
   \emph{Smoothness Priors Analysis of Time Series}.
@@ -54,6 +54,11 @@ tvar(y, trend.order = 2, ar.order = 2, span, outlier = NULL, tau2.ini = NULL,
   \emph{A smoothness priors time varying AR coefficient modeling of
   nonstationary time series}. IEEE trans. on Automatic Control, AC-30, 48-56.
 }
+
+\seealso{
+\code{\link{tvspc}}, \code{\link{plot.tvspc}}
+}
+
 \examples{
 # seismic data
 data(MYE1F)
@@ -62,7 +67,7 @@ z <- tvar(MYE1F, trend.order = 2, ar.order = 8, span = 20,
 z
 
 spec <- tvspc(z$arcoef, z$sigma2)
-plot(spec, theta = 30, phi = 40, expand = 0.5)
+plot(spec)
 }
 
 \keyword{ts}

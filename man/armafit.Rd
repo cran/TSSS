@@ -25,18 +25,18 @@ armafit(y, ar.order, ar = NULL, ma.order, ma = NULL)
   \item{macoef}{MA coefficients.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
-# Sun spot number data
+# Sunspot number data
 data(Sunspot)
 y <- log10(Sunspot)
-z1 <- armafit(y, ar.order = 3, ma.order = 3)
-z1
+z <- armafit(y, ar.order = 3, ma.order = 3)
+z
 
-nd <- length(y)
-armaimp(arcoef = z1$arcoef, macoef = z1$macoef, v = z1$sigma2, n = nd, lag = 20)
+armachar(arcoef = z$arcoef, macoef = z$macoef, v = z$sigma2, lag = 20)
 }
 
 \keyword{ts}

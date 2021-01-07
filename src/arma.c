@@ -2,12 +2,12 @@
 #include <Rdefines.h>
 #include "TSSS.h"
 
-extern void F77_NAME(armaf)(int*, int*, double*, double*, double*, int*, int*, int*, int*, double*, double*, double*, double*, double*, double*, int*, int*);
+extern void F77_NAME(armaf)(int*, int*, double*, double*, double*, int*, int*, int*, double*, double*, double*, double*, double*, double*, int*, int*);
 
-SEXP arma(SEXP arorder, SEXP maorder, SEXP arcoef, SEXP macoef, SEXP v, SEXP n, SEXP lag, SEXP kmax, SEXP nf)
+SEXP arma(SEXP arorder, SEXP maorder, SEXP arcoef, SEXP macoef, SEXP v, SEXP lag, SEXP kmax, SEXP nf)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
-    int *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8;
+    int *i1,*i2,*i3,*i4,*i5,*i6,*i7;
 
     SEXP ans = R_NilValue, g = R_NilValue, acov = R_NilValue, parcor = R_NilValue, spec = R_NilValue;
     SEXP roota = R_NilValue, rootb = R_NilValue, ier = R_NilValue, jer = R_NilValue;
@@ -21,17 +21,16 @@ SEXP arma(SEXP arorder, SEXP maorder, SEXP arcoef, SEXP macoef, SEXP v, SEXP n, 
     d1 = NUMERIC_POINTER(arcoef);
     d2 = NUMERIC_POINTER(macoef);
     d3 = NUMERIC_POINTER(v);
-    i3 = INTEGER_POINTER(n);
-    i4 = INTEGER_POINTER(lag);
-    i5 = INTEGER_POINTER(kmax);
-    i6 = INTEGER_POINTER(nf);
+    i3 = INTEGER_POINTER(lag);
+    i4 = INTEGER_POINTER(kmax);
+    i5 = INTEGER_POINTER(nf);
 
     ar = *i1;
     ma = *i2;
-    lag0 = *i4;
+    lag0 = *i3;
     lag1 = lag0 + 1;
-    kmax1 = *i5+1;
-    nf1 = *i6 + 1;
+    kmax1 = *i4+1;
+    nf1 = *i5 + 1;
     ar2 = ar*2;
     if( ar2 == 0 ) ar2 = 2;
     ma2 = ma*2;
@@ -53,10 +52,10 @@ SEXP arma(SEXP arorder, SEXP maorder, SEXP arcoef, SEXP macoef, SEXP v, SEXP n, 
     d7 = NUMERIC_POINTER(spec);
     d8 = NUMERIC_POINTER(roota);
     d9 = NUMERIC_POINTER(rootb);
-    i7 = INTEGER_POINTER(ier);
-    i8 = INTEGER_POINTER(jer);
+    i6 = INTEGER_POINTER(ier);
+    i7 = INTEGER_POINTER(jer);
 
-    F77_CALL(armaf) (i1,i2,d1,d2,d3,i3,i4,i5,i6,d4,d5,d6,d7,d8,d9,i7,i8);
+    F77_CALL(armaf) (i1,i2,d1,d2,d3,i3,i4,i5,d4,d5,d6,d7,d8,d9,i6,i7);
 
     xg = REAL(g);
     xacov = REAL(acov);
@@ -75,8 +74,8 @@ SEXP arma(SEXP arorder, SEXP maorder, SEXP arcoef, SEXP macoef, SEXP v, SEXP n, 
     if( ar != 0 ) for(i=0; i<ar2; i++)  xroota[i] = d8[i];
     if( ma == 0 ) xrootb = NULL;
     if( ma != 0 ) for(i=0; i<ma2; i++)  xrootb[i] = d9[i];
-    *nier = *i7;
-    *njer = *i8;
+    *nier = *i6;
+    *njer = *i7;
 
     UNPROTECT(1);
 

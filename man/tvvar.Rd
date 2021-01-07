@@ -1,5 +1,7 @@
 \name{tvvar}
 \alias{tvvar}
+\alias{print.tvvar}
+\alias{plot.tvvar}
 
 \title{Time Varying Variance}
 \description{
@@ -15,9 +17,9 @@ tvvar(y, trend.order, tau2.ini = NULL, delta, plot = TRUE, \dots)
     If \code{tau2.ini} = \code{NULL}, the most suitable value is chosen in
     \eqn{\tau^2 = 2^{-k}}.}
   \item{delta}{search width.}
-  \item{plot}{logical. If \code{TRUE} (default), '\code{sm}', '\code{trend}'
-    and '\code{noise}' are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.tvvar}.}
+  \item{plot}{logical. If \code{TRUE} (default), transformed data, trend and
+    residuals are plotted.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \details{
   Assuming that \eqn{\sigma_{2m-1}^2 = \sigma_{2m}^2}{%
@@ -60,8 +62,8 @@ tvvar(y, trend.order, tau2.ini = NULL, delta, plot = TRUE, \dots)
   time series \eqn{y_n} is obtained.
 }
 \value{
-  An object of class \code{"tvvar"}, which is a list with the following
-  elements:
+  An object of class \code{"tvvar"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{tvv}{time varying variance.}
   \item{nordata}{normalized data.}
   \item{sm}{transformed data.}
@@ -74,8 +76,9 @@ tvvar(y, trend.order, tau2.ini = NULL, delta, plot = TRUE, \dots)
   \item{tsname}{the name of the univariate time series \code{y}.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 
   Kitagawa, G. and Gersch, W. (1996)
   \emph{Smoothness Priors Analysis of Time Series}. Lecture Notes in Statistics,

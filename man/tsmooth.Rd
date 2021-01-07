@@ -24,9 +24,10 @@ tsmooth(y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
   \item{minmax}{lower and upper limits of observations.}
   \item{missed}{start position of missed intervals.}
   \item{np}{number of missed observations.}
-  \item{plot}{logical. If \code{TRUE} (default), '\code{mean.smooth}' and
-    '\code{esterr}' are plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.smooth}}.}}
+  \item{plot}{logical. If \code{TRUE} (default), mean vectors of the smoother
+    and estimation error are plotted.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.smooth}}.}
+}
 \details{
   The linear Gaussian state space model is
 
@@ -48,7 +49,8 @@ tsmooth(y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
   time invariant.
 }
 \value{
-  An object of class \code{"smooth"}. It contains the following components:
+  An object of class \code{"smooth"}, which is a list with the following
+  components:
   \item{mean.smooth}{mean vectors of the smoother.}
   \item{cov.smooth}{variance of the smoother.}
   \item{esterr}{estimation error.}
@@ -56,25 +58,26 @@ tsmooth(y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
   \item{aic}{AIC.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 
   Kitagawa, G. and Gersch, W. (1996)
   \emph{Smoothness Priors Analysis of Time Series}.
   Lecture Notes in Statistics, No.116, Springer-Verlag.
 }
 \examples{
-## Example of prediction (AR model : m=15, k=1)
+## Example of prediction (AR model)
 data(BLSALLFOOD)
 BLS120 <- BLSALLFOOD[1:120]
 z1 <- arfit(BLS120, plot = FALSE)
 tau2 <- z1$sigma2
-arcoef <- z1$arcoef
 
-# in case m = 15
+# m = maice.order, k=1
 m1 <- z1$maice.order
+arcoef <- z1$arcoef[[m1]]
 f <- matrix(0.0e0, m1, m1)
-f[1, ] <- arcoef[1:m1]
+f[1, ] <- arcoef
 if (m1 != 1)
   for (i in 2:m1) f[i, i-1] <- 1
 g <- c(1, rep(0.0e0, m1-1))
@@ -89,15 +92,15 @@ s1
 
 plot(s1, BLSALLFOOD)
 
-## Example of interpolation of missing values  (AR model : m=15, k=1)
+## Example of interpolation of missing values (AR model)
 z2 <- arfit(BLSALLFOOD, plot = FALSE)
 tau2 <- z2$sigma2
-arcoef <- z2$arcoef
 
-# in case m2 = 15
+# m = maice.order, k=1
 m2 <- z2$maice.order
+arcoef <- z2$arcoef[[m2]]
 f <- matrix(0.0e0, m2, m2)
-f[1, ] <- arcoef[1:m2]
+f[1, ] <- arcoef
 if (m2 != 1)
   for (i in 2:m2) f[i, i-1] <- 1
 g <- c(1, rep(0.0e0, m2-1))

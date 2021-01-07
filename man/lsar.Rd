@@ -11,17 +11,17 @@ lsar(y, max.arorder = 20, ns0, plot = TRUE, \dots)
 \arguments{
   \item{y}{a univariate time series.}
   \item{max.arorder}{highest order of AR model.}
-  \item{ns0}{basic local span.}
+  \item{ns0}{length of basic local span.}
   \item{plot}{logical. If \code{TRUE} (default), local spectra are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.lsar}.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \value{
-  An object of class \code{"lsar"}, which is a list with the following
-  elements:
+  An object of class \code{"lsar"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{model}{1: pooled model is accepted.\cr 2: switched model is accepted.} 
   \item{ns}{number of observations of local span.}
   \item{span}{start points and end points of local spans.}
-  \item{nf}{number of frequencies.}
+  \item{nf}{number of frequencies in computing local power spectrum.}
   \item{ms}{order of switched model.}
   \item{sds}{innovation variance of switched model.}
   \item{aics}{AIC of switched model.}
@@ -32,8 +32,9 @@ lsar(y, max.arorder = 20, ns0, plot = TRUE, \dots)
   \item{tsname}{the name of the univariate time series \code{y}.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # seismic data

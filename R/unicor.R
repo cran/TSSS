@@ -37,8 +37,7 @@ plot.unicor <- function(x, ...) {
   lag <- length(acor)[1] - 1
 
   old.par <- par(no.readonly = TRUE)
-  mtitle <- paste(x$tsname,
-                  "\n( mean = ", format(round(x$mean, 3), nsmall = 3), " )")
+  mtitle <- paste(x$tsname)
   plot(c(0:lag), acor, type = "h", ylim = c(-1, 1), main = mtitle,
        ylab = "Autocorrelation", xlab = "Lag", xaxs = "i", ...)
   par(new = TRUE)

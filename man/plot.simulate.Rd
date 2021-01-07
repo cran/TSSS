@@ -8,8 +8,8 @@
 \method{plot}{simulate}(x, use = NULL, \dots)
 }
 \arguments{
-  \item{x}{an object of class \code{"simulate"} created by \code{\link{simssm}}
-           and \code{\link{ngsim}}.}
+  \item{x}{an object of class \code{"simulate"} as returned by 
+           \code{\link{simssm}} and \code{\link{ngsim}}.}
   \item{use}{start and end time \code{c(x1, x2)} to be plotted actually.}
   \item{\dots}{further graphical parameters may also be supplied as arguments.}
 }

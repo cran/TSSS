@@ -37,8 +37,9 @@ klinfo(distg = 1, paramg = c(0, 1), distf = 1, paramf, xmax = 10)
   \item{gint}{integration of \eqn{g(y)} over [-\code{xmax}, \code{xmax}].}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # g:Gauss, f:Gauss

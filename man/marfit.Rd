@@ -1,9 +1,9 @@
 \name{marfit}
 \alias{marfit}
 
-\title{Yule-Walker Method of Fitting Multivariate AR Model Fitting}
+\title{Yule-Walker Method of Fitting Multivariate AR Model}
 \description{
-  Fit a multivariate AR model by Yule-Walker method.
+  Fit a multivariate AR model by the Yule-Walker method.
 }
 \usage{
 marfit(y, lag = NULL)
@@ -15,15 +15,16 @@ marfit(y, lag = NULL)
 }
 \value{
   An object of class \code{"maryule"}, which is a list with the following
-  elements:
+  components:
   \item{maice.order}{order of minimum AIC.}
-  \item{aic}{AIC's of the AR model with order \eqn{0,\dots,}\code{lag}.}
-  \item{v}{innovation covariance matrix of AIC best model.}
-  \item{arcoef}{AR coefficient of the AIC best model.}
+  \item{aic}{AIC's of the AR models with order \eqn{0,\dots,}\code{lag}.}
+  \item{v}{innovation covariance matrix of the AIC best model.}
+  \item{arcoef}{AR coefficients of the AIC best model.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # Yaw rate, rolling, pitching and rudder angle of a ship

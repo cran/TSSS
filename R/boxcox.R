@@ -70,7 +70,7 @@ plot.boxcox <- function(x, rdata = NULL, ...)
   tdata <- x$z
   if (is.null(ts.atr) == FALSE)
     tdata <- ts(tdata, start = ts.atr[1], frequency = ts.atr[3])
-  plot(tdata, type = "l", main = "transeformed data", xlab = "",
+  plot(tdata, type = "l", main = "Transformed data", xlab = "",
        ylab = "log y", ...)
   par(old.par)
 }

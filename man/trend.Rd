@@ -16,9 +16,9 @@ trend(y, trend.order = 1, tau2.ini = NULL, delta, plot = TRUE, \dots)
     \eqn{\tau^2 = 2^{-k}}.}
   \item{delta}{search width (for \code{tau2.ini} is specified (not \code{NULL}))
     .}
-  \item{plot}{logical. If \code{TRUE} (default), '\code{trend}' and
-    '\code{residual}' are plotted.}
-  \item{\dots}{further arguments to be passed to \link{plot.trend}.}}
+  \item{plot}{logical. If \code{TRUE} (default), trend component and residuals
+    are plotted.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.trend}}.}}
 \details{
   The trend model can be represented by a state space model
 
@@ -32,7 +32,7 @@ trend(y, trend.order = 1, tau2.ini = NULL, delta, plot = TRUE, \dots)
 }
 \value{
   An object of class \code{"trend"}, which is a list with the following
-  elements:
+  components:
   \item{trend}{trend component.}
   \item{residual}{residuals.}
   \item{tau2}{variance of the system noise \eqn{\tau^2}.}
@@ -41,8 +41,9 @@ trend(y, trend.order = 1, tau2.ini = NULL, delta, plot = TRUE, \dots)
   \item{aic}{AIC.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # The daily maximum temperatures for Tokyo

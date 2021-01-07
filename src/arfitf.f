@@ -38,7 +38,7 @@ cxx      DIMENSION AIC(0:LAG), A(LAG,LAG), B(LAG+1), PAR(LAG)
 cxx      DIMENSION FE(N), BE(N)
 c
       INTEGER :: N, LAG, NF, MJ2, ISW
-      REAL(8) :: Y(N), SIG2(0:LAG), AIC(0:LAG), A(LAG,LAG), PAR(LAG),
+      REAL(8) :: Y(N), SIG2(0:LAG), AIC(0:LAG), A(LAG,LAG), PAR(LAG), 
      1           SP(0:NF)
       REAL(8) :: COV(0:LAG,4), X(MJ2,LAG+1), B(LAG+1), FE(N), BE(N),
      1           OUTMIN, OUTMAX, YMEAN
@@ -67,7 +67,8 @@ cc         CALL  REDUCT( SETXAR,Y,D,N-LAG,0,LAG,MJ2,X )
 cc         CALL  REGRES( X,LAG,N-LAG,MJ2,MJ,A,SIG2,AIC,MAR )
          CALL  REDUCT( SETXAR,Y,N-LAG,0,LAG,MJ2,X )
          CALL  REGRES( X,LAG,N-LAG,MJ2,A,SIG2,AIC,MAR )
-         CALL  PARCOR( A(1,MAR),MAR,PAR )
+cxx         CALL  PARCOR( A(1,MAR),MAR,PAR )
+         CALL  PARCOR( A(1,LAG),LAG,PAR )
       END IF
 C
 C  ...  PARCOR method  ...

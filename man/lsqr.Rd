@@ -3,21 +3,23 @@
 
 \title{The Least Squares Method via Householder Transformation}
 \description{
-  Compute Regression coefficients of the model with minimum AIC.
+  Compute regression coefficients of the model with minimum AIC by the least
+  squares method via Householder transformation.
 }
 \usage{
-lsqr(y, lag = 10, plot = TRUE, \dots)
+lsqr(y, lag = NULL, plot = TRUE, \dots)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{number of sine and cosine terms.}
+  \item{lag}{number of sine and cosine components. Default is \eqn{\sqrt{n}}{sqrt(n)},
+    where \eqn{n} is the length of the time series \code{y}.}
   \item{plot}{logical. If \code{TRUE} (default), original data and fitted
     trigonometric polynomial are plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.lsqr}}.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.lsqr}}.}
 }
 \value{
   An object of class \code{"lsqr"}, which is a list with the following
-  elements:
+   components:
   \item{aic}{
     AIC's of the model with order \eqn{0,\dots,k ( = 2}\code{lag}\eqn{ + 1)}.}
   \item{sigma2}{residual variance of the model with order \eqn{0,\dots,k}.}
@@ -26,13 +28,14 @@ lsqr(y, lag = 10, plot = TRUE, \dots)
   \item{tripoly}{trigonometric polynomial.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
-# The daily maximum temperatures for Tokyo
+# The daily maximum temperatures in Tokyo
 data(Temperature)
-lsqr(Temperature)
+lsqr(Temperature, lag = 10)
 }
 
 \keyword{ts}

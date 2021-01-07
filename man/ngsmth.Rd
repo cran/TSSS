@@ -17,7 +17,7 @@ ngsmth(y, noisev = 2, tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
       2 : \tab Pearson family \cr
       3 : \tab two-sided exponential}
   }
-  \item{tau2}{variance of dispersion of system noise.}
+  \item{tau2}{variance or dispersion of system noise.}
   \item{bv}{shape parameter of system noise (for \code{noisev} = 2).}
   \item{noisew}{type of observation noise density
     \tabular{rl}{
@@ -26,7 +26,7 @@ ngsmth(y, noisev = 2, tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
       3 : \tab two-sided exponential \cr
       4 : \tab double exponential}
   }
-  \item{sigma2}{variance of dispersion of observation noise.}
+  \item{sigma2}{variance or dispersion of observation noise.}
   \item{bw}{shape parameter of observation noise (for \code{noisew} = 2).}
   \item{initd}{type of density function.
     \tabular{rl}{
@@ -34,10 +34,9 @@ ngsmth(y, noisev = 2, tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
       2 : \tab uniform \cr
       3 : \tab two-sided exponential}
   }
-  \item{k}{number of intervals.}
-  \item{plot}{logical. If \code{TRUE} (default), '\code{trend}' and '\code{smt}'
-              are plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.ngsmth}}.}
+  \item{k}{number of intervals in numerical integration.}
+  \item{plot}{logical. If \code{TRUE} (default), trend is plotted.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.ngsmth}}.}
 }
 \details{
   Consider a one-dimensional state space model
@@ -55,35 +54,35 @@ ngsmth(y, noisev = 2, tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
   (\eqn{b = 1}) and \eqn{t}-distribution (\eqn{b = (k+1)/2}).
 }
 \value{
-  An object of class \code{"ngsmth"}. It contains the following components:
+  An object of class \code{"ngsmth"}, which is a list with the following
+   components:
   \item{trend}{trend.}
   \item{smt}{smoothed density.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 
   Kitagawa, G. and Gersch, W. (1996)
   \emph{Smoothness Priors Analysis of Time Series}. Lecture Notes in Statistics,
   No.116, Springer-Verlag.
 }
 \examples{
-## trend model
-x <- rep(0, 400)
-x[101:200] <- 1
-x[201:300] <- -1
-y <- x + rnorm(400, mean = 0, sd = 1.0)
+## test data
+data(PfilterSample)
+par(mar = c(3, 3, 1, 1) + 0.1)
 
 # system noise density : Gaussian (normal)
-s1 <- ngsmth(y, noisev = 1, tau2 = 1.4e-02, noisew = 2, sigma2 = 1.048)
+s1 <- ngsmth(PfilterSample, noisev = 1, tau2 = 1.4e-02, noisew = 1, sigma2 = 1.048)
 
-plot(s1, "smt", theta = 20, phi = 60, expand = 0.3)
+plot(s1, "smt", theta = 25, phi = 30, expand = 0.25, col = "white")
 
 # system noise density : Pearson family
-s2 <- ngsmth(y, noisev = 2, tau2 = 2.11e-10, bv = 0.6, noisew = 2,
+s2 <- ngsmth(PfilterSample, noisev = 2, tau2 = 2.11e-10, bv = 0.6, noisew = 1,
              sigma2 = 1.042)
 
-plot(s2, "smt", theta = 25, phi = 30, expand = 0.25)
+plot(s2, "smt", theta = 25, phi = 30, expand = 0.25, col = "white")
 
 ## seismic data
 data(MYE1F)
@@ -100,7 +99,5 @@ s3 <- ngsmth(z$sm, noisev = 1, tau2 = z$tau2, noisew = 2, sigma2 = pi*pi/6,
 
 plot(s3, "smt", phi = 50, expand = 0.5, col = 8)
 }
-
-
 
 \keyword{ts}

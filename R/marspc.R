@@ -126,7 +126,7 @@ plot.marspc <- function(x, ...)
     for(j in 1:d) {
       if( i == 1 )
         plot(x, fnc[,i,j], type='l', ylim=c(ymin,ymax), xlab="", ylab="",
-             main="power contribution", ...)
+             main="Power contribution", ...)
       if( i != 1 )
         plot(x, fnc[,i,j], type='l', ylim=c(ymin,ymax), xlab="", ylab="", ...)
       par(new=TRUE)
@@ -137,7 +137,7 @@ plot.marspc <- function(x, ...)
       rnc <- fnc[, i, j] / fnc[, i, d]
       if (i == 1)
         plot(x, rnc, type = "l", ylim = c(0, 1), xlab = "", ylab = "",
-             main = "relative power contribution", ...)
+             main = "Relative power contribution", ...)
       if (i != 1)
         plot(x, rnc, type = "l", ylim = c(0, 1), xlab = "", ylab = "", ...)
       par(new = TRUE)

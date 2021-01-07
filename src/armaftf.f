@@ -152,7 +152,8 @@ cxx   10 PAR(I) = -(-0.6D0)**I
       CALL  ARCOEF( PAR,M,AR )
       DO 20 I=1,L
 cxx   20 PAR(I) = -(-0.6D0)**I
-      PAR(I) = -(-0.6D0)**I
+ccc      PAR(I) = -(-0.6D0)**I
+      PAR(I) = -(-0.5D0)**I
    20 CONTINUE
       CALL  ARCOEF( PAR,L,CMA )
 C
@@ -165,7 +166,6 @@ C
 cc      SUBROUTINE  FILTR3( Y,XF,VF,A,B,C,M,MJ,NS,N,OUTMIN,OUTMAX,
 cxx      SUBROUTINE  FILTR3( Y,XF,VF,A,B,C,M,NS,N,OUTMIN,OUTMAX,
       SUBROUTINE  FILTR3( Y,XF,VF,A,B,M,NS,N,OUTMIN,OUTMAX,
-
      *                    FF,OVAR )
 C
 C  ...  Kalman filter  ...
@@ -252,9 +252,12 @@ cxx  210 VH(I) = VP(I,1)
   210 CONTINUE
 C
       PVAR = VH(1)
-c------------------   2013/06/30
-      if( PVAR.LE.0 ) GO TO 400
-c------------------
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      IF( PVAR.LE.1.0D-30 )  THEN
+         FF = -1.0D20
+         RETURN
+      END IF
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       PERR = Y(II) - XP(1)
 C
       DO 230  I=1,M
@@ -297,10 +300,6 @@ C
       FF = -0.5D0*(NSUM*DLOG(PI*2*OVAR) + SDET + NSUM)
 C
       RETURN
-c------------------   2013/06/30
-  400 FF = -1.0D30
-      RETURN
-c------------------
       E N D
 cc      SUBROUTINE  ISTAT3( M,L,AR,CMA,MJ,XF,VF )
       SUBROUTINE  ISTAT3( M,L,MM,AR,CMA,XF,VF,IER )
@@ -371,29 +370,33 @@ cxx   60 SUM = SUM + AR(I1)*AR(J1)*COV(IABS(J1-J-I1+I))
    61 CONTINUE
 cxx      DO 70 I1=I,M
       DO 71 I1=I,M
-      DO 70 J1=J-I+I1,L
+c  modified 2019/12/09 =============
+ccc   DO 70 J1=J-I+I1,L
+      JMIN = MAX(J-1,J-I+I1)
+      DO 70 J1=JMIN,L
+c ==================================
 cxx   70 SUM = SUM - AR(I1)*CMA(J1)*G(IABS(J1-J-I1+I))
       SUM = SUM - AR(I1)*CMA(J1)*G(IABS(J1-J-I1+I))
    70 CONTINUE
    71 CONTINUE
 cxx      DO 80 I1=J,M
       DO 81 I1=J,M
-      DO 80 J1=I-J+I1,L
+c  modified 2019/12/09 =============
+ccc   DO 80 J1=I-J+I1,L
+      JMIN = MAX( I-1,I-J+I1)
+      DO 80 J1=JMIN,L
+c ==================================
 cxx   80 SUM = SUM - AR(I1)*CMA(J1)*G(IABS(J1-I-I1+J))
       SUM = SUM - AR(I1)*CMA(J1)*G(IABS(J1-I-I1+J))
    80 CONTINUE
    81 CONTINUE
-c  modefied 2013/05/21 ----------
-cxxx      DO 90 I1=I-1,L
-cxxx   90 SUM = SUM + CMA(I1)*CMA(J-I+I1)
-cxx      DO 90 I1=I-1,L
-      DO 91 I1=I-1,L
-      DO 90 J1=J-I+I1,L
-cxx   90 SUM = SUM + CMA(I1)*CMA(J1)
-      SUM = SUM + CMA(I1)*CMA(J1)
+c  modified 2019/12/09 =============
+ccc      DO 90 I1=I-1,L
+      DO 90 I1=I-1,L+I-J
+ccc      SUM = SUM + CMA(I1)*CMA(J1)
+      SUM = SUM + CMA(I1)*CMA(J-I+I1)
    90 CONTINUE
-   91 CONTINUE
-c-----------------------------
+c ==================================
       VF(I,J) = SUM
 cxx  100 VF(J,I) = SUM
       VF(J,I) = SUM
@@ -798,6 +801,7 @@ C
       INTEGER :: K, IG, N, M, L, MLMAX, ISW, IER
       REAL(8) :: X(K), H(K), RAM, EE, Y(N), OUTMIN, OUTMAX, ALIMIT, FLK,
      1           SIG2
+      INTEGER :: ire510
       REAL(8) :: X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2, E3,
      1           A1, A2, A3, B1, B2
       EXTERNAL FUNCT
@@ -1015,6 +1019,9 @@ C
       RETURN
 C
   500 RAM = (RAM2+RAM3)*0.5D0
+cxx 19/12/07
+         ire510 = 0
+cxx
   510 DO 520  I=1,K
 cxx  520 X1(I) = X(I) + RAM*H(I)
       X1(I) = X(I) + RAM*H(I)
@@ -1037,7 +1044,11 @@ C
       GO TO 70
 C
   540 RAM = (RAM2+RAM)*0.5D0
-      GO TO 510
+cxx      GO TO 510
+cxx 19/12/07
+         if (RAM .EQ. RAM2) return
+         ire510 = ire510 + 1
+         if (ire510 .le. 100) GO TO 510
 C
 C ------------------------------------------------------------
 cxx    1 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E1 =',D25.17 )

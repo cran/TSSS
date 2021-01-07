@@ -21,6 +21,8 @@ crscor <- function (y, lag = NULL, outmin = NULL, outmax = NULL, plot = TRUE, ..
       stop ("specify the values of 'outmax' for each dimension")
   }
 
+  y[is.na(y)] <- outmin
+
   z <- .Call("CrscorC",
              as.double(y),
              as.integer(n),
@@ -37,24 +39,41 @@ crscor <- function (y, lag = NULL, outmin = NULL, outmax = NULL, plot = TRUE, ..
   class(crscor.out) <- "crscor"
 
   if (plot) {
-    plot.crscor(crscor.out, ...)
+    plot.crscor(crscor.out, colnames(y), ...)
     invisible(crscor.out)
   } else crscor.out
 }
 
-plot.crscor <- function(x, ...) {
+plot.crscor <- function(x, vnames, ...) {
   cor <- x$cor
   lag <- dim(cor)[1] - 1
   id <- dim(cor)[2]
 
   old.par <- par(no.readonly = TRUE)
-  par(mfcol = c(id, id), xaxs = "i", yaxs = "i")
-  for (j in 1:id)
+    new.mar <- old.par$mar
+    new.mar[3:4] <- new.mar[3:4] * 0.8
+    new.mgp <- old.par$mgp
+    new.mgp[1] <- new.mgp[1] * 0.8
+    
+    
+  par(mfcol = c(id, id), xaxs = "i", yaxs = "i", oma = c(0, 1, 1, 0),
+      mar = new.mar, mgp = new.mgp, cex.main = 0.9)
+
+  for (j in 1:id) {
     for (i in 1:id) {
+      xlab <- "";  ylab <- ""
+      if (j == 1)
+        ylab <- vnames[i]
+      if (i == id)
+        xlab <- "Lag"
       plot((0:lag), cor[, i, j], type = "l", ylim = c(-1, 1),
-           ylab = paste("cor [", i, ",", j, "]"), xlab = "Lag", ...)
+           xlab = xlab, ylab = ylab)
+      if (i == 1)
+        title(main = vnames[j], line = 1)
+
       par(new = TRUE)
       abline(h = 0)
     }
+  }
   par(old.par)
 }

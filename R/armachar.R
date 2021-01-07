@@ -1,6 +1,6 @@
 # PROGRAM 6.1
-armaimp <- function(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL,
-                    nf = 200, plot = TRUE, ...)
+armachar <- function(arcoef = NULL, macoef = NULL, v, lag = 50, nf = 200,
+                     plot = TRUE, ...)
 {
   if (is.null(arcoef)) {        # AR coefficients
     arorder <- 0
@@ -15,9 +15,7 @@ armaimp <- function(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL,
     maorder <- length(macoef)   # MA order
   }
 # v                             # innovation variance
-# n                             # original data length
-  if (is.null(lag))
-    lag <- as.integer(2 * sqrt(n))    # maximum lag of autocovariance function
+# lag                           # maximum lag of autocovariance function
   kmax <- max(arorder, maorder, lag)
 # nf                            # number of frequencies in evaluating spectrum
 
@@ -27,7 +25,6 @@ armaimp <- function(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL,
              as.double(arcoef),
              as.double(macoef),
              as.double(v),
-             as.integer(n),
              as.integer(lag),
              as.integer(kmax),    
              as.integer(nf))
@@ -84,14 +81,14 @@ armaimp <- function(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL,
     }
   }
 
-  armaimp.out <- list(impuls = impuls, acov = acov, parcor = parcor,
+  armachar.out <- list(impuls = impuls, acov = acov, parcor = parcor,
                       spec = spec, croot.ar = croot.ar, croot.ma = croot.ma)
-  class(armaimp.out) <- "arma"
+  class(armachar.out) <- "arma"
 
   if (plot) {
-    plot.arma(armaimp.out, ...)
-    invisible(armaimp.out)
-  } else armaimp.out
+    plot.arma(armachar.out, ...)
+    invisible(armachar.out)
+  } else armachar.out
 
 }
 

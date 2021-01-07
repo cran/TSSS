@@ -11,6 +11,9 @@ ngsmth <- function(y, noisev = 2,tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
     stop("'noisev' is numeric in {1,2,3}" )
 # tau2                  # variance of dispersion of system noise
 # bv                    # shape parameter of system noise (for noisev=2)
+  if (noisev == 2)
+    if ((bv == 0.5) || (bv < 0.5))
+      stop("shape parameter of system noise is greater than 0.5")
 # noisew                # type of observation noise density (0,1,2,3,4)
                         # 1: Gaussian (normal) / 2: Pearson family
                         # 3: two-sided exponential / 4:double exponential
@@ -18,6 +21,9 @@ ngsmth <- function(y, noisev = 2,tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
     stop("'noisew' is numeric in {1,2,3,4}" )
 # sigma2                # variance of dispersion of observation noise
 # bw                    # shape parameter of observation noise (for noisew=2)
+  if (noisew == 2)
+    if ((bw == 0.5) || (bw < 0.5))
+      stop("shape parameter of observation noise is greater than 0.5")
 # initd                 # type of density function
                         # 1: Gaussian (normal) / 2: uniform
                         # 3: two-sided exponential
@@ -56,7 +62,7 @@ ngsmth <- function(y, noisev = 2,tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
   class(ngsmth.out) <- "ngsmth"
 
   if (plot)
-    plot.ngsmth(ngsmth.out, ...)
+    plot.ngsmth(ngsmth.out, "trend",...)
 
   return(ngsmth.out)
 }

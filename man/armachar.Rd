@@ -1,26 +1,23 @@
-\name{armaimp}
-\alias{armaimp}
+\name{armachar}
+\alias{armachar}
 
 \title{Calculate Characteristics of Scalar ARMA Model}
 \description{
-  Calculate impulse, autocovariance, partial autocorrelation function and
-  characteristic roots of scalar ARMA model for given AR and MA coefficients.
+  Calculate impulse response function, autocovariance function, autocorrelation
+  function and characteristic roots of given scalar ARMA model.
 }
 \usage{
-armaimp(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL, nf = 200,
-        plot = TRUE, \dots)
+armachar(arcoef = NULL, macoef = NULL, v, lag = 50, nf = 200, plot = TRUE, \dots)
 }
 \arguments{
   \item{arcoef}{AR coefficients.}
   \item{macoef}{MA coefficients.}
   \item{v}{innovation variance.}
-  \item{n}{data length.}
-  \item{lag}{maximum lag of autocovariance function. Default is
-   \eqn{2 \sqrt{n}}{2*sqrt(n)}.}
+  \item{lag}{maximum lag of autocovariance function.}
   \item{nf}{number of frequencies in evaluating spectrum.}
   \item{plot}{logical. If \code{TRUE} (default), impulse response function,
-   autocovariance, power spectrum, parcor and characteristic roots are plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.arma}}.}
+   autocovariance, power spectrum, PARCOR and characteristic roots are plotted.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \details{
   The ARMA model is given by
@@ -41,31 +38,32 @@ armaimp(arcoef = NULL, macoef = NULL, v, n = 1000, lag = NULL, nf = 200,
   }
 }
 \value{
-  An object of class \code{"arma"}, which is a list with the following
-  elements:
+  An object of class \code{"arma"} which has a \code{plot} method. This is a
+  list with components:
   \item{impuls}{impulse response function.}
   \item{acov}{autocovariance function.}
-  \item{parcor}{partial autocorrelation function.}
+  \item{parcor}{PARCOR.}
   \item{spec}{power spectrum.}
   \item{croot.ar}{characteristic roots of AR operator. See Details.}
   \item{croot.ma}{characteristic roots of MA operator. See Details.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # AR model : y(n) = a(1)*y(n-1) + a(2)*y(n-2) + v(n)
 a <- c(0.9 * sqrt(3), -0.81)
-armaimp(arcoef = a, v = 1.0, n = 1000, lag = 20)
+armachar(arcoef = a, v = 1.0, lag = 20)
 
 # MA model : y(n) = v(n) - b(1)*v(n-1) - b(2)*v(n-2)
 b <- c(0.9 * sqrt(2), -0.81)
-armaimp(macoef = b, v = 1.0, n = 1000, lag = 20)
+armachar(macoef = b, v = 1.0, lag = 20)
 
 # ARMA model :  y(n) = a(1)*y(n-1) + a(2)*y(n-2)
 #                      + v(n) - b(1)*v(n-1) - b(2)*v(n-2)
-armaimp(arcoef = a, macoef = b, v = 1.0, n = 1000, lag = 20)
+armachar(arcoef = a, macoef = b, v = 1.0, lag = 20)
 }
 
 \keyword{ts}

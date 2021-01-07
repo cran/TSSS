@@ -14,8 +14,9 @@ pdfunc <- function(model = "norm", mean=0, sigma2 = 1, mu = 0, tau2 = 1, shape,
 
   } else if (model == "Pearson") {
     model.type <- 3
-    if ((shape < 0) || (shape == 0))
-      stop("'shape' is greater than 0")
+#    if ((shape < 0) || (shape == 0))
+    if ((shape < 0.5) || (shape == 0.5))
+      stop("'shape' is greater than 0.5")
     param <- c(mu, tau2, shape)
 
   } else if (model == "exp") {

@@ -18,24 +18,29 @@ crscor(y, lag = NULL, outmin = NULL, outmax = NULL, plot = TRUE, \dots)
   \item{outmax}{bound for outliers in high side. A default value is 1.0e+30 for
     each dimension.}
   \item{plot}{logical. If \code{TRUE} (default), cross-correlations are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.crscor}.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \value{
-  An object of class \code{"crscor"}, which is a list with the following
-  elements:
+  An object of class \code{"crscor"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{cov}{cross-covariances.}
   \item{cor}{cross-correlations.}
-  \item{mean}{mean.}
+  \item{mean}{mean vector.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # Yaw rate, rolling, pitching and rudder angle of a ship
 data(HAKUSAN)
 y <- as.matrix(HAKUSAN[, 2:4])   # Rolling, Pitching, Rudder
 crscor(y, lag = 50)
+
+# The groundwater level and the atmospheric pressure
+data(Haibara)
+crscor(Haibara, lag = 50)
 }
 
 \keyword{ts}

@@ -48,6 +48,14 @@ print.trend <- function(x, ...)
 
 plot.trend <- function(x, rdata = NULL, ...)
 {
+    ts.atr <- tsp(rdata)
+    trend <- x$trend
+    res <- x$res
+    if (is.null(ts.atr) == FALSE) {
+      trend <- ts(trend, start = ts.atr[1], frequency = ts.atr[3])
+      res <- ts(res, start = ts.atr[1], frequency = ts.atr[3])
+    }
+
     old.par <- par(no.readonly = TRUE)
     par(mfcol = c(2, 1), xaxs = "i")
 
@@ -60,10 +68,10 @@ plot.trend <- function(x, rdata = NULL, ...)
       plot(rdata, type = "l", ylim = ylim, xlab = "", ylab = "", main = "", ...) 
       par(new = TRUE)
     }
-    plot(x$trend, type = "l", ylim = ylim, col=2, xlab = "n", ylab = "y(n)",
+    plot(trend, type = "l", ylim = ylim, col=2, xlab = "", ylab = "",
          main = mtitle, ...) 
- 
-    plot(x$res, type = "h", xlab = "",  ylab = "",  main = "Residuals", ...)
+
+    plot(res, type = "h", xlab = "",  ylab = "",  main = "Residuals", ...)
     abline(h = 0)
     par(old.par)
 }

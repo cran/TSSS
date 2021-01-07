@@ -1,4 +1,4 @@
-      SUBROUTINE ARMAF(M,L,A,B,SIG2,N,K,KMAX,NF,G,COV,PAR,SP,
+      SUBROUTINE ARMAF(M,L,A,B,SIG2,K,KMAX,NF,G,COV,PAR,SP,
      * ROOTA,ROOTB,IER,JER)
 C
       INCLUDE 'TSSS_f.h'
@@ -38,7 +38,7 @@ cxx      DIMENSION  A(M), B(L), PAR(K), ROOTA(M,2), ROOTB(L,2)
 cxx      DIMENSION  G(0:KMAX), COV(0:K), SP(0:NF)
 cxx      DIMENSION  WRK1(0:K), WRK2(0:K), WRK3(K,K)
 C
-      INTEGER :: M, L, N, K, KMAX, NF, IER, JER
+      INTEGER :: M, L, K, KMAX, NF, IER, JER
       REAL(8) :: A(M), B(L), SIG2, G(0:KMAX), COV(0:K), PAR(K),
      1           SP(0:NF), ROOTA(M,2), ROOTB(L,2)
       REAL(8) :: WRK1(0:K), WRK2(0:K), WRK3(K,K)
@@ -63,7 +63,7 @@ c------------
       CALL  PARCOR( A,M,PAR )
       CALL  ARCOEF( PAR,M,A )
 cc      IF( L.GT.0 )  CALL  ARYULE( COV,1000,K,WRK1,WRK2,PAR,WRK3,MAR )
-      IF( L.GT.0 )  CALL  ARYULE( COV,N,K,WRK1,WRK2,PAR,WRK3,MAR )
+      IF( L.GT.0 )  CALL  ARYULE( COV,0,K,WRK1,WRK2,PAR,WRK3,MAR )
       CALL  ARMASP( A,M,B,L,SIG2,NF,SP )
 cc      CALL  CHROOT( A,M,ROOTA,MJ )
 cc      CALL  CHROOT( B,L,ROOTB,MJ )

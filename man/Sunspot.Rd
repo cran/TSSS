@@ -1,7 +1,7 @@
 \name{Sunspot}
 \docType{data}
 \alias{Sunspot}
-\title{Sun Spot Number Data}
+\title{Sunspot Number Data}
 \description{
   Yearly numbers of sunspots from to 1749 to 1979.
 }

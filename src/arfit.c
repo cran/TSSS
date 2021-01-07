@@ -19,7 +19,7 @@ SEXP ArfitC(SEXP y, SEXP n, SEXP lag, SEXP nf, SEXP mj2, SEXP isw)
     i2 = INTEGER_POINTER(lag);
     i3 = INTEGER_POINTER(nf);
     i4 = INTEGER_POINTER(mj2);
-	i5 = INTEGER_POINTER(isw);
+    i5 = INTEGER_POINTER(isw);
 
     lg = *i2;
     lg1 = lg + 1;

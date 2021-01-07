@@ -1,10 +1,10 @@
 # PROGRAM 5.5 LSQR
-lsqr <- function(y, lag = 10, plot = TRUE, ...)
+lsqr <- function(y, lag = NULL, plot = TRUE, ...)
 {
-  n <- length(y)                     # length of data
+  n <- length(y)                 # length of data
   if (is.null(lag))
-    lag <- as.integer(2 * sqrt(n))   # number of sine and cosine terms
-  k <- lag * 2 + 1
+    lag <- as.integer(sqrt(n))   # number of sine and cosine terms
+  k <- 2 * lag + 1
 
   mj <- n
   if (n > 50000) mj <- 2 * k
@@ -57,7 +57,10 @@ print.lsqr <- function(x, ...)
 
 plot.lsqr <- function(x, rdata = NULL, ...)
 {
+  ts.atr <- tsp(rdata)
   data <- x$tripoly
+  if (is.null(ts.atr) == FALSE)
+    data <- ts(data, start = ts.atr[1], frequency = ts.atr[3])
   imin <- x$maice.order
 
   if (is.null(rdata) == FALSE) {
@@ -72,7 +75,7 @@ plot.lsqr <- function(x, rdata = NULL, ...)
     mtitle <-
       paste("Rregression curve of the model with order",imin)
   }
-  plot(data, type = "l", ylim = ylim, col=2, xlab = "n", ylab = "",
+  plot(data, type = "l", ylim = ylim, col=2, xlab = "", ylab = "",
        main = mtitle, xaxs = "i", cex.main = 1.0,...)
 
 }

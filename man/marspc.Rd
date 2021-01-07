@@ -3,7 +3,7 @@
 
 \title{Cross Spectra and Power Contribution}
 \description{
-  Compute cross spectra and power contribution.
+  Compute cross spectra, coherency and power contribution.
 }
 \usage{
 marspc(arcoef, v, plot = TRUE, \dots)
@@ -11,23 +11,24 @@ marspc(arcoef, v, plot = TRUE, \dots)
 \arguments{
   \item{arcoef}{AR coefficient matrices.}
   \item{v}{innovation variance matrix.}
-  \item{plot}{logical. If \code{TRUE} (default), cross spectra and power
-    contribution are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.marspc}.}
+  \item{plot}{logical. If \code{TRUE} (default), cross spectra, coherency and
+    power contribution are plotted.}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \value{
-  An object of class \code{"marspc"}, which is a list with the following
-  elements:
+  An object of class \code{"marspc"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{spec}{cross spectra.}
   \item{amp}{amplitude spectra.}
-  \item{phase}{Phase spectra.}
+  \item{phase}{phase spectra.}
   \item{coh}{simple coherency.}
-  \item{power}{power contribution.}
+  \item{power}{decomposition of power spectra.}
   \item{rpower}{relative power contribution.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # Yaw rate, rolling, pitching and rudder angle of a ship

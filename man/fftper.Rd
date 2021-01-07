@@ -10,9 +10,9 @@ fftper(y, window = 1, plot = TRUE, \dots)
 \arguments{
   \item{y}{a univariate time series.}
   \item{window}{smoothing window type. (0: box-car, 1: Hanning, 2: Hamming)}
-  \item{plot}{logical. If \code{TRUE} (default), smoothed periodogram is
+  \item{plot}{logical. If \code{TRUE} (default), smoothed (log-)periodogram is
               plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.spg}}.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.spg}}.}
 }
 \details{
   \tabular{rll}{
@@ -20,12 +20,12 @@ fftper(y, window = 1, plot = TRUE, \dots)
     Hamming Window : \tab \eqn{W_0} = 0.54 \tab \eqn{W_1} = 0.23}
 }
 \value{
-  An object of class \code{"spg"}, which is a list with the following
-  elements:
-  \item{period}{periodogram (raw spectrum).}
+  An object of class \code{"spg"}, which is a list with the following components:
+  \item{period}{periodogram.}
   \item{smoothed.period}{smoothed periodogram. If there is not a negative
     number, logarithm of smoothed periodogram.}
-  \item{log.scale}{if \code{TRUE} "smooth the periodogram on log scale.}
+  \item{log.scale}{logical. If \code{TRUE} \code{smoothed.period} is logarithm
+    of smoothed periodogram.}
   \item{tsname}{the name of the univariate time series \code{y}.}
 }
 
@@ -35,8 +35,9 @@ fftper(y, window = 1, plot = TRUE, \dots)
   behind the data \code{y}. 
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # Yaw rate, rolling, pitching and rudder angle of a ship

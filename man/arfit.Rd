@@ -3,8 +3,8 @@
 
 \title{Univariate AR Model Fitting}
 \description{
-  Fit a univariate AR model by Yule-Walker method, Least squares (Householder)
-  method or PARCOR method.
+  Fit a univariate AR model by the Yule-Walker method, the least squares (Householder)
+  method or the PARCOR method.
 }
 \usage{
 arfit(y, lag = NULL, method = 1, plot = TRUE, \dots)
@@ -23,26 +23,28 @@ arfit(y, lag = NULL, method = 1, plot = TRUE, \dots)
   }
   \item{plot}{logical. If \code{TRUE} (default), PARCOR, AIC and power spectrum
     are plotted.}
-  \item{\dots}{further arguments to be passed to \code{plot.arfit}.}}
+  \item{\dots}{graphical arguments passed to the \code{plot} method.}
+}
 \value{
-  An object of class \code{"arfit"}, which is a list with the following
-  elements:
+  An object of class \code{"arfit"} which has a \code{plot} method. This is a
+  list with the following components:
   \item{sigma2}{innovation variance.}
   \item{maice.order}{order of minimum AIC.}
-  \item{aic}{AIC.}
-  \item{arcoef}{AR coefficients of the best model.}
+  \item{aic}{AICs of the estimated AR models.}
+  \item{arcoef}{AR coefficients of the estimated AR models.}
   \item{parcor}{PARCOR.}
-  \item{spec}{power spectrum (in log scale).}
+  \item{spec}{power spectrum (in log scale) of the AIC best AR model.}
   \item{tsname}{the name of the univariate time series \code{y}.}
 }
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
-# Sun spot number data
+# Sunspot number data
 data(Sunspot)
-arfit(log10(Sunspot), 20)
+arfit(log10(Sunspot), lag = 20, method = 1)
 
 # BLSALLFOOD data
 data(BLSALLFOOD)

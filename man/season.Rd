@@ -12,21 +12,24 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
        minmax = c(-1.0e+30, 1.0e+30), plot = TRUE, ...)
 }
 \arguments{
-  \item{y}{a univariate time series.}
-  \item{trend.order}{trend order.}
-  \item{seasonal.order}{seasonal order.}
-  \item{ar.order}{AR order.}
+  \item{y}{a univariate time series with or without the tsp attribute.}
+  \item{trend.order}{trend order (0, 1, 2 or 3).}
+  \item{seasonal.order}{seasonal order (0, 1 or 2).}
+  \item{ar.order}{AR order (0, 1, 2, 3, 4 or 5).}
   \item{trade}{logical; if \code{TRUE}, the model including trading day effect
-               component is considered, where \code{tsp(y)} is not \code{NULL} 
-               and \code{frequency(y)} is 4 or 12.}
-  \item{period}{number of seasons in one period. If the tsp attribute of 
-                \code{y} is not \code{NULL}, \code{frequency(y)}.
+               component is considered.}
+  \item{period}{If the tsp attribute of \code{y} is \code{NULL}, valid number of
+                seasons in one period in the case that \code{seasonal.order} > 0 
+                and/or \code{trade} = \code{TRUE}.
     \tabular{rl}{
-      = 12 : for monthly data\cr
-      = 4 : for quarterly data
+      4 : \tab quarterly data\cr
+      12 : \tab monthly data\cr
+      5 : \tab weekly data (5 days a week)\cr
+      7 : \tab weekly data\cr
+      24 : \tab hourly data
     }}
-  \item{tau2.ini}{initial estimate of variance of the system noise \eqn{\tau^2},
-    not equal to 1.}
+  \item{tau2.ini}{initial estimate of variance of the system noise \eqn{\tau^2} 
+    less than 1.}
   \item{filter}{a numerical vector of the form \code{c(x1,x2)} which gives start
     and end position of filtering.}
   \item{predict}{the end position of prediction (\eqn{\geq}{>=} \code{x2}).}
@@ -34,13 +37,13 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
     0).}
   \item{log}{logical. If \code{TRUE}, the data \code{y} is log-transformed.}
   \item{minmax}{lower and upper limits of observations.}
-  \item{plot}{logical. If \code{TRUE} (default), '\code{trend}',
-    '\code{seasonal}' and '\code{ar}' are plotted.}
-  \item{\dots}{further arguments to be passed to \code{\link{plot.season}}.}
+  \item{plot}{logical. If \code{TRUE} (default), trend, seasonal, AR and noise 
+    components are plotted.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.season}}.}
 }
 \value{
   An object of class \code{"season"}, which is a list with the following
-  elements:
+   components:
   \item{tau2}{variance of the system noise.}
   \item{sigma2}{variance of the observational noise.}
   \item{llkhood}{log-likelihood of the model.}
@@ -49,13 +52,19 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
   \item{seasonal}{seasonal component (for \code{seasonal.order} > 0).}
   \item{arcoef}{AR coefficients (for \code{ar.order} > 0).}
   \item{ar}{AR component (for \code{ar.order} > 0).}
-  \item{day.effect}{trading day effect (for \code{trade} = 6).}
+  \item{day.effect}{trading day effect (for \code{trade} = \code{TRUE}).}
   \item{noise}{noise component.}
   \item{cov}{covariance matrix of smoother.}
 }
+\note{
+  For time series with the tsp attribute, set \code{frequency} to
+  \code{period}. However, for weekly data, set \code{frequency} to 365.25/7 or
+  52. 
+}
 \references{
-  Kitagawa, G. (2010)
-  \emph{Introduction to Time Series Modeling}. Chapman & Hall/CRC.
+  Kitagawa, G. (2020)
+  \emph{Introduction to Time Series Modeling with Applications in R}.
+  Chapman & Hall/CRC.
 }
 \examples{
 # BLSALLFOOD data

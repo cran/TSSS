@@ -5,6 +5,48 @@
 
              *****************************
 
+
+ TSSS_1.3.0
+==============
+* Added an aurgument 'lag' to period().
+
+* Changed value 'arcoef' to output for each order of AR model in arfit().
+
+* Changed value of 'noisew' of examples in ngsmth().
+
+* Denoted or modified the　allowed values of arguments 'trend.order',
+ 'seasonal.order', 'ar.order' and 'period' in season().
+
+* Added 'Note' about the setting of the frequency, i.e., the data with tsp
+ attribute gives priority its frequency over 'period' in season().
+
+* Changed the default value for 'lag' from 10 to sqrt(n), where n is the length
+ of input time series.
+
+* Changed the plot style of evolutionary power spectra in plot.tvspc().
+
+* Added functions pfilter() (Particle Filtering and Smoothing) and pfilterNL()
+ (Particle Filtering and Nonlinear Smoothing).
+
+* Changed function name 'armaimp' to 'armachar'.
+
+* Fixed a bug in armafitf.f / subroutine istat3.
+
+* Added function armafit2() (Scalar ARMA Model Fitting: Estimate all ARMA
+ models within the user-specified maximum order by maximum likelihood method).
+
+* Added datasets Haibara and Nikkei225.
+
+* Changed default values for 'wminmax' in case of noisew = 2 (Pearson) and
+ 'vminmax' in case of noisev = 2 (Pearson) in ngsim().
+
+* Added tsp attribute to all datasets.
+
+* Added an example using Haibara dataset in crscor().
+
+* Added a dataset Rainfall.
+
+
  TSSS_1.2.4
 ==============
 * Used the gammafn function provided by R instead of the DGAMMA function in
@@ -19,8 +61,8 @@
 
  TSSS_1.2.2
 ==============
-* Fixed problems in Fortran code according to the warning messages from
- gfortran-8 with options -fpic -g -O2 -Wall -mtune=native.
+* Fixed problems in Fortran code (comsub.f / SUBROUTINE ARYULE) according to the
+ warning messages from gfortran-8 with options -fpic -g -O2 -Wall -mtune=native.
 
 
  TSSS_1.2.1
@@ -44,6 +86,8 @@
 
 * Turned output values of each function into an object of S3 class.
  Defined print and plot methods for these classes.
+
+* Added src/init.c.
 
 
  TSSS_1.1.0

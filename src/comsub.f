@@ -15,8 +15,8 @@ C     FOURIE  ---  period, arma, marspc, arfit, tvspc
 C     MOMENT ---  trend, season, tvvar, ngsmth
 C     SMOOTH  ---  tvvar, smooth
 C     GINVRS  ---  tvvar, smooth, season
-C     SETSEA  ---  simssm. ngsim
-C     CHOLES  ---  simssm. ngsim
+C     SETSEA  ---  simssm, ngsim
+C     CHOLES  ---  simssm, ngsim
 C     CRSCOR  ---  crscor, marfit
 C     MEAN  ---  unicor, crscor, period, arfit, marfit
 C     AUTCOR  --- unicor, arfit
@@ -200,6 +200,8 @@ cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
       INTEGER :: K, N, MJ1, IMIN
       REAL(8) :: X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
       REAL(8) :: AICM
+C
+      A(1:K, 1:K) = 0.0D0
 C
       CALL  COMAIC( X,N,K,MJ1,SIG2,AIC )
 C
@@ -1227,24 +1229,16 @@ cxx   30   SPE(I) = W(0,IWINDW)*PE(I) + W(1,IWINDW)*(PE(I-1) + PE(I+1))
    30   CONTINUE
       END IF
 c---------- 2013/07/03
+      IF ( MINVAL(SPE) .GT. 0 ) THEN
       IFG = 0
-      DO 40 I=0,NP
-cxx   40 IF( SPE(I) .LE. 0 ) IFG = -1
-      IF( SPE(I) .LE. 0 ) IFG = -1
-   40 CONTINUE
-      IF( IFG .NE. 0 ) GO TO 60
-c----------
       DO 50 I=0,NP
 c   50 SPE(I) = DLOG10( SPE(I) )
-c      DO 50 I=0,NP
-c		 if (SPE(I) .gt. 0) then
-           SPE(I) = DLOG10( SPE(I) )
-c		 else
-c		   SPE(I) = -10
-c         end if
+       SPE(I) = DLOG10( SPE(I) )
    50 CONTINUE
+      ELSE
+         IFG = -1
+      END IF
 C
-   60 CONTINUE
       RETURN
       E N D
 C

@@ -1,7 +1,9 @@
 C     PROGRAM  3.1  PERIOD
 cx      SUBROUTINE PERIODF(Y,N,IWINDW,OUTMIN,OUTMAX,PE,SPE,NP)
 ccb      SUBROUTINE PERIODF(Y,N,IWINDW,OUTMIN,OUTMAX,PE,SPE,NP,IFG)
-      SUBROUTINE PERIODF(Y,N,NP,IWINDW,OUTMIN,OUTMAX,PE,SPE,IFG)
+ccxx      SUBROUTINE PERIODF(Y,N,NP,IWINDW,OUTMIN,OUTMAX,PE,SPE,IFG)
+      SUBROUTINE PERIODF(Y,N,NP,IWINDW,LAG,OUTMIN,OUTMAX,PE,SPE,IFG)
+
 C
       INCLUDE 'TSSS_f.h'
 C
@@ -29,18 +31,19 @@ cxx      DIMENSION  Y(N), PE(0:NP), SPE(0:NP), COV(0:1024)
 C
       INTEGER :: N, NP, IWINDW, IFG
       REAL(8) :: Y(N), OUTMIN, OUTMAX, PE(0:NP), SPE(0:NP)
-      REAL(8) :: COV(0:1024)
+ccxx      REAL(8) :: COV(0:1024)
+      REAL(8) :: COV(0:LAG)
 C
 cc      DATA  OUTMIN/-1.0D30/, OUTMAX/ 1.0D30/
 C
 cc      CALL  READTS( IDEV,Y,N )
 C
 cc      IF( IWINDW.EQ.0 )  LAG = MIN0( N-1,MJ )
-      IF( IWINDW.EQ.0 )  LAG = N-1
+ccxx      IF( IWINDW.EQ.0 )  LAG = N-1
 cxx      IF( IWINDW.GT.0 )  LAG = 2*DSQRT( DBLE(N) )
-      IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DBLE(N) ))
-      IF( IWINDW.EQ.0 )  NP  = (LAG+1)/2
-      IF( IWINDW.GT.0 )  NP  = LAG
+ccxx      IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DBLE(N) ))
+ccxx      IF( IWINDW.EQ.0 )  NP  = (LAG+1)/2
+ccxx      IF( IWINDW.GT.0 )  NP  = LAG
 C
       CALL  PERIOD( Y,N,LAG,OUTMIN,OUTMAX,NP,0,COV,PE )
 C
@@ -75,10 +78,11 @@ ccb      DIMENSION  Y(N), COV(0:1024), P(0:512), FC(513), FS(513)
 cxx      DIMENSION  Y(N), COV(0:1024), P(0:NN), FC(NN+1), FS(NN+1)
 C
       INTEGER :: N, LAG, NN, ISW
-      REAL(8) :: Y(N), OUTMIN, OUTMAX, COV(0:1024), P(0:NN)
+ccxx      REAL(8) :: Y(N), OUTMIN, OUTMAX, COV(0:1024), P(0:NN)
+      REAL(8) :: Y(N), OUTMIN, OUTMAX, COV(0:LAG), P(0:NN)
       REAL(8) :: FC(NN+1), FS(NN+1), YMEAN
 C
-      IF( LAG.GE.1023 )  LAG = 1023
+ccxx      IF( LAG.GE.1023 )  LAG = 1023
       IF( ISW.EQ.0 )  CALL  AUTCOV( Y,N,LAG,OUTMIN,OUTMAX,COV,YMEAN )
 C
 C  ...  Fourier transformation by Goertzel method  ...

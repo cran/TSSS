@@ -187,7 +187,8 @@ C
 cc      CALL  FILTR1( Y,XF,VF,A,B,C,Q,SIG2,REG,MTYPE,NMAX,M,MAXM,NC,L,
 cc     *      NS,NFE,NPE,MJ,N, OUTMIN,OUTMAX,VFS,VPS,XFS,XPS,FF,OVAR )
       CALL  FILTR1( Y,XF,VF,A,B,C,Q,SIG2,REG,MTYPE,NMAX,M,MAXM,NC,L,
-     *      NS,NFE,NPE,MJ,N, OUTMIN,OUTMAX,VFS,VPS,XFS,XPS,FF,OVAR )
+     *     NS,NFE,NPE,MJ,N, OUTMIN,OUTMAX,VFS,VPS,XFS,XPS,FF,OVAR,ier2 )
+      if( ier2.ne.0 ) return
 C
 C  ...  Fixed Interval Smoothing  ...
 C
@@ -307,7 +308,7 @@ cxx  750 FORMAT( 1H ,'TRADING DAY EFFECT' )
       E N D
       SUBROUTINE  FILTR1( Y,XF,VF,A,B,C,Q,SIG2,REG,MTYPE,NMAX,M,MMAX,
      *                    NCM,NC,NS,N,NPE,MJ,NDIM,OUTMIN,OUTMAX,
-     *                    VFS,VPS,XFS,XPS,FF,OVAR )
+     *                    VFS,VPS,XFS,XPS,FF,OVAR,IER )
 C
 C  ...  Kalman filter  ...
 C
@@ -356,7 +357,7 @@ cxx      DIMENSION  WRK(MJ,MJ), VH(MJ), GAIN(MJ)
 cxx      DIMENSION  I0(NCM), MTYPE(NCM)
 C
       INTEGER :: NMAX, MMAX, NCM, NC, NS, N, NPE, MJ, NDIM, MTYPE(NCM),
-     1           M(NCM)
+     1           M(NCM), IER
       REAL(8) :: Y(NDIM), XF(MJ), VF(MJ,MJ), A(MMAX,NCM), B(MMAX,NCM),
      1           C(MMAX,NCM), Q(NCM,NCM), SIG2, REG(NMAX,7), OUTMIN,
      2           OUTMAX, VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX), XFS(MJ,NMAX),
@@ -367,6 +368,7 @@ C
 C
       DATA   PI  /3.1415926535D0/
 C
+      IER = 0
       OVAR = 0.0D0
       SDET = 0.0D0
       NSUM = 0
@@ -469,8 +471,14 @@ cxx  220    PVAR = PVAR + VH(I0(L)+J)*C(J,L)
       END IF
   225 CONTINUE
 c------------------   2013/07/01
-      if( PVAR.LE.0 ) GO TO 400
+cdel      if( PVAR.LE.0 ) GO TO 400
 c------------------
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      IF( PVAR.LE.1.0D-30 )  THEN
+         FF = -1.0D20
+         RETURN
+      END IF
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C
       DO 230  I=1,MM
 cxx  230 GAIN(I) = VH(I)/PVAR
@@ -541,8 +549,9 @@ C     WRITE(6,*)  'FF =',FF, OVAR, SDET, NSUM
 C
       RETURN
 c------------------   2013/07/01
-  400 FF = -1.0D30
-      RETURN
+cdel  400 FF = -1.0D30
+cdel      IER = 400
+cdel      RETURN
 c------------------
       E N D
       SUBROUTINE  ISTAT1( NC,M,MJ,MAXM,A,XMEAN,XVAR,XF,VF )
@@ -832,6 +841,7 @@ cc      MJ  = 25
 cc      MAXM= 22
 cc      NC  = 9
       NP  = ID(M1) + ID(M2) + ID(M3)
+      ier = 0
 C
       DO 10 I=1,K
 cxx   10 IF( DABS(AA(I)).GT.20.0D0 )  GO TO 100
@@ -857,7 +867,7 @@ cc     *              XMEAN,XVAR )
       CALL  ISTAT1( L,M,MJ,MAXM,A,XMEAN,XVAR,XF,VF )
 cc      CALL  FILTR1( Y,XF,VF,A,B,C,Q,SIG2,REG,MTYPE,NMAX,M,MAXM,NC,L,
       CALL  FILTR1( Y,XF,VF,A,B,C,Q,SIG2,REG,MTYPE,NMAX,M,MAXM,NC,L,
-     *      NS,NFE,NPE,MJ,N,OUTMIN,OUTMAX,VFS,VPS,XFS,XPS,FF,OVAR )
+     *      NS,NFE,NPE,MJ,N,OUTMIN,OUTMAX,VFS,VPS,XFS,XPS,FF,OVAR,ier )
 cc      WRITE(6,*) FF
       FF = -FF
       RETURN
@@ -927,7 +937,7 @@ C
 cc      SUBROUTINE  DAVIDN( FUNCT,X,N,NDIF )
       SUBROUTINE  DAVIDN1( FUNCT,X,N,NDIF,
      * YY,NN,M1,M2,M3,M4,NPER,REG,OUTMIN,OUTMAX,ALIMIT,ISW,IDIF,
-     * M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,IER )
+     * M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,ier )
 C
 C  ...  6/20/83, 12/19/92
 C
@@ -940,7 +950,7 @@ cxx      DIMENSION  YY(NN), REG(NMAX,7)
 cxx      DIMENSION  M(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
       INTEGER :: N, NDIF, NN, M1, M2, M3, M4, NPER, ISW, IDIF, NS, NFE,
-     1           NPE, NMAX, MJ, MAXM, NC, IER, M(NC)
+     1           NPE, NMAX, MJ, MAXM, NC, M(NC), ier
       REAL(8) :: X(N), YY(NN), REG(NMAX,7), OUTMIN, OUTMAX, ALIMIT,
      1           XMEAN(NC), XVAR(MAXM,NC)
       REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N), TAU2,
@@ -983,6 +993,7 @@ cc      IF( NDIF.GE.1 )  CALL  FUNCND( FUNCT,N,X,XM,G,IG )
       IF( NDIF.EQ.0 )  CALL  FUNCT( YY,NN,M1,M2,M3,M4,NPER,REG,N,X,
      * OUTMIN,OUTMAX,ALIMIT,M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,
      * MAXM,NC,XM,IG,ier )
+      if( ier.ne.0 ) return
       IF( NDIF.GE.1 )  CALL  FUNCND1( FUNCT,N,X,XM,G,IG,IDIF,
      * YY,NN,M1,M2,M3,M4,NPER,REG,OUTMIN,OUTMAX,ALIMIT,M,XMEAN,XVAR,
      * NS,NFE,NPE,ISW,NMAX,MJ,MAXM,NC,ier )
@@ -1098,6 +1109,7 @@ cc      IF( NDIF.GE.1 )  CALL  FUNCND( FUNCT,N,X,XM,G,IG )
       IF( NDIF.EQ.0 )  CALL  FUNCT( YY,NN,M1,M2,M3,M4,NPER,REG,N,X, 
      * OUTMIN,OUTMAX,ALIMIT,M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,
      * MAXM,NC,XM,IG,ier )
+      if( ier.ne.0 ) return
       IF( NDIF.GE.1 )  CALL  FUNCND1( FUNCT,N,X,XM,G,IG,IDIF,
      * YY,NN,M1,M2,M3,M4,NPER,REG,OUTMIN,OUTMAX,ALIMIT,M,XMEAN,XVAR,
      * NS,NFE,NPE,ISW,NMAX,MJ,MAXM,NC,ier )
@@ -1150,7 +1162,7 @@ cxx      DIMENSION  A(M) , G(M) , B(M)
 cxx      DIMENSION  Y(N), REG(NMAX,7), MM(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
       INTEGER :: M, IFG, IDIF, N, M1, M2, M3, M4, NPER, NS, NFE, NPE,
-     1           ISW, NMAX, MJ, MAXM, NC, ier, MM(NC)
+     1           ISW, NMAX, MJ, MAXM, NC, MM(NC), ier
       REAL(8) :: A(M), F, G(M), Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
      1           ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
       REAL(8) :: B(M), CONST, FF, FB
@@ -1215,9 +1227,10 @@ cxx      DIMENSION  Y(N), REG(NMAX,7)
 cxx      DIMENSION  M(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
       INTEGER :: K, IG, N, M1, M2, M3, M4, NPER, NS, NFE, NPE, ISW,
-     1           NMAX, MJ, MAXM, NC, ier, M(NC) 
+     1           NMAX, MJ, MAXM, NC, M(NC), ier
       REAL(8) :: X(K), H(K), RAM, EE, Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
      1           ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
+      INTEGER :: ire510
       REAL(8) :: X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2, E3,
      1           A1, A2, A3, B1, B2
 C
@@ -1429,6 +1442,9 @@ C
       RETURN
 C
   500 RAM = (RAM2+RAM3)*0.5D0
+cxx 2019/07/27
+         ire510 = 0
+cxx
   510 DO 520  I=1,K
 cxx  520 X1(I) = X(I) + RAM*H(I)
       X1(I) = X(I) + RAM*H(I)
@@ -1450,7 +1466,14 @@ C
       GO TO 70
 C
   540 RAM = (RAM2+RAM)*0.5D0
-      GO TO 510
+cxx      GO TO 510
+cxx 2019/07/27
+         if (RAM .EQ. RAM2) return
+         ire510 = ire510 + 1
+         if (ire510 .le. 100) GO TO 510
+C
+         return
+C
 C
 C ------------------------------------------------------------
 cxx    1 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E1 =',D25.17 )

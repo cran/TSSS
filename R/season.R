@@ -5,41 +5,61 @@ season <- function(y, trend.order = 1, seasonal.order = 1, ar.order = 0,
                    arcoef.ini = NULL, log = FALSE,
                    minmax = c(-1.0e+30, 1.0e+30), plot = TRUE, ...) 
 {
-  if (trend.order < 0)
-    stop("trend.order must be greater than 0 or equal to 0.")
+  if (trend.order < 0 || trend.order > 3)
+    stop("'trend.order' must be 0, 1, 2 or 3.")
 
-#  if ((trade != 0) && (trade != 6 ))
-#    stop("'trade' is 0 or 6" )
+  if (seasonal.order < 0 || seasonal.order > 2)
+    stop("'seasonal.order' must be 0, 1 or 2.")
 
-#  if (trade == 6 )
-#    if (is.null(year) )
-#      stop("specify starting year of the data" )
-
-  if (is.null(tsp(y)) == TRUE) {
-	year <- 1
-	month <- 1
-  } else if (is.null(tsp(y)) == FALSE) {
-	year <- start(y)[1]
-	month <- start(y)[2]
-    period <- tsp(y)[3]
-  }
-
+  if (ar.order < 0 || ar.order > 5)
+    stop("'ar.order' must be 0, 1, 2, 3, 4 or 5.")
 
   n <- length(y)      # data length
   m1 <- trend.order
   m2 <- seasonal.order
   m3 <- ar.order
-#  m4 <- trade
   m4 <- 0
+  m123 <- m1 + m2 + m3
+
+  if (m123 == 0)
+    stop("Total order is 0.")
+
+  if (is.null(tsp(y)) == TRUE) {
+	year <- 0
+	month <- 1
+  } else if (is.null(tsp(y)) == FALSE) {
+	year <- start(y)[1]
+	month <- start(y)[2]
+    if (tsp(y)[3] == 7)
+      stop("frequency is invalid.")
+    if (tsp(y)[3] == 365.25/7 || tsp(y)[3] == 52) {
+      period <- 7
+    } else {
+      period <- tsp(y)[3]
+      if (is.element(period, c(4, 5, 12, 24)) == FALSE) {
+       warning(gettextf("Invarid 'frequency' %d is substituted for 'period'.
+                        \nThe value of 'period' is ignored.", period),
+                        domain=NA)
+        m2 <- 0
+      }
+    }
+  }
+  if (m2 != 0) {
+    if (is.element(period, c(4, 5, 7, 12, 24)) == FALSE) {
+      warning("'period' must be 4, 5, 7, 12 or 24.\n")
+      m2 <- 0
+    }
+  }
+
   if (trade == TRUE) {
     if(period == 4 || period ==12) {
       m4 <- 6
     } else {
-      warning("'trade = TRUE' is available only if period is 4 or 12.")
+      warning("In the case of trade = TRUE, 'period' must be 4 or 12.\n")
     }
   }
+
   jyear <- year
-#  if (is.null(jyear) ) jyear <- 0
   jmonth <- month
   logt <- 0
   if (log == TRUE) logt <- 1
@@ -71,19 +91,19 @@ season <- function(y, trend.order = 1, seasonal.order = 1, ar.order = 0,
   tau2 <- rep(0, 4)
   ll <- 0
   if (is.null(tau2.ini) ) {
-    if (m1 > 0 ) {
+    if (m1 > 0) {
       ll <- 1
       tau2[1] <- 0.05
     }
-    if (m2 > 0 ) {
+    if (m2 > 0) {
       ll <- ll+1
       tau2[ll] <- 0.11e-7
     }
-    if (m3 > 0 ) {
+    if (m3 > 0) {
       ll <- ll+1
       tau2[ll] <- 0.9
     }
-    if (m4 > 0 ) {
+    if (m4 > 0) {
       ll <- ll+1
       tau2[ll] <- 0.0
     }
@@ -147,12 +167,17 @@ season <- function(y, trend.order = 1, seasonal.order = 1, ar.order = 0,
     stop("Log-transformation cannot be applied to zeros and nagative numbers")
 
   ier2 <- z[[8L]]
-  if (ier2 == 1)
-    stop(" Matrix with zero row in decompose" )
-  if (ier2 == 2)
-    stop(" Singular matrix in decompose.zero divide in solve" )
-  if (ier2 == 3)
-    stop(" Convergence in impruv.matrix is nearly singular" )
+  if (ier2 == 1 ) {
+    stop(" Matrix with zero row in decompose." )
+  } else if (ier2 == -1) {
+    stop(" PARCOR for AR coefficients > 0.9." )
+  } else if (ier2 == 2) {
+    stop(" Singular matrix in decompose.zero divide in solve." )
+  } else if (ier2 == 3) {
+    stop(" Convergence in impruv.matrix is nearly singular." )
+  } else if (ier2 ==400) {
+    stop(" This model is unsuitable. The condition of the filtering routine is violated." )
+  }
 
   trend <- NULL
   seasonal <- NULL
@@ -187,7 +212,7 @@ season <- function(y, trend.order = 1, seasonal.order = 1, ar.order = 0,
     noise <- noise - ar[1:n]
   if (m4 > 0)
     noise <- noise - deff[1:n]
-  noise.list <- list(val = noise, range = c(ns, nfe))
+  noise.list <- list(val = noise, range = c(ns, nfe), period = period)
 
   season.out <- list(tau2=tau2[1:np], sigma2=sig2, llkhood=z[[1L]], aic=z[[3L]],
                      trend=trend, seasonal=seasonal, arcoef=arcoef, ar=ar,
@@ -207,6 +232,7 @@ season <- function(y, trend.order = 1, seasonal.order = 1, ar.order = 0,
   return(season.out)
 }
 
+
 print.season <- function(x, ...)
 {
   n <- length(x$tau2)
@@ -218,19 +244,43 @@ print.season <- function(x, ...)
   message(gettextf(" aic\t\t%12.3f\n", x$aic), domain = NA)
 }
 
+
 plot.season <- function(x, rdata = NULL, ...)
 {
-  ts.atr <- tsp(rdata)
-  n <- length(rdata)
+  period <- x$noise$period
+
+  if (is.null(rdata) == TRUE) {
+    y <- NULL
+    ts.atr <- c(1, 1, 1)
+     xtime <- "time"
+  } else {
+    y <- rdata
+    tsname <- deparse(substitute(rdata))
+    ts.atr <- tsp(rdata)
+    if (is.null(ts.atr) == TRUE) {
+      freq <- period
+      if (period == 7)
+        freq <- 365.25/7
+      ts.atr <- c(1, 1, freq)
+    }
+    if (period == 4) {
+      xtime <- "time"
+    } else if (period == 24) {
+      xtime <- "day"
+    } else if (period == 5 || period == 7) {
+      xtime <- "week"
+    } else {
+      xtime <- "year"
+    }
+  }
+
   trend <- x$trend
   seasonal <- x$seasonal
   ar <- x$ar
   day.effect <- x$day.effect
   noise <- x$noise$val
-  if (is.null(ts.atr) == FALSE)
-    noise <- ts(noise, start = ts.atr[1], frequency = ts.atr[3])
+  noise <- ts(noise, start = ts.atr[1], frequency = ts.atr[3])
 
-  y <- rdata
   n <- length(noise)
   range <- x$noise$range
   if (is.null(range) == TRUE) {
@@ -242,34 +292,32 @@ plot.season <- function(x, rdata = NULL, ...)
   }
   npe <- max(length(trend), length(seasonal), length(ar), length(day.effect))
 
-  np <- length(x$tau2)
-  ng <- np + 1
-  if (is.null(day.effect) == FALSE)
-    ng <- ng + 1
-  nc <- 1
-  nr <- ng
-  if (nfe < npe)  ng <- ng + 1
-  if (ng > 3) {
-    nc <- 2
-    nr <- as.integer((ng + 1) / 2)
-  }
-
   old.par <- par(no.readonly = TRUE)
-  par(mfrow = c(nr, nc), xaxs = "i")
+  par(mfrow = c(3, 1), xaxs = "i", yaxs = "i")
+  nplot <- 0
+  new.mar <- old.par$mar
+  new.mar[1] <- new.mar[1] * 0.75
+  new.mar[3] <- new.mar[3] * 0.5
+  new.mgp <- old.par$mgp
+  new.mgp[1] <- new.mgp[1] * 0.75
 
   nmax <- max(n, npe)
   xlim <- c(1, nmax)
-  if (is.null(ts.atr) == FALSE)
-    xlim <- xlim + ts.atr[1] - 1
-  ylim1 <- NULL
 
 ### original and trend
-  if (is.null(trend) == FALSE) {
-    trendx <- c(ns:nmax)
-    if (is.null(ts.atr) == FALSE) {
-      trend <- ts(trend, start = ts.atr[1], frequency = ts.atr[3])
-      trendx <- trendx + ts.atr[1] - 1
+  par(mar = new.mar, mgp = new.mgp)
+  k <- NULL
+  if (is.null(trend) == TRUE) {
+    if (is.null(y) == FALSE) {
+      ylim1 <- get.ylim(y)$minmax
+      k <- get.ylim(y)$k
+      mtitle <- paste(tsname)
+      y <- ts(y, start = ts.atr[1], frequency = ts.atr[3])
+      plot(y, type = "l", ylim = ylim1, xlab = xtime, ylab = "", main = mtitle, ...)
+      nplot <- nplot + 1
     }
+
+  } else {  # is.null(trend) == FALSE
     s2 <- x$sigma2
     t1 <- trend[1:nmax]
     t2 <- trend[1:nmax]
@@ -277,70 +325,131 @@ plot.season <- function(x, rdata = NULL, ...)
       t1[i] <- t1[i] - sqrt(x$cov[i] * s2)
       t2[i] <- t2[i] + sqrt(x$cov[i] * s2)
     }
-    ylim1 <- range(t1[ns:nmax], t2[ns:nmax], y)
+    yrange <- range(t1[ns:nmax], t2[ns:nmax], y, na.rm = TRUE)
+    ylim1 <- get.ylim(yrange)$minmax
+    k <- get.ylim(yrange)$k
+
+    trend <- ts(trend, start = ts.atr[1], frequency = ts.atr[3])
     if (is.null(y) == TRUE) {
       mtitle <- paste("Trend component")
+      plot(trend, type = "n", ylim = ylim1, xlab = "", ylab = "",
+           main = mtitle, ...)
+      par(new = TRUE)
     } else {
-      tsname <- deparse(substitute(rdata))
       mtitle <- paste(tsname, "and trend component")
+      y <- ts(y, start = ts.atr[1], frequency = ts.atr[3])
       plot(y, type = "l", ylim = ylim1, xlab = "", ylab = "", main = mtitle, ...)
       par(new = TRUE)
     }
-    plot(trendx, trend[ns:nmax], type = "l", col = 2, xlim = xlim, ylim = ylim1, xlab = "",
-         ylab = "", main = mtitle, xaxt = "n", ...) 
+    plot(trend[ns:nmax], type = "l", col = 2, xlim = c(ns, nmax), ylim = ylim1,
+         xlab = xtime, ylab = "", main = "", xaxt = "n", ...) 
     par(new = TRUE)
-    plot(trendx, t1[ns:nmax], type = "l", lty = 3, col = 4, xlim = xlim, ylim = ylim1, xlab = "",
-         ylab = "", main = "", xaxt = "n", ...)
+    plot(t1[ns:nmax], type = "l", lty = 3, col = 4, xlim = c(ns, nmax),
+         ylim = ylim1, xlab = "", ylab = "", main = "", xaxt = "n", ...)
     par(new = TRUE)
-    plot(trendx, t2[ns:nmax], type = "l", lty = 3, col = 4, xlim = xlim, ylim = ylim1, xlab = "",
-         ylab = "", main = "", xaxt = "n", ...)
+    plot(t2[ns:nmax], type = "l", lty = 3, col = 4, xlim = c(ns, nmax),
+         ylim = ylim1, xlab = "", ylab = "", main = "", xaxt = "n", ...)
+    nplot <- nplot + 1
   }
+  par(mar = old.par$mar, mgp = old.par$mgp)
 
-  ylim <- range(seasonal, ar, day.effect, na.rm = TRUE)
-  ymax <- max(abs(ylim[1]), abs(ylim[2]))
-  ylim <- c(-ymax, ymax)
 
 ### seasonal
   if (is.null(seasonal) == FALSE) {
-    if (is.null(ts.atr) == FALSE)
-      seasonal <- ts(seasonal, start = ts.atr[1], frequency = ts.atr[3])
-    plot(seasonal, type = "h", ylim = ylim, xlab = "", ylab = "",
+    ylim2 <- get.ylim(seasonal)$minmax
+#-------- 
+    if (is.null(k) == TRUE)
+      k <- get.ylim(seasonal)$k
+#--------
+    if (ylim2[2] < 10 ** k) {
+      ylim2[1] <- -10 ** k
+      ylim2[2] <- 10 ** k
+    }
+
+    seasonal <- ts(seasonal, start = ts.atr[1], frequency = ts.atr[3])
+    plot(seasonal, type = "h", ylim = ylim2, xlab = xtime, ylab = "",
          main = "Seasonal component", ...) 
+    nplot <- nplot + 1
   }
+
 
 ### AR
-  if (is.null(x$ar) == FALSE) {
-    ar <- x$ar
-    if (is.null(ts.atr) == FALSE)
-      ar <- ts(ar, start = ts.atr[1], frequency = ts.atr[3])
-    plot(ar, type = "h", xlab = "", ylim = ylim, ylab = "",
+  if (is.null(ar) == FALSE) {
+    ylim3 <- get.ylim(ar)$minmax
+#--------
+    if (is.null(k) == TRUE)
+      k <- get.ylim(ar)$k
+#--------
+    if (ylim3[2] < 10 ** k) {
+      ylim3[1] <- -10 ** k
+      ylim3[2] <- 10 ** k
+    }
+    if (ylim3[1] > 0)
+      ylim3[1] <- 0
+
+    ar <- ts(ar, start = ts.atr[1], frequency = ts.atr[3])
+    plot(ar, type = "h", xlab = xtime, ylim = ylim3, ylab = "",
          main = "AR component", ...)
+    nplot <- nplot + 1
   }
 
+
 ### day.effect
-  if (is.null(x$day.effect) == FALSE) {
-    day.effect <- x$day.effect
-    if (is.null(ts.atr) == FALSE)
-      day.effect <- ts(day.effect, start = ts.atr[1], frequency = ts.atr[3])
-    plot(day.effect, type = "h", xlab = "", ylim = ylim, ylab = "",
-         main = "Trading day effect", ...) 
+  if (is.null(day.effect) == FALSE) {
+    ylim4 <- get.ylim(day.effect)$minmax
+#--------
+    if (is.null(k) == TRUE)
+      k <- get.ylim(day.effect)$k
+#--------
+    if (ylim4[2] < 10 ** k) {
+      ylim4[1] <- -10 ** k
+      ylim4[2] <- 10 ** k
+    }
+
+    if (nplot == 3) {
+      dev.new()
+      par(mfrow = c(3, 1), xaxs = "i", yaxs = "i")
+      nplot <- 0
+    }
+    day.effect <- ts(day.effect, start = ts.atr[1], frequency = ts.atr[3])
+    plot(day.effect, type = "h", xlab = xtime, ylim = ylim4, ylab = "",
+         main = "Trading day effect", ...)
+    nplot <- nplot + 1
   }
 
 ### noise
-  noisex <- c(ns:nfe)
-  if (is.null(ts.atr) == FALSE) {
-    noise <- ts(noise, start = ts.atr[1], frequency = ts.atr[3])
-    noisex <- noisex + ts.atr[1] - 1
+  ylim5 <- get.ylim(noise)$minmax
+#--------
+    if (is.null(k) == TRUE)
+      k <- get.ylim(noise)$k
+#--------
+  if (ylim5[2] < 10 ** k) {
+    ylim5[1] <- -10 ** k
+    ylim5[2] <- 10 ** k
   }
-  plot(noise, type = "n", xlab = "", ylim = ylim, ylab = "", main = "noise", ...)
-  par(new = TRUE)
-  plot(noisex, noise[ns:nfe], type = "h", xlab = "", xlim = xlim, ylim = ylim,
-       ylab = "", xaxt = "n", ...) 
+  if (ylim5[1] > 0)
+    ylim5[1] <- 0
 
+  if (nplot == 3) {
+    dev.new()
+    par(mfrow = c(3, 1), xaxs = "i", yaxs = "i")
+    nplot <- 0
+  }
+
+  plot(noise, type = "n", ylim = ylim5, xlab = xtime, ylab = "", main = "Noise", ...)
+  par(new = TRUE)
+  plot(noise[ns:nfe], type = "h", xlab = "", xlim = c(ns, nfe), ylim = ylim5,
+       ylab = "", xaxt = "n", ...) 
+  nplot <- nplot + 1
+
+### Predicted values
   if (nfe < npe) {
     nps <- nfe + 1
-    yy <- rep(0, npe)
+    yy <- rep(NA, npe)
     for (i in nps:npe) {
+      yy[i] <- 0
+      if (is.null(trend) == FALSE)
+        yy[i] <- yy[i] + trend[i]
       if (is.null(seasonal) == FALSE)
         yy[i] <- yy[i] + seasonal[i]
       if (is.null(ar) == FALSE)
@@ -350,44 +459,69 @@ plot.season <- function(x, rdata = NULL, ...)
     }
 
     xlim <- c(0, nmax)
-    xx <- c(nps:npe)
-    npsv <- nps
-    if (is.null(ts.atr) == FALSE) {
-      xlim <- xlim + ts.atr[1] - 1
-      xx <- xx + ts.atr[1] - 1
-      npsv <- npsv + ts.atr[1] - 1
+
+    if (nplot == 3) {
+      dev.new()
+      par(mfrow = c(3, 1), xaxs = "i", yaxs = "i")
     }
+    par(mar = new.mar, mgp = new.mgp)
 
     if (is.null(trend) == FALSE) {
-      for (i in nps:npe)
-        yy[i] <- yy[i] + trend[i]
       t1 <- yy
       t2 <- yy
       for (i in nps:npe) {
         t1[i] <- t1[i] - sqrt(x$cov[i] * s2)
         t2[i] <- t2[i] + sqrt(x$cov[i] * s2)
       }
-      ylim <- range(y, ylim1, t1[nps:npe], t2[nps:npe])
-      plot(y, type = "l", ylim = ylim, main = "", xlab = "", ylab = "", ...) 
+      ylim6 <- range(ylim1, t1[nps:npe], t2[nps:npe], na.rm = TRUE)
+
+      if (is.null(y) == FALSE) {
+        plot(y, type = "l", ylim = ylim6, xlab = "", ylab = "", main = "", ...) 
+        par(new = TRUE)
+      } else {
+        plot(noise, type = "n", ylim = ylim6, xlab = "", ylab = "", main = "", ...)
+        par(new = TRUE)
+      }
+      plot(yy, type = "l", col = 2, ylim = ylim6,
+           xlab = xtime, ylab = "", main = "Predicted values", xaxt = "n", ...)
       par(new = TRUE)
-      plot(xx, yy[nps:npe], type = "l", col = 2, xlim = xlim, ylim = ylim, xlab = "",
-           ylab = "", main = "predicted values", xaxt = "n", ...)
+      plot(t1, type = "l", col = 4, ylim = ylim6,
+           xlab = "", ylab = "", main = "", xaxt = "n", ...) 
       par(new = TRUE)
-      plot(xx, t1[nps:npe], type = "l", col = 4, xlim = xlim, ylim = ylim, xlab = "",
-           ylab = "", main = "", xaxt = "n", ...) 
-      par(new = TRUE)
-      plot(xx, t2[nps:npe], type = "l", col = 4, xlim = xlim, ylim = ylim, xlab = "",
-           ylab = "", main = "", xaxt = "n", ...) 
-      abline(v = npsv, lty = 2)
+      plot(t2, type = "l", col = 4, ylim = ylim6,
+           xlab = "", ylab = "", main = "", xaxt = "n", ...) 
+      abline(v = nps, lty = 2)
 
     } else {
-      plot(y, type = "l", ylim = ylim, xlab = "", ylab = "",
-           main = "", ...) 
-      par(new = TRUE)
-      plot(xx, yy, type = "l", col = 4, ylim = ylim, xlab = "",
-           ylab = "", main = "", ...) 
-      abline(v = npsv, lty = 2)
+      ylim6 <- range(ylim1, yy[nps:npe], na.rm = TRUE)
+      if (is.null(y) == FALSE) {
+        plot(y, type = "l", ylim = ylim6, xlab = "", ylab = "", main = "", ...) 
+        par(new = TRUE)
+      } else {
+        plot(noise, type = "n", ylim = ylim6, xlab = "", ylab = "", main = "", ...)
+        par(new = TRUE)
+      }
+      plot(yy, type = "l", col = 2, ylim = ylim6, xaxt = "n",
+           xlab = xtime, ylab = "", main = "Predicted values", ...)
+      abline(v = nps, lty = 2)
     }
+    par(mar = old.par$mar, mgp = old.par$mgp)
   }
-  par(old.par)
+  par(mfrow = old.par$mfrow, xaxs = old.par$xaxs)
+}
+
+
+get.ylim <- function(y) {
+  ymax <- max(y)
+  ymin <- min(y)
+  yd <- ymax - ymin
+  k <- floor(log10(yd))
+  ymax <- ((ymax %/% 10^k) + 1) * (10 ** k)
+  ymin <- (ymin %/% 10^k) * (10 ** k)
+  if (ymin < 0) {
+    ys <- max(abs(ymin), abs(ymax))
+    ymin <- -ys
+    ymax <- ys
+  }
+  return(list(minmax = c(ymin, ymax), k = k))
 }

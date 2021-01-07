@@ -1,12 +1,17 @@
 useDynLib(TSSS, .registration = TRUE)
 
 import(graphics)
-importFrom("stats", "quantile", "ts", "tsp", "start")
+importFrom("stats", "quantile", "ts", "tsp", "start", "na.omit")
 importFrom("grDevices", "dev.new")
+importFrom("utils", "capture.output")
 
-export(unicor, crscor, period, fftper, pdfunc, klinfo, boxcox, lsqr, armaimp,
- marspc, arfit, marfit, marlsq, lsar, lsar.chgpt, tsmooth, armafit, polreg, 
- trend, season, tvvar, tvar, tvspc, ngsmth, simssm, ngsim)
+export(unicor, crscor, period, fftper, pdfunc, klinfo, boxcox, lsqr, armachar,
+ marspc, arfit, marfit, marlsq, lsar, lsar.chgpt, tsmooth, armafit, armafit2,
+ polreg, trend, season, tvvar, tvar, tvspc, ngsmth, simssm, ngsim, pfilter,
+ pfilterNL)
+
+# for TSSS.OmpExt
+export(print.tvvar, plot.tvvar, plot.pfilter)
 
 S3method(print, klinfo)
 S3method(print, boxcox)
@@ -16,10 +21,10 @@ S3method(print, marlsq)
 S3method(print, lsar)
 S3method(print, smooth)
 S3method(print, armafit)
+S3method(print, armafit2)
 S3method(print, trend)
 S3method(print, season)
 S3method(print, tvvar)
-S3method(print, tvar)
 
 S3method(plot, unicor)
 S3method(plot, crscor)
@@ -40,4 +45,5 @@ S3method(plot, tvvar)
 S3method(plot, tvspc) 
 S3method(plot, ngsmth)
 S3method(plot, simulate)
+S3method(plot, pfilter)
 

@@ -115,7 +115,7 @@ plot.smooth <- function(x, rdata = NULL, ...)
 
   old.par <- par(no.readonly = TRUE)
   new.mar <- old.par$mar
-  new.mar[4] <- 6
+  new.mar[3] <- new.mar[3] + 1
 
   xss <- x$mean.smooth
   xss1 <- xss[1, ]
@@ -151,6 +151,8 @@ plot.smooth <- function(x, rdata = NULL, ...)
   plot(xss1, type = 'l', ylim = ylim, col = 2, main = mtitle, xlab="", ylab="",
        ...)
   par(new = TRUE)
+
+  pos.y <- par()$usr[4]
   if (is.null(rdata) == FALSE) {
     if (is.null(ts.atr) == TRUE) {
       xlim <- range(1, npe)
@@ -158,12 +160,19 @@ plot.smooth <- function(x, rdata = NULL, ...)
     } else {
       plot(rdata, type = 'l', ylim = ylim, xlab = "", ylab = "", ...)
     }
-    legend(par()$usr[2], par()$usr[4],
-      legend = c("mean", "+/- SD", paste(tsname)), lty = c(1, 1, 1),
-      col = c(2, 4, 1), cex = 0.8)
+    lg3 <- legend("topright", legend = c("mean", "+/- SD", paste(tsname)),
+                 lty = c(1, 1, 1), x.intersp = 0.3,ncol = 3, cex = 0.7, 
+                 plot = FALSE)
+    pos.y <- pos.y + lg3$rect$h
+    legend(lg3$rect$left, pos.y, legend = c("mean", "+/- SD", paste(tsname)),
+                 lty = c(1, 1, 1), col = c(2, 4, 1), x.intersp = 0.3, ncol = 3,
+                 cex = 0.7, bty = "n")
   } else {
-    legend(par()$usr[2], par()$usr[4], legend = c("mean", "+/- SD"),
-           lty = c(1, 1), col = c(2, 4), cex = 0.8)
+    lg2 <- legend("topright", legend = c("mean", "+/- SD"), lty = c(1, 1),
+                 x.intersp = 0.3, ncol = 2, cex = 0.7, plot = FALSE)
+    pos.y <- pos.y + lg2$rect$h
+    legend(lg2$rect$left, pos.y, legend = c("mean", "+/- SD"), lty = c(1, 1),
+           col = c(2, 4), x.intersp = 0.3,  ncol = 2, cex = 0.7, bty = "n")
   }
 
   if (is.null(err) == FALSE) {

@@ -2,12 +2,12 @@
 #include <Rdefines.h>
 #include "TSSS.h"
 
-extern void F77_NAME(periodf)(double*, int*, int*, int*, double*, double*, double*, double*, int*);
+extern void F77_NAME(periodf)(double*, int*, int*, int*, int*, double*, double*, double*, double*, int*);
 
-SEXP PeriodC(SEXP y, SEXP n, SEXP np, SEXP iw, SEXP outmin, SEXP outmax)
+SEXP PeriodC(SEXP y, SEXP n, SEXP np, SEXP iw, SEXP lag, SEXP outmin, SEXP outmax)
 {
     double *d1, *d2, *d3, *d4, *d5;
-    int *i1, *i2, *i3, *i4;
+    int *i1, *i2, *i3, *i4, *i5;
     int np1;
 
     SEXP ans =  R_NilValue, pe = R_NilValue, spe = R_NilValue, ifg = R_NilValue;
@@ -18,6 +18,7 @@ SEXP PeriodC(SEXP y, SEXP n, SEXP np, SEXP iw, SEXP outmin, SEXP outmax)
     i1 = INTEGER_POINTER(n);
     i2 = INTEGER_POINTER(np);
     i3 = INTEGER_POINTER(iw);
+    i4 = INTEGER_POINTER(lag);
     d2 = NUMERIC_POINTER(outmin);
     d3 = NUMERIC_POINTER(outmax);
     np1 = *i2 + 1;
@@ -31,9 +32,9 @@ SEXP PeriodC(SEXP y, SEXP n, SEXP np, SEXP iw, SEXP outmin, SEXP outmax)
 
     d4 = NUMERIC_POINTER(pe);
     d5 = NUMERIC_POINTER(spe);
-    i4 = INTEGER_POINTER(ifg);
+    i5 = INTEGER_POINTER(ifg);
 
-    F77_CALL(periodf)(d1,i1,i2,i3,d2,d3,d4,d5,i4);
+    F77_CALL(periodf)(d1,i1,i2,i3,i4,d2,d3,d4,d5,i5);
 
     xpe = REAL(pe);
     xspe = REAL(spe);
@@ -41,7 +42,7 @@ SEXP PeriodC(SEXP y, SEXP n, SEXP np, SEXP iw, SEXP outmin, SEXP outmax)
 
     for(int i=0; i<np1; i++) xpe[i] = d4[i];
     for(int i=0; i<np1; i++) xspe[i] = d5[i];
-    *xifg = *i4;
+    *xifg = *i5;
 
     UNPROTECT(1);
 
