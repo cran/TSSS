@@ -1,8 +1,8 @@
 C     PROGRAM 7.1  ARFIT
 ccx      SUBROUTINE ARFITF( Y,N,LAG,NF,ISW,SIG2,AIC,MAR,A,PAR,SP )
-      SUBROUTINE ARFITF( Y,N,LAG,NF,MJ2,ISW,SIG2,AIC,MAR,A,PAR,SP )
+      SUBROUTINE ARFIT( Y,N,LAG,NF,MJ2,ISW,SIG2,AIC,MAR,A,PAR,SP )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  AR model fitting  ...
 C
@@ -37,11 +37,12 @@ cxx      DIMENSION X(MJ2,LAG+1)
 cxx      DIMENSION AIC(0:LAG), A(LAG,LAG), B(LAG+1), PAR(LAG)
 cxx      DIMENSION FE(N), BE(N)
 c
-      INTEGER :: N, LAG, NF, MJ2, ISW
-      REAL(8) :: Y(N), SIG2(0:LAG), AIC(0:LAG), A(LAG,LAG), PAR(LAG), 
-     1           SP(0:NF)
-      REAL(8) :: COV(0:LAG,4), X(MJ2,LAG+1), B(LAG+1), FE(N), BE(N),
-     1           OUTMIN, OUTMAX, YMEAN
+      INTEGER N, LAG, NF, MJ2, ISW
+      DOUBLE PRECISION Y(N), SIG2(0:LAG), AIC(0:LAG), A(LAG,LAG), 
+     1                 PAR(LAG), SP(0:NF)
+c local
+      DOUBLE PRECISION COV(0:LAG,4), X(MJ2,LAG+1), B(LAG+1), FE(N),
+     1                 BE(N), OUTMIN, OUTMAX, YMEAN
 c
       EXTERNAL  SETXAR
       DATA  OUTMIN/-1.0D30/, OUTMAX/1.0D30/
@@ -115,10 +116,12 @@ cxx      DIMENSION  SIG2(0:K), AIC(0:K), PARCOR(K)
 cc      DIMENSION  A(50), B(50), FA(50), BA(50)
 cxx      DIMENSION  A(K), B(K), FA(K), BA(K)
 C
-      INTEGER :: K, N, MAR
-      REAL(8) :: Y(N), FE(N), BE(N), SIG2(0:K), AIC(0:K), PARCOR(K)
-      REAL(8) :: A(K), B(K), FA(K), BA(K), PI, SUM, AICM, FB, FF, BB,
-     1           FE0, X
+      INTEGER K, N, MAR
+      DOUBLE PRECISION Y(N), FE(N), BE(N), SIG2(0:K), AIC(0:K),
+     1                 PARCOR(K)
+c local
+      DOUBLE PRECISION A(K), B(K), FA(K), BA(K), PI, SUM, AICM, FB, FF,
+     1                 BB, FE0, X
 C
       PI = 3.1415926535D0
 C

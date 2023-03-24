@@ -1,7 +1,7 @@
 C     PROGRAM  11.1  POLREG
-      SUBROUTINE POLREGF(Y,N,K,A,SIG2,AIC,IMIN,DATA)
+      SUBROUTINE POLREG(Y,N,K,A,SIG2,AIC,IMIN,DATA)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Polynomial regression model  ...
 C
@@ -23,9 +23,10 @@ cc      DIMENSION  X(MJ1,MJ2), D(MJ1), A(MJ2,MJ2), SIG2(0:MJ2)
 cxx      DIMENSION  Y(N), AIC(0:K)
 cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K), DATA(N)
 C
-      INTEGER :: N, K, IMIN
-      REAL(8) :: Y(N), A(K,K), SIG2(0:K), AIC(0:K), DATA(N)
-      REAL(8) :: X(MJ1,K+1), SUM, XX
+      INTEGER N, K, IMIN
+      DOUBLE PRECISION Y(N), A(K,K), SIG2(0:K), AIC(0:K), DATA(N)
+c local
+      DOUBLE PRECISION X(MJ1,K+1), SUM, XX
 C
       EXTERNAL   SETXPL
 C
@@ -57,6 +58,53 @@ c--------------------
 cc      STOP
       RETURN
       E N D
+cc      SUBROUTINE  REDUCT( SETX,Z,D,NMK,N0,K,MJ1,X )
+      SUBROUTINE  REDUCT1( SETX,Z,NMK,N0,K,MJ1,X )
+C
+C  ...  Successive Householder reduction  ...
+C
+C     Inputs:
+C        SETX:    Name of the subroutine for making X(I,J)
+C        Z(I):    Data vector
+C        D(I):    Working area
+C        NMK:     Number of actually used observations
+C        N0:      Time point of the previous set ofobservations
+C        K:       Heighest order of the model
+C        MJ1:     Adjustable dimension of X
+C     Output:
+C        X(I,J):  data matrix
+C
+cxx      IMPLICIT  REAL*8( A-H,O-Z )
+cc      DIMENSION  X(MJ1,1) , D(1), Z(1)
+cx      DIMENSION  X(MJ1,1) , Z(1)
+cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK)
+      INTEGER NMK, N0, K, MJ1
+      DOUBLE PRECISION Z(N0+NMK), X(MJ1,K+1)
+C
+      L = MIN0( NMK,MJ1 )
+      K1 = K + 1
+      N1 = L
+C
+      CALL  SETX( Z,N0,L,K,MJ1,0,X )
+cc      CALL  HUSHLD( X,D,MJ1,L,K1 )
+      CALL  HUSHLD( X,MJ1,L,K1 )
+      IF( N1 .GE. NMK )  RETURN
+C
+   10 L = MIN0( NMK-N1,MJ1-K1 )
+C
+      LK = L + K1
+      N2 = N0 + N1
+      CALL  SETX( Z,N2,L,K,MJ1,1,X )
+cc      CALL  HUSHLD( X,D,MJ1,LK,K1 )
+      CALL  HUSHLD( X,MJ1,LK,K1 )
+      N1 = N1 + L
+      IF( N1.LT.NMK )  GO TO 10
+C
+      RETURN
+C
+      E N D
+C
+C
       SUBROUTINE  SETXPL( Z,N0,L,K,MJ1,JSW,X )
 C
 C  ...  Data matrix for polynomial regression  ...
@@ -76,9 +124,10 @@ C
 cc      REAL*8  X(MJ1,1), Z(1)
 cxx      REAL*8  X(MJ1,K+1), Z(N0+L)
 C
-      INTEGER :: N0, L, K, MJ1, JSW
-      REAL(8) :: Z(N0+L), X(MJ1,K+1)
-      REAL(8) :: SUM
+      INTEGER N0, L, K, MJ1, JSW
+      DOUBLE PRECISION Z(N0+L), X(MJ1,K+1)
+c local
+      DOUBLE PRECISION SUM
 C
       I0 = 0
       IF( JSW .EQ. 1 )     I0 = K+1

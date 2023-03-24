@@ -14,48 +14,68 @@ armachar <- function(arcoef = NULL, macoef = NULL, v, lag = 50, nf = 200,
   } else {
     maorder <- length(macoef)   # MA order
   }
+
+ if (arorder == 0 && maorder == 0)
+   stop(" Both AR coefficient and MA coefficient are NULL.")
+
 # v                             # innovation variance
 # lag                           # maximum lag of autocovariance function
   kmax <- max(arorder, maorder, lag)
 # nf                            # number of frequencies in evaluating spectrum
 
-  z <- .Call("arma",
-             as.integer(arorder),
-             as.integer(maorder),
-             as.double(arcoef),
-             as.double(macoef),
-             as.double(v),
-             as.integer(lag),
-             as.integer(kmax),    
-             as.integer(nf))
+  ar2 <- max(arorder*2, 2)
+  ma2 <- max(maorder*2, 2)
+	
+  z <- .Fortran(C_arma,
+                as.integer(arorder),
+                as.integer(maorder),
+                as.double(arcoef),
+                as.double(macoef),
+                as.double(v),
+                as.integer(lag),
+                as.integer(kmax),    
+                as.integer(nf),
+			    g = double(kmax+1),
+				acov = double(lag+1),
+				parcor = double(lag),
+				spec = double(nf+1),
+				roota = double(ar2),
+				rootb = double(ma2),
+				ier = integer(1),
+				jer = integer(1))
 
-  ier <- z[[7L]]
+  ier <- z$ier
   if (ier == 1)
-    stop(" Matrix with zero row in decompose" )
+    stop(" Matrix with zero row in decompose")
   if (ier == 2)
-    stop(" Singular matrix in decompose.zero divide in solve" )
+  stop(" Singular matrix in decompose.zero divide in solve")
   if (ier == 3)
-    stop(" Convergence in impruv.matrix is nearly singular" )
+    stop(" Convergence in impruv.matrix is nearly singular")
 
-  impuls <- z[[1L]]
-  acov <- z[[2L]]
-  parcor <- z[[3L]]
+  impuls <- z$g
+  impuls <- impuls[1:(lag+1)]
 
-  spec <- z[[4L]]
-  if (arorder != 0)
-    roota <- array(z[[5L]], dim = c(arorder, 2))
-  if (maorder != 0)
-    rootb <- array(z[[6L]], dim = c(maorder, 2))
+  if (arorder == 0) {
+    roota <- NULL
+  } else { # arorder != 0
+    roota <- array(z$roota, dim = c(arorder, 2))
+  }
+  if (maorder == 0) {
+    rootb <- NULL
+  } else { # maorder != 0
+    rootb <- array(z$rootb, dim = c(maorder, 2))
+  }
 
   croot.ar <- NULL
   croot.ma <- NULL
-  jer <- z[[8L]]
-  if (jer == 1)
+  jer <- z$jer
+  if (jer == 1) {
     warning(" AR : Non-convergence at polyrt\n")
-  if (jer == 2)
+  } else if (jer == 2) {
     warning(" MA : Non-convergence at polyrt\n")
-  if (jer == 3)
+  } else if (jer == 3) {
     warning(" Non-convergence at polyrt\n")
+  }
 
   if (arorder != 0) {
     croot.ar <- list()
@@ -81,8 +101,8 @@ armachar <- function(arcoef = NULL, macoef = NULL, v, lag = 50, nf = 200,
     }
   }
 
-  armachar.out <- list(impuls = impuls, acov = acov, parcor = parcor,
-                      spec = spec, croot.ar = croot.ar, croot.ma = croot.ma)
+  armachar.out <- list(impuls = impuls, acov = z$acov, parcor = z$parcor,
+                       spec = z$spec, croot.ar = croot.ar, croot.ma = croot.ma)
   class(armachar.out) <- "arma"
 
   if (plot) {
@@ -100,6 +120,7 @@ plot.arma <- function(x, ...)
   spec <- x$spec
   croot.ar <- x$croot.ar
   croot.ma <- x$croot.ma
+  lag <- length(parcor)
 
   old.par <- par(no.readonly = TRUE)
   par(xaxs = "i")
@@ -111,7 +132,6 @@ plot.arma <- function(x, ...)
     par(mfrow = c(3, 2), xaxs = "i")
   }
 
-  lag <- length(impuls) - 1
   x <- c(0:lag)
   ylim <- c(floor(min(impuls)), ceiling(max(impuls)))
   plot(x, impuls, type = "l", xlim = c(0, lag), ylim = ylim, xlab = "",

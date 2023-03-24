@@ -13,7 +13,7 @@ A time series of 486 observations.
 }
 \source{
 The data were obtained from Tokyo District Meteorological Observatory.
-\url{http://www.data.jma.go.jp/obd/stats/etrn/}
+\url{https://www.data.jma.go.jp/obd/stats/etrn/}
 }
 \keyword{datasets}
  

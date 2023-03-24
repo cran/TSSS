@@ -3,7 +3,7 @@
 
 \title{Cross-Covariance and Cross-Correlation}
 \description{
-  Computes cross-covariance and cross-correlation functions of the multivariate
+  Compute cross-covariance and cross-correlation functions of the multivariate
   time series.
 }
 \usage{

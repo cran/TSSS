@@ -1,7 +1,7 @@
 C     PROGRAM 7.2  MARFIT
-      SUBROUTINE MARFITF( Y,N,L,LAG,AMIN,VMIN,AIC,MMIN )
+      SUBROUTINE MARFIT( Y,N,L,LAG,AMIN,VMIN,AIC,MMIN )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program fits multivariate AR model  ...
 C
@@ -27,10 +27,11 @@ cxx      DIMENSION  Y(N,L), OUTMIN(L), OUTMAX(L)
 cxx      DIMENSION  C(0:LAG,L,L), R(0:LAG,L,L), YMEAN(L)
 cxx      DIMENSION  AMIN(LAG,L,L), VMIN(L,L), AIC(0:LAG)
 C
-      INTEGER :: N, L, LAG, MMIN
-      REAL(8) :: Y(N,L), AMIN(LAG,L,L), VMIN(L,L), AIC(0:LAG)
-      REAL(8) :: OUTMIN(L), OUTMAX(L), C(0:LAG,L,L), R(0:LAG,L,L),
-     1           YMEAN(L)
+      INTEGER N, L, LAG, MMIN
+      DOUBLE PRECISION Y(N,L), AMIN(LAG,L,L), VMIN(L,L), AIC(0:LAG)
+c local
+      DOUBLE PRECISION OUTMIN(L), OUTMAX(L), C(0:LAG,L,L), R(0:LAG,L,L),
+     1                 YMEAN(L)
 C
 cxx      DO 100 I = 1,L
 cxx         OUTMIN(I) = -1.0D30
@@ -86,11 +87,13 @@ cxx      DIMENSION  AMIN(LAG,L,L), VMIN(L,L), AIC(0:LAG)
 cxx      DIMENSION  A(LAG,L,L), A0(LAG,L,L), B(LAG,L,L), B0(LAG,L,L)
 cxx      DIMENSION  V(L,L), U(L,L), W(L,L)
 C
-      INTEGER :: L, LAG, N, MMIN
-      REAL(8) :: C(0:LAG,L,L), AMIN(LAG,L,L), VMIN(L,L), AIC(0:LAG)
-      REAL(8) :: A(LAG,L,L), A0(LAG,L,L), B(LAG,L,L), B0(LAG,L,L),
-     1           V(L,L), U(L,L), W(L,L), UDET, VDET, AICMIN, SUM, SUM1,
-     2           SUM2, PI2
+      INTEGER L, LAG, N, MMIN
+      DOUBLE PRECISION C(0:LAG,L,L), AMIN(LAG,L,L), VMIN(L,L),
+     1                 AIC(0:LAG)
+c local
+      DOUBLE PRECISION A(LAG,L,L), A0(LAG,L,L), B(LAG,L,L), B0(LAG,L,L),
+     1                 V(L,L), U(L,L), W(L,L), UDET, VDET, AICMIN, SUM,
+     2                 SUM1, SUM2, PI2
 C
       DATA  PI2 /6.28318531D0/
 cc      MJ2 = 10
@@ -236,10 +239,11 @@ cxx      IMPLICIT  REAL*8 (A-H,O-Z)
 cc      DIMENSION  X(MJ,MJ), IND(100)
 cxx      DIMENSION  X(MJ,MJ), IND(M)
 C
-      INTEGER :: M, MJ
-      REAL(8) :: X(MJ,MJ), DET
-      INTEGER :: IND(M)
-      REAL(8) :: XMAX, XTEMP
+      INTEGER M, MJ
+      DOUBLE PRECISION X(MJ,MJ), DET
+c local
+      INTEGER IND(M)
+      DOUBLE PRECISION XMAX, XTEMP
 C
       DET = 1.0D0
       DO 60 L=1,M

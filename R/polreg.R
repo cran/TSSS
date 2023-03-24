@@ -5,23 +5,26 @@ polreg <- function (y, order, plot = TRUE, ...)
   k <- order          # order of polinomial regression  
   k1 <- k + 1
 
-  z <- .Call("PolregC",
-             as.double(y),
-             as.integer(n),
-             as.integer(k))
+  z <- .Fortran(C_polreg,
+                as.double(y),
+                as.integer(n),
+                as.integer(k),
+                a = double(k * k),
+                sig2 = double(k1),
+                aic = double(k1),
+                imin = integer(1),
+                data = double(n))
 
-  a <- array(z[[1L]], dim = c(k, k))
+  a <- array(z$a, dim = c(k, k))
   coef <- list()
   for (i in 1:k)
     coef[[i]] <- a[1:i, i]
-  sig2 <- z[[2L]]
-  aic <- z[[3L]]
-  imin <- z[[4L]]
-  data <- z[[5L]]
+  aic <- z$aic
+  imin <- z$imin
   daic <- aic - aic[imin + 1]
 
-  polreg.out <- list(order.maice = imin, sigma2 = sig2, aic = aic, daic = daic,
-                     coef = coef, trend = data)
+  polreg.out <- list(order.maice = imin, sigma2 = z$sig2, aic = aic, daic = daic,
+                     coef = coef, trend = z$data)
   class(polreg.out) <- "polreg"
 
   if (plot) {

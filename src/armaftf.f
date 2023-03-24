@@ -1,8 +1,8 @@
 C     PROGRAM 10.1  ARMAFT
-      SUBROUTINE ARMAFTF( Y0,N,M,L,MLMAX,IPARAM,AR0,CMA0,
-     *                    SIG2,FLK,AIC,AR,CMA,IER )
+      SUBROUTINE ARMAFT( Y0,N,M,L,MLMAX,IPARAM,AR0,CMA0,SIG2,FLK,AIC,
+     *                   AR,CMA,IER )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  ARMA MODEL FITTING  ...
 C
@@ -30,10 +30,12 @@ cc      COMMON  /C92908/  M, L, N
 cc      COMMON  /C92909/  FLK, SIG2
 cc      COMMON  / CCC /  ISW, IPR, ISMT, IDIF
 C
-      INTEGER :: N, M, L, MLMAX, IPARAM, IER 
-      REAL(8) :: Y0(N), AR0(M), CMA0(L), SIG2, FLK, AIC, AR(M), CMA(L)
-      REAL(8) :: Y(N), AA(M+L), PAR(MLMAX), ALIMIT, OUTMIN, OUTMAX, SUM,
-     1           YMEAN
+      INTEGER N, M, L, MLMAX, IPARAM, IER 
+      DOUBLE PRECISION Y0(N), AR0(M), CMA0(L), SIG2, FLK, AIC, AR(M),
+     1                 CMA(L)
+c local
+      DOUBLE PRECISION Y(N), AA(M+L), PAR(MLMAX), ALIMIT, OUTMIN,
+     1                 OUTMAX, SUM, YMEAN
       EXTERNAL  FFARMA
 C
 C  ...  Read Model Orders  ...
@@ -69,12 +71,13 @@ cxx    7 Y(I) = Y0(I)
 C
 C  ...  Subtrac Mean Value  ...
 C
-      SUM = 0.0D0
-      DO 10 I=1,N
-cxx   10 SUM = SUM + Y(I)
-      SUM = SUM + Y(I)
-   10 CONTINUE
-      YMEAN = SUM/N
+cc      SUM = 0.0D0
+cc      DO 10 I=1,N
+cccxx   10 SUM = SUM + Y(I)
+cc      SUM = SUM + Y(I)
+cc   10 CONTINUE
+cc      YMEAN = SUM/N
+      CALL  MEAN( Y,N,-1.0D30,1.0D30,SUM,YMEAN )
       DO 20 I=1,N
 cxx   20 Y(I) = Y(I) - YMEAN
       Y(I) = Y(I) - YMEAN
@@ -122,6 +125,11 @@ C
 cc      STOP
       RETURN
       E N D
+C
+C------------------------------
+C  armafit, armafit2 commoon 
+C------------------------------
+C
 cc      SUBROUTINE  SPARA1( M,L,AR,CMA,OUTMIN,OUTMAX,IOPT )
       SUBROUTINE  SPARA1( M,L,MLMAX,AR,CMA,OUTMIN,OUTMAX,IOPT )
 C
@@ -141,9 +149,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  AR(20), PAR(20), CMA(20)
 cxx      DIMENSION  AR(M), PAR(MLMAX), CMA(L)
 C
-      INTEGER :: M, L, MLMAX, IOPT
-      REAL(8) :: AR(M), CMA(L), OUTMIN, OUTMAX
-      REAL(8) :: PAR(MLMAX)
+      INTEGER M, L, MLMAX, IOPT
+      DOUBLE PRECISION AR(M), CMA(L), OUTMIN, OUTMAX
+c local
+      DOUBLE PRECISION PAR(MLMAX)
 C
       DO 10 I=1,M
 cxx   10 PAR(I) = -(-0.6D0)**I
@@ -195,10 +204,12 @@ cxx      DIMENSION  A(M), B(M), C(M), Y(N)
 cxx      DIMENSION  XF(M), VF(M,M), XP(M), VP(M,M)
 cxx      DIMENSION  WRK(M,M), VH(M), GAIN(M)
 C
-      INTEGER :: M, NS, N
-      REAL(8) :: Y(N), VF(M,M), A(M), B(M), OUTMIN, OUTMAX, FF, OVAR
-      REAL(8) :: XF(M), XP(M), VP(M,M), WRK(M,M), VH(M), GAIN(M), PI,
-     1           SDET, PVAR, PERR
+      INTEGER M, NS, N
+      DOUBLE PRECISION Y(N), VF(M,M), A(M), B(M), OUTMIN, OUTMAX, FF,
+     1                 OVAR
+c local
+      DOUBLE PRECISION XF(M), XP(M), VP(M,M), WRK(M,M), VH(M), GAIN(M),
+     1                 PI, SDET, PVAR, PERR
 C
       DATA   PI  /3.1415926535D0/
 C
@@ -322,9 +333,10 @@ cc      DIMENSION  XF(MJ), VF(MJ,MJ), COV(0:20), G(0:20)
 cxx      DIMENSION  AR(M), CMA(L)
 cxx      DIMENSION  XF(MM), VF(MM,MM), COV(0:MM), G(0:MM)
 C
-      INTEGER :: M, L, MM, IER 
-      REAL(8) :: AR(M), CMA(L), XF(MM), VF(MM,MM)
-      REAL(8) :: COV(0:MM), G(0:MM), SUM
+      INTEGER M, L, MM, IER 
+      DOUBLE PRECISION AR(M), CMA(L), XF(MM), VF(MM,MM)
+c local
+      DOUBLE PRECISION COV(0:MM), G(0:MM), SUM
 C
 cc      MM = MAX0( M,L+1 )
 cc      DO 10  I=1,MJ
@@ -424,8 +436,8 @@ cc      DIMENSION  AR(*), CMA(*)
 cxx      DIMENSION  A(MM), B(MM), C(MM)
 cxx      DIMENSION  AR(M), CMA(L)
 C
-      INTEGER :: M, L, MM
-      REAL(8) :: AR(M), CMA(L), A(MM), B(MM), C(MM)
+      INTEGER M, L, MM
+      DOUBLE PRECISION AR(M), CMA(L), A(MM), B(MM), C(MM)
 C
 cc      MM = MAX0( M,L+1 )
 cxx      DO 10  I=1,MM
@@ -480,14 +492,28 @@ cxx      DIMENSION  A(MM), B(MM), C(MM)
 cxx      DIMENSION  XF(MM), VF(MM,MM)
 cxx      DIMENSION  Y(N)
 C
-      INTEGER :: K, IFG, N, M, L, MM, IER
-      REAL(8) :: AA(K), FF, Y(N), OUTMIN, OUTMAX, ALIMIT, FLK, SIG2
-      REAL(8) :: PAR(MM), AR(M), CMA(L), A(MM), B(MM), C(MM), XF(MM),
-     1           VF(MM,MM)
+      INTEGER K, IFG, N, M, L, MM, IER
+      DOUBLE PRECISION AA(K), FF, Y(N), OUTMIN, OUTMAX, ALIMIT, FLK,
+     1                 SIG2
+c local
+      DOUBLE PRECISION PAR(MM), AR(M), CMA(L), A(MM), B(MM), C(MM),
+     1                 XF(MM), VF(MM,MM)
+C avoid floating-point exceptions
+      INTEGER IFPLIM
+cc      IFPLIM = 709
+      IFPLIM = 87
 C
 cc      MJ  = 20
 C
 cc      MM = MAX0( M,L+1 )
+c
+      IER = 0
+      DO 101 I=1,M
+      IF( DABS(AA(I)).GT.IFPLIM ) IER = -1
+cxx      IF( DABS(AA(I)).GT.20.0D0 )  GO TO 100
+      IF( DABS(AA(I)).GT.30.0D0 )  GO TO 100
+  101 CONTINUE
+c
       DO 10 I=1,M
 cxx   10 PAR(I)  = ALIMIT*(DEXP(AA(I))-1.0D0)/(DEXP(AA(I))+1.0D0)
       PAR(I)  = ALIMIT*(DEXP(AA(I))-1.0D0)/(DEXP(AA(I))+1.0D0)
@@ -511,9 +537,9 @@ cxx      CALL  FILTR3( Y,XF,VF,A,B,C,MM,1,N,OUTMIN,OUTMAX,FLK,SIG2 )
       FF = -FLK
       RETURN
 C
-cx  100 IFG = 1
-cx      FF = 1.0D20
-cx      RETURN
+  100 IFG = 1
+      FF = 1.0D20
+      RETURN
       E N D
 cc      SUBROUTINE  DAVIDN( FUNCT, X, N, NDIF )
       SUBROUTINE  DAVIDN( FUNCT,X,N,NDIF, YY,NN,M,L,MLMAX,
@@ -530,11 +556,12 @@ cxx      DIMENSION  X(N), DX(N), G(N), G0(N), Y(N)
 cxx      DIMENSION  H(N,N), WRK(N), S(N)
 cxx      DIMENSION  YY(NN)
 C
-      INTEGER :: N, NDIF, NN, M, L, MLMAX, IER
-      REAL(8) :: X(N), YY(NN), OUTMIN, OUTMAX, ALIMIT, FLK, SIG2
-      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N), TAU2,
-     1           EPS1, EPS2, RAMDA, CONST1, SUM, S1, S2, STEM, SS, ED,
-     2           XM, XMB
+      INTEGER N, NDIF, NN, M, L, MLMAX, IER
+      DOUBLE PRECISION X(N), YY(NN), OUTMIN, OUTMAX, ALIMIT, FLK, SIG2
+c local
+      DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1                 TAU2, EPS1, EPS2, RAMDA, CONST1, SUM, S1, S2,
+     2                 STEM, SS, ED, XM, XMB
 C
       EXTERNAL  FUNCT
       DATA        TAU2  /          1.0D-6  /
@@ -734,9 +761,11 @@ cc      COMMON  /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
 cxx      DIMENSION  A(M) , G(M) , B(M)
 cxx      DIMENSION  Y(N)
 C
-      INTEGER :: M, IFG, N, MM, L, MLMAX, ISW, IDIF, IER
-      REAL(8) :: A(M), F, G(M), Y(N), OUTMIN, OUTMAX, ALIMIT, FLK, SIG2
-      REAL(8) :: B(M), CONST, FB, FF
+      INTEGER M, IFG, N, MM, L, MLMAX, ISW, IDIF, IER
+      DOUBLE PRECISION A(M), F, G(M), Y(N), OUTMIN, OUTMAX, ALIMIT,
+     1                 FLK, SIG2
+c local
+      DOUBLE PRECISION B(M), CONST, FB, FF
       EXTERNAL FUNCT
 C
 C     DATA       ICNT /0/
@@ -798,12 +827,13 @@ cc      COMMON     / CCC /  ISW , IPR, ISMT, IDIF
 cxx      DIMENSION  X(K), H(K), X1(K)
 cxx      DIMENSION Y(N)
 C
-      INTEGER :: K, IG, N, M, L, MLMAX, ISW, IER
-      REAL(8) :: X(K), H(K), RAM, EE, Y(N), OUTMIN, OUTMAX, ALIMIT, FLK,
-     1           SIG2
-      INTEGER :: ire510
-      REAL(8) :: X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2, E3,
-     1           A1, A2, A3, B1, B2
+      INTEGER K, IG, N, M, L, MLMAX, ISW, IER
+      DOUBLE PRECISION X(K), H(K), RAM, EE, Y(N), OUTMIN, OUTMAX,
+     1                 ALIMIT, FLK, SIG2
+c local
+      INTEGER ire510
+      DOUBLE PRECISION X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2,
+     1                 E3, A1, A2, A3, B1, B2
       EXTERNAL FUNCT
 C
 C     IPR = 7
@@ -862,6 +892,9 @@ cxx      CALL  FUNCT( K,X1,E3,G,IG, Y,N,M,L,MLMAX,
        IF( IG.EQ.1 )  GO TO  500
 cc      IF( IPR.GE.7 )  WRITE(6,3)  RAM3,E3
       IF( E3 .GT. E2 )  GO TO 70
+c----- for debug
+c         IF( E3 .EQ. E2 )  GO TO 70
+c-----
       IF(RAM3.GT.1.0D10 .AND. E3.LT.E1)  GO TO 45
       IF(RAM3.GT.1.0D10 .AND. E3.GE.E1)  GO TO 46
       RAM1 = RAM2

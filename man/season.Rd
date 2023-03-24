@@ -7,8 +7,8 @@
 }
 \usage{
 season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
-       period = 12, tau2.ini = NULL, filter = c(1, length(y)),
-       predict = length(y), arcoef.ini = NULL, log = FALSE,
+       period = NULL, tau2.ini = NULL, filter = c(1, length(y)),
+       predict = length(y), arcoef.ini = NULL, log = FALSE, log.base = "e",
        minmax = c(-1.0e+30, 1.0e+30), plot = TRUE, ...)
 }
 \arguments{
@@ -24,8 +24,8 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
     \tabular{rl}{
       4 : \tab quarterly data\cr
       12 : \tab monthly data\cr
-      5 : \tab weekly data (5 days a week)\cr
-      7 : \tab weekly data\cr
+      5 : \tab daily data (5 days a week)\cr
+      7 : \tab daily data (7 days a week)\cr
       24 : \tab hourly data
     }}
   \item{tau2.ini}{initial estimate of variance of the system noise \eqn{\tau^2} 
@@ -36,6 +36,8 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
   \item{arcoef.ini}{initial estimate of AR coefficients (for \code{ar.order} >
     0).}
   \item{log}{logical. If \code{TRUE}, the data \code{y} is log-transformed.}
+  \item{log.base}{the letter "e" (default) or "10" specifying the base of
+    logarithmic transformation. Valid only if log = TRUE.}
   \item{minmax}{lower and upper limits of observations.}
   \item{plot}{logical. If \code{TRUE} (default), trend, seasonal, AR and noise 
     components are plotted.}
@@ -58,8 +60,7 @@ season(y, trend.order = 1, seasonal.order = 1, ar.order = 0, trade = FALSE,
 }
 \note{
   For time series with the tsp attribute, set \code{frequency} to
-  \code{period}. However, for weekly data, set \code{frequency} to 365.25/7 or
-  52. 
+  \code{period}.
 }
 \references{
   Kitagawa, G. (2020)

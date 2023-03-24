@@ -7,16 +7,20 @@ C     @NFILTER.SIM4:    FORWARD SMOOTHING   NOV.20,1992
 C     @NFILTER.SIM3:    SMOOTHING           NOV.19,1992
 C     @NFILTER.SIM2:    MONTE CARLO METHOD  NOV.02,1992
 C
-      SUBROUTINE PFILTERNF(Y,N,M,LAG,SIG2,TAU2,XMIN,XMAX,IX,T,FF)
+      SUBROUTINE PFILTERN(Y,N,M,LAG,SIG2,TAU2,XMIN,XMAX,IX,T,FF)
+C
+      INCLUDE 'TSSS.h'
+C
 cc      PARAMETER( NMAX=500,IDEV=1,MM=1000000, LAG=20 )
 cc      IMPLICIT REAL*8(A-H,O-Z)
 cc      real*4  PS, PST
 cc      DIMENSION  Y(NMAX), T(NMAX,8), PS(MM,0:LAG), PST(MM,0:LAG)
 cc      CHARACTER   DATE*8, TIME2*10
-      INTEGER :: N, M, LAG, IX
-      REAL(8) :: Y(N), SIG2, TAU2, XMIN, XMAX, T(N,8), FF
-      INTEGER :: IST, L
-      REAL(8) :: PS(M,0:LAG), PST(M,0:LAG)
+      INTEGER N, M, LAG, IX
+      DOUBLE PRECISION Y(N), SIG2, TAU2, XMIN, XMAX, T(N,8), FF
+c local
+      INTEGER IST, L
+      DOUBLE PRECISION PS(M,0:LAG), PST(M,0:LAG)
 cc      COMMON  /INIT/ IX
       common  /COMIST/  IST
 cc      IX = 1992110113
@@ -74,12 +78,13 @@ cc      real*4  PS, PST
 cc      DIMENSION  Y(N), F(1000000), P(1000000), S(1000000)
 cc      DIMENSION  PS(MM,0:LAG), T(NMAX,8), PST(MM,0:LAG)
 cc      DIMENSION  TT(7)
-      INTEGER :: N, M, L, LAG, IX
-      REAL(8) :: Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2, TAU2,
-     *            XMIN, XMAX, FF
-      REAL(8) :: TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM, GAUS2,
+      INTEGER N, M, L, LAG, IX
+      DOUBLE PRECISION Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2,
+     *                 TAU2, XMIN, XMAX, FF
+c local
+      DOUBLE PRECISION TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM,
 ccx     *           RUNIFT
-     *           random 
+     *                 GAUS2, random 
 cc      COMMON  /INIT/ IX
 c----- Initialize Mersenne Twister with given seed value
       call init(IX)

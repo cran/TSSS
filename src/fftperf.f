@@ -2,7 +2,7 @@ C     PROGRAM  3.2  FFTPER
 cx      SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP )
       SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP,IFG )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program computes periodogram via FFT  ...
 C
@@ -22,14 +22,15 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(NMAX), PE(0:NF), SPE(0:NF)
 cxx      DIMENSION  Y(N), PE(0:NF), SPE(0:NF)
 C
-      INTEGER :: N, IWINDW, NP, IFG
-      REAL(8) :: Y(N), PE(0:NF), SPE(0:NF)
+      INTEGER N, IWINDW, NP, IFG
+      DOUBLE PRECISION Y(N), PE(0:NF), SPE(0:NF)
 C
 cc      CALL  READTS( IDEV,Y,N )
 C
       IF( IWINDW.EQ.0 )  LAG = N-1
 cxx      IF( IWINDW.GT.0 )  LAG = 2*DSQRT( DFLOAT(N) )
-      IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DFLOAT(N) ))
+cxxx      IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DFLOAT(N) ))
+      IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DBLE(N) ))
       IF( IWINDW.EQ.0 )  NP  = (LAG+1)/2
       IF( IWINDW.GT.0 )  NP  = LAG
 C
@@ -60,9 +61,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION Y(N),P(0:1024),X(1024),FY(1024),WK(1024)
 C
-      INTEGER :: N, NN, N2
-      REAL(8) :: Y(N), P(0:1024)
-      REAL(8) :: X(1024), FY(1024), WK(1024)
+      INTEGER N, NN, N2
+      DOUBLE PRECISION Y(N), P(0:1024)
+c local
+      DOUBLE PRECISION X(1024), FY(1024), WK(1024)
 C
       IF(NN.LE.0) THEN
          IF( N.LE.1024 ) THEN
@@ -133,14 +135,16 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  X(N), FX(N), WRK(N/4)
 C
-      INTEGER :: N, ISW
-      REAL(8) :: X(N), FX(N), WRK(N/4)
-      REAL(8) :: PI2
+      INTEGER N, ISW
+      DOUBLE PRECISION X(N), FX(N), WRK(N/4)
+c local
+      DOUBLE PRECISION PI2
 C
       DATA  PI2 /6.2831853071796D0/
 C
 cxx      NP = DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5
-      NP = INT(DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5)
+cxxx      NP = INT(DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5)
+      NP = INT(DLOG( DBLE(N) )/DLOG( 2.0D0 ) + 1.0D-5)
       N2 = N/2
       N4 = N/4
 C
@@ -208,8 +212,8 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  X(L,M),  Y(M,L)
 C
-      INTEGER :: M, L
-      REAL(8) :: X(L,M), Y(M,L)
+      INTEGER M, L
+      DOUBLE PRECISION X(L,M), Y(M,L)
 C
       IF( M.GE.L )  THEN
 cxx      DO 10  J=1,L
@@ -238,9 +242,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  X(MJ1,MJ2), Y(M,K,4), SINE(M,K)
 C
-      INTEGER :: K, M, MJ1, MJ2
-      REAL(8) :: X(MJ1,MJ2), SINE(M,K), Y(M,K,4)
-      REAL(8) :: SUM1, SUM2
+      INTEGER K, M, MJ1, MJ2
+      DOUBLE PRECISION X(MJ1,MJ2), SINE(M,K), Y(M,K,4)
+c local
+      DOUBLE PRECISION SUM1, SUM2
 C
       DO 10  I=1,M
       Y(I,1,1) = X(I,1) + X(I+M,1)
@@ -272,9 +277,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  X(K,2,M,2),  SINE(M,K),  Y(K,4,M)
 C
-      INTEGER :: K, M
-      REAL(8) :: X(K,2,M,2), SINE(M,K), Y(K,4,M)
-      REAL(8) :: SUM1, SUM2
+      INTEGER K, M
+      DOUBLE PRECISION X(K,2,M,2), SINE(M,K), Y(K,4,M)
+c local
+      DOUBLE PRECISION SUM1, SUM2
 C
 cxx      DO 10  J=1,M
       DO 11  J=1,M

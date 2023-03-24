@@ -1,8 +1,8 @@
 C     PROGRAM 15.2  NGSIM
       SUBROUTINE NGSIMF( M1,M2,M3,M,K,N,INI0,NOISEW,WMIN,WMAX,
-     &    PARAMW,NOISEV,VMIN,VMAX,PARAMV,PERIOD,AR,X,Y )
+     &                   PARAMW,NOISEV,VMIN,VMAX,PARAMV,PERIOD,AR,X,Y )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  SIMULATION BY NON-GAUSSIAN STATE SPACE MODEL  ...
 C
@@ -33,11 +33,12 @@ cxx      DIMENSION  X(M), F(M,M), G(M,K), H(M)
 cxx      DIMENSION  Q(K,K), Y(N), AR(M3), R(L,L)
 cxx      DIMENSION  PARAMV(3), PARAMW(3)
 C
-      INTEGER :: M1, M2, M3, M, K, N, INI0, NOISEW, NOISEV, PERIOD
-      REAL(8) :: WMIN, WMAX, PARAMW(3), VMIN, VMAX, PARAMV(3), AR(M3),
-     1           X(M), Y(N)
-      REAL(8) :: F(M,M), G(M,K), H(M), Q(K,K), R(L,L), TAU1, TAU2, TAU3,
-     1           SIG2
+      INTEGER M1, M2, M3, M, K, N, INI0, NOISEW, NOISEV, PERIOD
+      DOUBLE PRECISION WMIN, WMAX, PARAMW(3), VMIN, VMAX, PARAMV(3),
+     1                 AR(M3), X(M), Y(N)
+c local
+      DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), R(L,L), TAU1, TAU2,
+     1                 TAU3, SIG2
 C
       DATA   TAU1/1.0D0/, TAU2/1.0D0/, TAU3/1.0D0/, SIG2/1.0D0/
 cc      INI = 1992092521
@@ -123,12 +124,13 @@ cxx      DIMENSION XT(M), T(L), V(K), W(L), Y(N,L)
 cxx      DIMENSION FV(0:400), FW(0:400), XV(0:400), XW(0:400)
 cxx      DIMENSION PV(3), PW(3)
 C
-      INTEGER :: NOISEV, NOISEW, N, M, L, K, IX
-      REAL(8) :: PV(3), PW(3), X0, X1, Y0, Y1, F(M,M), G(M,K), H(L,M),
-     1           Q(K,K), R(L,L), X(M), Y(N,L)
-      REAL(8) :: GAUSS, PEARSN, DBLEXP, USERV1, USERW1,
-     1           SQ(K,K), SR(L,L), XT(M), T(L), V(K), W(L), FV(0:400),
-     2           FW(0:400), XV(0:400), XW(0:400), DXV, DXW
+      INTEGER NOISEV, NOISEW, N, M, L, K, IX
+      DOUBLE PRECISION PV(3), PW(3), X0, X1, Y0, Y1, F(M,M), G(M,K),
+     1                 H(L,M), Q(K,K), R(L,L), X(M), Y(N,L)
+c local
+      DOUBLE PRECISION GAUSS, PEARSN, DBLEXP, USERV1, USERW1, SQ(K,K),
+     1                 SR(L,L), XT(M), T(L), V(K), W(L), FV(0:400),
+     2                 FW(0:400), XV(0:400), XW(0:400), DXV, DXW
 C
       EXTERNAL  GAUSS
       EXTERNAL  PEARSN
@@ -232,9 +234,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Q(10,10), W(10), V(K), F(0:400), X(0:400)
 cxx      DIMENSION  Q(K,K), W(K), V(K), F(0:400), X(0:400)
 C
-      INTEGER :: NOISE, K
-      REAL(8) :: F(0:400), X(0:400), DX, Q(K,K), V(K)
-      REAL(8) :: RNG, RNG2, W(K), SUM
+      INTEGER NOISE, K
+      DOUBLE PRECISION F(0:400), X(0:400), DX, Q(K,K), V(K)
+c local
+      DOUBLE PRECISION RNG, RNG2, W(K), SUM
 C
       DO 10 I=1,K
 ccxx      IF( NOISE.LT.0 )  W(I) = RNG2( IX,NOISE )
@@ -270,8 +273,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  F(0:400), P(0:400), X(0:400), PARAM(3)
 C
-      REAL(8) :: FUNCT, PARAM(3), XMIN, XMAX, F(0:400), X(0:400), DX 
-      REAL(8) :: P(0:400)
+      DOUBLE PRECISION FUNCT, PARAM(3), XMIN, XMAX, F(0:400), X(0:400),
+     1                 DX
+c local
+      DOUBLE PRECISION P(0:400)
       EXTERNAL FUNCT
 C
       K = 400
@@ -313,8 +318,9 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  F(0:400), P(0:400), X(0:400), PARAM(3)
 C
-      REAL(8) :: FUNCT, XMIN, XMAX, F(0:400), X(0:400), DX 
-      REAL(8) :: P(0:400)
+      DOUBLE PRECISION FUNCT, XMIN, XMAX, F(0:400), X(0:400), DX
+c local
+      DOUBLE PRECISION P(0:400)
       EXTERNAL FUNCT
 C
       K = 400
@@ -352,10 +358,11 @@ C        DX:     SIZE OF EACH BIN
 cxx      IMPLICIT REAL*8( A-H,O-Z)
 cxx      DIMENSION  F(0:400), X(0:400)
 C
-ccxx      INTEGER :: IX
-      REAL(8) :: F(0:400), X(0:400), DX
-cxx      REAL(8) :: RUNI, U, V
-      REAL(8) :: U, V, random
+ccxx      INTEGER IX
+      DOUBLE PRECISION F(0:400), X(0:400), DX
+c local
+cxx      DOUBLE PRECISION RUNI, U, V
+      DOUBLE PRECISION U, V, random
 
 C
 cxx      IF( IX.EQ.0 )  IX = 1990103011
@@ -385,10 +392,9 @@ C           = -3:  DOUBLE EXPONENTIAL DISTRIBUTION
 C
 cxx      IMPLICIT REAL*8( A-H,O-Z)
 C
-ccxx      INTEGER :: IX, NOISE
-cxx      REAL(8) :: RUNI, PI, U
-      REAL(8) :: PI, U, random
-
+ccxx      INTEGER IX, NOISE
+cxx      DOUBLE PRECISION RUNI, PI, U
+      DOUBLE PRECISION PI, U, random
 C
       DATA  PI /3.1415926535D0/
 C
@@ -434,7 +440,7 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(2)
 C
-      REAL(8) :: X, C
+      DOUBLE PRECISION X, C
       DATA  C/0.5771D0/
 C
 cc      USERV = DEXP( X-C - DEXP(X-C) )
@@ -456,7 +462,7 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(2)
 C
-      REAL(8) :: X, C
+      DOUBLE PRECISION X, C
       DATA  C/0.5771D0/
 C
 cc      USERW = DEXP( X-C - DEXP(X-C) )

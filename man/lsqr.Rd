@@ -7,12 +7,13 @@
   squares method via Householder transformation.
 }
 \usage{
-lsqr(y, lag = NULL, plot = TRUE, \dots)
+lsqr(y, lag = NULL, period = 365, plot = TRUE, \dots)
 }
 \arguments{
   \item{y}{a univariate time series.}
   \item{lag}{number of sine and cosine components. Default is \eqn{\sqrt{n}}{sqrt(n)},
     where \eqn{n} is the length of the time series \code{y}.}
+  \item{period}{period of one cycle.}
   \item{plot}{logical. If \code{TRUE} (default), original data and fitted
     trigonometric polynomial are plotted.}
   \item{\dots}{graphical arguments passed to \code{\link{plot.lsqr}}.}

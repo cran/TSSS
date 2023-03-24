@@ -19,24 +19,24 @@ period <-
 
   outmin <- minmax[1]
   outmax <- minmax[2]
-
-  z <- .Call("PeriodC",
-             as.double(y),
-             as.integer(n),
-             as.integer(np),
-             as.integer(window),
-             as.integer(lag),
-             as.double(outmin),
-             as.double(outmax))
-
   np1 <- np + 1
-  pe <- z[[1]][1:np1]     # periodogram (raw spectrum)
-  spe <- z[[2]][1:np1]    # logarithm of smoothed periodogram
-  ifg <- z[[4L]]
-  if (ifg == 0) log <- "TRUE"
-  if (ifg != 0) log <- "FALSE"
 
-  period.out <- list(period = pe, smoothed.period = spe, window = window,
+  z <- .Fortran(C_periodf,
+                as.double(y),
+                as.integer(n),
+                as.integer(np),
+                as.integer(window),
+                as.integer(lag),
+                as.double(outmin),
+                as.double(outmax),
+                pe = double(np1),
+                spe = double(np1),
+                ifg = integer(1))
+
+  log <- "TRUE"
+  if (z$ifg != 0) log <- "FALSE"
+
+  period.out <- list(period = z$pe, smoothed.period = z$spe, window = window,
                      log.scale = log, tsname = deparse(substitute(y)))
   class(period.out) <- "spg"
 
@@ -55,18 +55,24 @@ fftper <-
   if ((window < 0) || (window > 2 ))
     stop("'window' is 0, 1 or 2")
 
-  z <- .Call("FftperC",
-             as.double(y),
-             as.integer(n),
-             as.integer(window))
+  nf <- 1024
+  nf1 <- nf +1
 
-  np <- z[[3]]
-  np1 <- np + 1
-  pe <- z[[1]][1:np1]     # periodogram (raw spectrum)
-  spe <- z[[2]][1:np1]    # logarithm of smoothed periodogram
-  ifg <- z[[4L]]
-  if (ifg == 0) log <- "TRUE"
-  if (ifg != 0) log <- "FALSE"
+  z <- .Fortran(C_fftperf,
+                as.double(y),
+                as.integer(n),
+                as.integer(window),
+                pe = double(nf1),
+                spe = double(nf1),
+                np = integer(1),
+                ifg = integer(1))
+
+  np1 <- z$np +1
+  pe <- z$pe[1:np1]      # periodogram (raw spectrum)
+  spe <- z$spe[1:np1]    # logarithm of smoothed periodogram
+
+  log <- "TRUE"
+  if (z$ifg != 0) log <- "FALSE"
 
   fftper.out <- list(period = pe, smoothed.period = spe, window = window,
                      log.scale = log, tsname = deparse(substitute(y)))
@@ -114,4 +120,3 @@ plot.spg <- function(x, type = "vl", ...)
   }
   
 }
-

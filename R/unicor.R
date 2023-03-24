@@ -8,22 +8,23 @@ unicor <- function (y, lag = NULL, minmax = c(-1.0e+30, 1.0e+30), plot = TRUE, .
   outmin <- minmax[1]
   outmax <- minmax[2]
 
-  z <- .Call("UnicorC",
-             as.double(y),
-             as.integer(n),
-             as.integer(lag),
-             as.double(outmin),
-             as.double(outmax))
+  z <- .Fortran(C_unicorf,
+                as.double(y),
+                as.integer(n),
+                as.integer(lag),
+                as.double(outmin),
+                as.double(outmax),
+                cov = double(lag1 * 4),
+                mean = double(1))
 
-  cov <- matrix(z[[1]], lag1, 4)
+  cov <- matrix(z$cov, lag1, 4)
   acov <- cov[, 1]
   acor <- cov[, 2]
   cerr <- cov[, 3]
   rerr <- cov[, 4]
-  ymean <- z[[2L]]
 
   unicor.out <- list(acov = acov, acor = acor, acov.err = cerr, acor.err = rerr,
-                     mean = ymean, tsname = deparse(substitute(y)))
+                     mean = z$mean, tsname = deparse(substitute(y)))
   class(unicor.out) <- "unicor"
 
   if (plot) {

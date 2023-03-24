@@ -1,4 +1,3 @@
-
 # PROGRAM 2.1
 crscor <- function (y, lag = NULL, outmin = NULL, outmax = NULL, plot = TRUE, ...)
 {
@@ -23,19 +22,21 @@ crscor <- function (y, lag = NULL, outmin = NULL, outmax = NULL, plot = TRUE, ..
 
   y[is.na(y)] <- outmin
 
-  z <- .Call("CrscorC",
-             as.double(y),
-             as.integer(n),
-             as.integer(id),
-             as.integer(lag),
-             as.double(outmin),
-             as.double(outmax))
+  z <- .Fortran(C_crscorf,
+                as.double(y),
+                as.integer(n),
+                as.integer(id),
+                as.integer(lag),
+                as.double(outmin),
+                as.double(outmax),
+                cov = double(lag1 * id * id),
+                cor = double(lag1 * id * id),
+                mean = double(id))
 
-  cov <- array(z[[1]], c(lag1, id, id))
-  cor <- array(z[[2]], c(lag1, id, id))
-  ymean <- z[[3L]]
+  cov <- array(z$cov, c(lag1, id, id))
+  cor <- array(z$cor, c(lag1, id, id))
 
-  crscor.out <- list(cov = cov, cor = cor, mean = ymean)
+  crscor.out <- list(cov = cov, cor = cor, mean = z$mean)
   class(crscor.out) <- "crscor"
 
   if (plot) {

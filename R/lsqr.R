@@ -1,5 +1,5 @@
 # PROGRAM 5.5 LSQR
-lsqr <- function(y, lag = NULL, plot = TRUE, ...)
+lsqr <- function(y, lag = NULL, period = 365, plot = TRUE, ...)
 {
   n <- length(y)                 # length of data
   if (is.null(lag))
@@ -9,23 +9,25 @@ lsqr <- function(y, lag = NULL, plot = TRUE, ...)
   mj <- n
   if (n > 50000) mj <- 2 * k
 
-  z <- .Call("LsqrC",
-             as.double(y),
-             as.integer(n),
-             as.integer(k),
-             as.integer(mj))
+  z <- .Fortran(C_lsqr,
+                as.double(y),
+                as.integer(n),
+                as.integer(k),
+                as.integer(period),
+                as.integer(mj),
+                aic = double(k + 1),
+                sig2 = double(k + 1),
+                imin = integer(1),
+                reg = double(k * k),
+                data = double(n))
 
-  aic <- z[[1L]]
-  sig2 <- z[[2L]]
-  imin <- z[[3L]]
-  a <- array(z[[4L]], dim = c(k, k))
-  data <- z[[5L]]
+  a <- array(z$reg, dim = c(k, k))
   reg <- list()
   for (i in 1:k)
     reg[[i]] <- a[1:i, i]
 
-  lsqr.out <- list(aic = aic, sigma2 = sig2, maice.order = imin, regress = reg,
-                   tripoly = data)
+  lsqr.out <- list(aic = z$aic, sigma2 = z$sig2, maice.order = z$imin,
+                   regress = reg, tripoly = z$data)
   class(lsqr.out) <- "lsqr"
 
   if (plot) {
@@ -76,7 +78,6 @@ plot.lsqr <- function(x, rdata = NULL, ...)
       paste("Rregression curve of the model with order",imin)
   }
   plot(data, type = "l", ylim = ylim, col=2, xlab = "", ylab = "",
-       main = mtitle, xaxs = "i", cex.main = 1.0,...)
+       main = mtitle, xaxs = "i", cex.main = 1.0, lwd = 2, ...)
 
 }
-

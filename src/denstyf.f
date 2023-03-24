@@ -1,7 +1,7 @@
 C     PROGRAM 4.1  DENSTY
       SUBROUTINE DENSTYF( MODEL, PARAM, XMIN, XMAX, K, F ) 
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program draws probability density function  ...
 C
@@ -19,11 +19,12 @@ cc      CHARACTER*72   TITLE
 cxx      DIMENSION  F(K), PARAM(3), NP(0:7)
 cc      COMMON  /CMDATA/  TITLE
 C
-      INTEGER :: MODEL, K
-      REAL(8) :: PARAM(3), XMIN, XMAX, F(K)
-      INTEGER :: NP(0:7)
-      REAL(8) :: USERF, GAUSS, CAUCHY, PEARSN, EXPNTL, CHISQR, DBLEXP,
-     1           UNIFRM
+      INTEGER MODEL, K
+      DOUBLE PRECISION PARAM(3), XMIN, XMAX, F(K)
+c local
+      INTEGER NP(0:7)
+      DOUBLE PRECISION USERF, GAUSS, CAUCHY, PEARSN, EXPNTL, CHISQR,
+     1                 DBLEXP, UNIFRM
 C
       EXTERNAL  USERF
       EXTERNAL  GAUSS
@@ -86,9 +87,10 @@ cxx      IMPLICIT REAL*8( A-H,O-Z )
 cx      DIMENSION  P(K), PARAM(*)
 cxx      DIMENSION  P(K), PARAM(3)
 C
-      INTEGER :: K
-      REAL(8) :: P(K), PARAM(3), XMIN, XMAX
-      REAL(8) :: DX, X, DIST
+      INTEGER K
+      DOUBLE PRECISION P(K), PARAM(3), XMIN, XMAX
+c local
+      DOUBLE PRECISION DX, X, DIST
 C
       EXTERNAL  DIST
 C
@@ -112,7 +114,7 @@ C        EXPNTL:    density at X
 C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(1)
-      REAL(8) :: X, PARAM(1)
+      DOUBLE PRECISION X, PARAM(1)
 C
       IF( X.GE.0.0D0 )  EXPNTL = PARAM(1)*DEXP( -PARAM(1)*X )
       IF( X.LT.0.0D0 )  EXPNTL = 0.0D0
@@ -131,7 +133,7 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cx      DIMENSION  PARAM(*)
 cxx      DIMENSION  PARAM(1)
-      REAL(8) :: X, PARAM(1), dgammafn
+      DOUBLE PRECISION X, PARAM(1), dgammafn
 C
       CHISQR = 0.0D0
       IF( X.GT.0.0D0 ) CHISQR = DEXP( -X/2 )*(X/2)**(PARAM(1)/2-1.D0)
@@ -153,7 +155,7 @@ C        UNIFRM:    density at X
 C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(2)
-      REAL(8) :: X, PARAM(2)
+      DOUBLE PRECISION X, PARAM(2)
 C
       IF( X.GT.PARAM(1) .AND. X.LE.PARAM(2) )  THEN
          UNIFRM = 1.0D0/(PARAM(2)-PARAM(1))
@@ -176,7 +178,7 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cx      DIMENSION  PARAM(2)
 cxx      DIMENSION  PARAM(1)
-      REAL(8) :: X, PARAM(1)
+      DOUBLE PRECISION X, PARAM(1)
 C
       IF( X.GE.0.0D0 )  THEN
          USERF = PARAM(1)*DEXP( -PARAM(1)*X )/2

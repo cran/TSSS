@@ -1,7 +1,7 @@
 C     PROGRAM 6.2  MARSPC
       SUBROUTINE MARSPCF( M,L,A,E,NF,P,AMP,ANG,COH,FNC,FRNC )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program computes cross spectra and noise contribution  ...
 C
@@ -26,10 +26,11 @@ cxx      DIMENSION  A(L,L,M), E(L,L), FRNC(0:NF,L,L)
 cxx      DIMENSION  P(0:NF,L,L), FNC(0:NF,L,L), COH(0:NF,L,L)
 cxx      DIMENSION  AMP(0:NF,L,L), ANG(0:NF,L,L)
 C
-      INTEGER :: M, L, NF
-      REAL(8) :: A(L,L,M), E(L,L), AMP(0:NF,L,L), ANG(0:NF,L,L),
-     1           COH(0:NF,L,L), FNC(0:NF,L,L), FRNC(0:NF,L,L)
-      COMPLEX(kind(0d0)) :: P(0:NF,L,L)
+      INTEGER M, L, NF
+      DOUBLE PRECISION A(L,L,M), E(L,L), AMP(0:NF,L,L), ANG(0:NF,L,L),
+     1                 COH(0:NF,L,L), FNC(0:NF,L,L), FRNC(0:NF,L,L)
+c local
+      COMPLEX(KIND(0d0)) P(0:NF,L,L)
 c
       AMP(:,:,:) = 0.0d0
       ANG(:,:,:) = 0.0d0
@@ -82,8 +83,8 @@ cc      DIMENSION  COH(0:NF,MJ,MJ)
 cxx      DIMENSION  P(0:NF,L,L), FNC(0:NF,L,L), FRNC(0:NF,L,L)
 cxx      DIMENSION  COH(0:NF,L,L)
 C
-      INTEGER :: L, NF
-      REAL(8) :: FNC(0:NF,L,L), FRNC(0:NF,L,L)
+      INTEGER L, NF
+      DOUBLE PRECISION FNC(0:NF,L,L), FRNC(0:NF,L,L)
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  M, L, NF
@@ -157,12 +158,13 @@ cxx      DIMENSION  AMP(0:NF,L,L), ANG(0:NF,L,L)
 cxx      DIMENSION  ZA(0:NF,L,L), ZB(L,L)
 cxx      DIMENSION  FC(0:NF), FS(0:NF), WRK(L,L)
 C
-      INTEGER :: M, L, NF
-      REAL(8) :: A(L,L,M), E(L,L), FNC(0:NF,L,L), AMP(0:NF,L,L),
-     1           ANG(0:NF,L,L), COH(0:NF,L,L)
-      COMPLEX(kind(0d0)) :: P(0:NF,L,L)
-      REAL(8) :: C(0:M), FC(0:NF), FS(0:NF), FSUM
-      COMPLEX(kind(0d0)) :: ZA(0:NF,L,L), ZB(L,L), WRK(L,L), ZDET, SUM
+      INTEGER M, L, NF
+      DOUBLE PRECISION A(L,L,M), E(L,L), FNC(0:NF,L,L), AMP(0:NF,L,L),
+     1                 ANG(0:NF,L,L), COH(0:NF,L,L)
+      COMPLEX(KIND(0d0)) P(0:NF,L,L)
+c local
+      DOUBLE PRECISION C(0:M), FC(0:NF), FS(0:NF), FSUM
+      COMPLEX(KIND(0d0)) ZA(0:NF,L,L), ZB(L,L), WRK(L,L), ZDET, SUM
 C
 cxx      DO 30 I=1,L
       DO 31 I=1,L
@@ -178,7 +180,8 @@ C
 C
       DO 20 II=0,NF
 cxx   20 ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
-      ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
+cxxx      ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
+      ZA(II,I,J) = CMPLX( FC(II),FS(II), kind(0d0) )
    20 CONTINUE
    30 CONTINUE
    31 CONTINUE
@@ -281,10 +284,11 @@ cxx      IMPLICIT  COMPLEX*16 (A-H,O-Z)
 cc      DIMENSION  X(MJ,MJ), IND(100)
 cxx      DIMENSION  X(M,M), IND(M)
 C
-      INTEGER :: M
-      COMPLEX(kind(0d0)) :: DET, X(M,M)
-      INTEGER :: IND(M)
-      COMPLEX(kind(0d0)) :: XMAX, XTEMP
+      INTEGER M
+      COMPLEX(KIND(0d0)) DET, X(M,M)
+c local
+      INTEGER IND(M)
+      COMPLEX(KIND(0d0)) XMAX, XTEMP
 C
       DET = 1.0D0
       DO 60 L=1,M

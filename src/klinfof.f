@@ -1,8 +1,8 @@
 C     PROGRAM 4.2  KLINFO
-      SUBROUTINE KLINFOF( IDISTG,PG,IDISTF,PF,XMIN,XMAX,
-     *                                NINT,DX,FKLI,GINT )
+      SUBROUTINE KLINFOF( IDISTG,PG,IDISTF,PF,XMIN,XMAX,NINT,DX,
+     *                   FKLI,GINT )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Driver program of the subroutine KLINFO  ...
 C
@@ -11,9 +11,9 @@ cc      DIMENSION  PARAMG(3), PARAMF(3)
 cxx      DIMENSION PG(2), PF(2)
 cxx      DIMENSION NINT(4), DX(4), FKLI(4), GINT(4)
 C
-      INTEGER :: IDISTG, IDISTF, NINT(4)
-      REAL(8) :: PG(2), PF(2), XMIN, XMAX, DX(4), FKLI(4), GINT(4),
-     1           GAUSS, CAUCHY
+      INTEGER IDISTG, IDISTF, NINT(4)
+      DOUBLE PRECISION PG(2), PF(2), XMIN, XMAX, DX(4), FKLI(4),
+     1                 GINT(4), GAUSS, CAUCHY
 C
       EXTERNAL  GAUSS
       EXTERNAL  CAUCHY
@@ -74,12 +74,14 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cx      DIMENSION  PARAMG(*), PARAMF(*)
 cxx      DIMENSION  PARAMG(2), PARAMF(2)
 C
-      INTEGER :: NINT
-      REAL(8) :: DISTG, DISTF, PARAMG(2), PARAMF(2), XMIN, XMAX, DX,
-     1           FKLI, GINT
-      REAL(8) :: XX, GX, FX 
+      INTEGER NINT
+      DOUBLE PRECISION DISTG, DISTF, PARAMG(2), PARAMF(2), XMIN, XMAX,
+     1                 DX, FKLI, GINT
+c local
+      DOUBLE PRECISION XX, GX, FX 
 C
-      DX = (XMAX-XMIN)/DFLOAT(NINT)
+cxxx      DX = (XMAX-XMIN)/DFLOAT(NINT)
+      DX = (XMAX-XMIN)/DBLE(NINT)
       FKLI = 0.0D0
       GINT = 0.0D0
 C

@@ -1,8 +1,9 @@
 C     PROGRAM 11.2  TREND
-      SUBROUTINE TRENDF(Y,N,M,IOPT,TAU20,DELTA,TAUMAX,SIG2M,FFMAX,AIC,
-     &                  XSS,RS)
+      SUBROUTINE TREND(Y,N,M,IOPT,TAU20,DELTA,TAUMAX,SIG2M,FFMAX,AIC,
+ccc     &                 XSS,RS)
+     &                 XSS,VSS,RS)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  State space model for trend estimation  ...
 C
@@ -34,12 +35,14 @@ cxx      DIMENSION  VPS(M,M,N), VFS(M,M,N), VSS(M,M,N)
 cxx      DIMENSION  XF(M), VF(M,M)
 cxx      DIMENSION  RS(N)
 C
-      INTEGER :: N, M, IOPT
-      REAL(8) :: Y(N), TAU20, DELTA, TAUMAX, SIG2M, FFMAX, AIC,
-     1           XSS(M,N), RS(N)
-      REAL(8) :: F(M,M), G(M), H(M), Q(K,K), XPS(M,N), XFS(M,N),
-     1           VPS(M,M,N), VFS(M,M,N), VSS(M,M,N), XF(M), VF(M,M),
-     2           OUTMIN, OUTMAX, SIG2, YMEAN, VAR, TAU2, R, FF
+      INTEGER N, M, IOPT
+      DOUBLE PRECISION Y(N), TAU20, DELTA, TAUMAX, SIG2M, FFMAX, AIC,
+     1                 XSS(M,N), RS(N)
+c local
+      DOUBLE PRECISION F(M,M), G(M), H(M), Q(K,K), XPS(M,N), XFS(M,N),
+     1                 VPS(M,M,N), VFS(M,M,N), VSS(M,M,N), XF(M),
+     2                 VF(M,M), OUTMIN, OUTMAX, SIG2, YMEAN, VAR, TAU2,
+     3                 R, FF
 C
       DATA  OUTMIN, OUTMAX /-1.0D30, 1.0D30/
 C
@@ -144,8 +147,8 @@ cx      DIMENSION  XSS(MJ,*), Y(N), DATA(N)
 cxx      DIMENSION  XSS(MJ,N), Y(N), DATA(N)
 cc      COMMON  /CMDATA/  TITLE
 C
-      INTEGER :: MJ, N
-      REAL(8) :: Y(N), XSS(MJ,N), DATA(N)
+      INTEGER MJ, N
+      DOUBLE PRECISION Y(N), XSS(MJ,N), DATA(N)
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  TITLE

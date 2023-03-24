@@ -1,8 +1,9 @@
 C     PROGRAM  8.1  LSAR1
-      SUBROUTINE LSAR1F( Y,N,LAG,NS0,NB,NF0,NNS,NN0,NN1,
-     * IIF,MS,SDS,AICS,MP,SDP,AICP,AS,MFS,SIG2S,NNF )
+      SUBROUTINE LSAR1( Y,N,LAG,NS0,NB,NF0,NNS,NN0,NN1,
+c     * IIF,MS,SDS,AICS,MP,SDP,AICP,AS,MFS,SIG2S,NNF )
+     * IIF,MS,SDS,AICS,MP,SDP,AICP,AS,MFS,SIG2S,NNF,IER )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Decomposition of time interval to stationary subintevals  ...
 C
@@ -32,11 +33,13 @@ cxx      DIMENSION  NNS(NB), NN0(NB), NN1(NB), IIF(NB)
 cxx      DIMENSION  MS(NB), SDS(NB), AICS(NB), MP(NB), SDP(NB), AICP(NB)
 cxx      DIMENSION  MFS(NB), SIG2S(NB), NNF(NB)
 C
-      INTEGER :: N, LAG, NS0, NB, NF0, NNS(NB), NN0(NB), NN1(NB), 
-     1           IIF(NB), MS(NB), MP(NB), MFS(NB), NNF(NB)
-      REAL(8) :: Y(N), SDS(NB), AICS(NB), SDP(NB), AICP(NB), AS(LAG,NB),
-     1           SIG2S(NB)
-      REAL(8) :: X(3*(LAG+1),LAG+1), U(LAG+1,LAG+1), A(LAG), SIG2, AICF
+      INTEGER N, LAG, NS0, NB, NF0, NNS(NB), NN0(NB), NN1(NB), IIF(NB),
+     1        MS(NB), MP(NB), MFS(NB), NNF(NB), IER
+      DOUBLE PRECISION Y(N), SDS(NB), AICS(NB), SDP(NB), AICP(NB),
+     1                 AS(LAG,NB), SIG2S(NB)
+c local
+      DOUBLE PRECISION X(3*(LAG+1),LAG+1), U(LAG+1,LAG+1), A(LAG),
+     1                 SIG2, AICF
 c
       EXTERNAL   SETXAR
 C
@@ -53,6 +56,7 @@ C
       IF = 0
       IIF(1) = 0
       AICF = 0
+      IER = 0
 C
       NBLOCK = N/NS
       DO 100 II=1,NBLOCK
@@ -70,8 +74,11 @@ C  ...  Locally stationary time series  ...
 C
 cc      CALL  LOCAL( SETXAR,Y,X,U,D,LAG,L,NS,LAG,IF,MJ1,MJ2,A,MF,SIG2)
 cx      CALL  LOCAL( SETXAR,Y,X,U,LAG,NF,L,NS,LAG,IF,MJ1,
-      CALL  LOCAL( SETXAR,Y,N,X,U,LAG,NF,L,NS,LAG,IF,MJ1,
-     *  A,MF,SIG2,MS(II),SDS(II),AICS(II),MP(II),SDP(II),AICP(II),AICF )
+cx     *  A,MF,SIG2,MS(II),SDS(II),AICS(II),MP(II),SDP(II),AICP(II),AICF)
+      CALL  LOCAL( SETXAR,Y,N,X,U,LAG,NF,L,NS,LAG,IF,MJ1,A,MF,SIG2,
+     *  MS(II),SDS(II),AICS(II),MP(II),SDP(II),AICP(II),AICF, IER)
+c 2023/01/11
+      IF (IER .NE. 0) RETURN
       IIF(II) = IF
 C
       NNF(II) = NF
@@ -106,8 +113,9 @@ cxx  600 FORMAT( 1H ,'L =',I5 )
 cc      SUBROUTINE  LOCAL( SETX,Z,X,U,D,LAG,N0,NS,K,IF,MJ1,MJ2,
 cc     *                   A,MF,SDF )
 cx      SUBROUTINE  LOCAL( SETX,Z,X,U,LAG,NF,N0,NS,K,IF,MJ1,
-      SUBROUTINE  LOCAL( SETX,Z,N,X,U,LAG,NF,N0,NS,K,IF,MJ1,
-     *   A,MF,SDF,MS,SDS,AICS,MP,SDP,AICP,AICF)
+cx     *   A,MF,SDF,MS,SDS,AICS,MP,SDP,AICP,AICF)
+	 SUBROUTINE  LOCAL( SETX,Z,N,X,U,LAG,NF,N0,NS,K,IF,MJ1,
+     *   A,MF,SDF,MS,SDS,AICS,MP,SDP,AICP,AICF,IER)
 C
 C  ...  Locally stationary AR model  ...
 C
@@ -133,10 +141,12 @@ cxx      DIMENSION  Z(N)
 cxx      DIMENSION  X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG)
 cxx      DIMENSION  B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG)
 C
-      INTEGER :: N, LAG, NF, N0, NS, K, IF, MJ1, MF, MS, MP
-      REAL(8) :: Z(N), X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG), SDF, SDS,
-     1           AICS, SDP, AICP, AICF
-      REAL(8) :: B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG), AIC0
+      INTEGER N, LAG, NF, N0, NS, K, IF, MJ1, MF, MS, MP, IER
+      DOUBLE PRECISION Z(N), X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG), SDF,
+     1                 SDS, AICS, SDP, AICP, AICF
+c local
+      DOUBLE PRECISION B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG),
+     1                 AIC0
 C
       EXTERNAL   SETX
 C
@@ -152,6 +162,10 @@ cc      WRITE(6,600)  NN0, NN1
 C
 cc      CALL  REDUCT( SETX,Z,D,NS,N0,K,MJ1,X )
 cc      CALL  REGRES( X,K,NS,MJ1,20,AA,SIG2,AIC,MS )
+c 2023/01/11
+      L = MIN0(NS, MJ1)
+      if (L .GE. K+1) THEN
+
       CALL  REDUCT( SETX,Z,NS,N0,K,MJ1,X )
       CALL  REGRES( X,K,NS,MJ1,AA,SIG2,AIC,MS )
 C
@@ -214,6 +228,9 @@ cc      WRITE(6,650)
       NF = NF + NS
    50 CONTINUE
 C
+      ELSE
+         IER = -1
+      END IF
       RETURN
 cxx  600 FORMAT( 1H0,'<<< NEW DATA (N =',I4,' ---',I4,')  >>>' )
 cxx  610 FORMAT( 1H ,'  INITIAL MODEL: NS =',I4,/,10X,'MS =',I2,3X,
@@ -233,8 +250,8 @@ cxx      IMPLICIT  REAL*8( A-H,O-Z )
 cc      DIMENSION  X(MJ1,1) , Y(MJ2,1)
 cxx      DIMENSION  X(MJ1,K) , Y(MJ2,K)
 C
-      INTEGER :: K, II, JJ, MJ1, MJ2 
-      REAL(8) :: X(MJ1,K) , Y(MJ2,K)
+      INTEGER K, II, JJ, MJ1, MJ2 
+      DOUBLE PRECISION X(MJ1,K) , Y(MJ2,K)
 C
 cxx      DO 10  I=1,K
       DO 11  I=1,K

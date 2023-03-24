@@ -6,20 +6,27 @@ marspc <- function(arcoef, v, plot = TRUE, ...)
 
   nf <- 200                # number of frequencies
   nf1 <- nf + 1
+  llnf1 <- l * l * nf1
 
-  z <- .Call("MarspcC",
+  z <- .Fortran(C_marspcf,
              as.integer(m),
              as.integer(l),
              as.double(arcoef),
              as.double(v),
-             as.integer(nf))
+             as.integer(nf),
+             p = complex(llnf1),
+             amp = double(llnf1),
+             ang = double(llnf1),
+             coh = double(llnf1),
+             fnc = double(llnf1),
+             frnc = double(llnf1))
 
-  p <- array(z[[1L]], dim = c(nf1, l, l))
-  amp <- array(z[[2L]], dim = c(nf1, l, l))
-  ang <- array(z[[3L]], dim = c(nf1, l, l))
-  coh <- array(z[[4L]], dim = c(nf1, l, l))
-  fnc <- array(z[[5L]], dim = c(nf1, l, l))
-  frnc <- array(z[[6L]], dim = c(nf1, l, l))
+  p <- array(z$p, dim = c(nf1, l, l))
+  amp <- array(z$amp, dim = c(nf1, l, l))
+  ang <- array(z$ang, dim = c(nf1, l, l))
+  coh <- array(z$coh, dim = c(nf1, l, l))
+  fnc <- array(z$fnc, dim = c(nf1, l, l))
+  frnc <- array(z$frnc, dim = c(nf1, l, l))
 
   marspc.out <- list(spec = p, amp = amp, phase = ang, coh = coh, power = fnc,
                      rpower = frnc)

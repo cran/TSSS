@@ -1,7 +1,7 @@
 C     PROGRAM 2.3  CRSCOR
-      SUBROUTINE CRSCORF( Y,N,L,LAG,OUTMIN,OUTMAX,C,R,YMEAN)
+      SUBROUTINE CRSCORF( Y,N,L,LAG,OUTMIN,OUTMAX,C,R,YMEAN )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program computes sample cross-covariance and
 C       sample cross-correlation functions  ...
@@ -28,9 +28,9 @@ cc      DATA  OUTMIN/10*-1.0D30/, OUTMAX/10*1.0D30/
 cxx      DIMENSION  Y(N,L), OUTMIN(L), OUTMAX(L)
 cxx      DIMENSION  C(0:LAG,L,L), R(0:LAG,L,L), YMEAN(L)
 C
-      INTEGER :: N, L, LAG
-      REAL(8) :: Y(N,L), OUTMIN(L), OUTMAX(L), C(0:LAG,L,L),
-     1           R(0:LAG,L,L), YMEAN(L)
+      INTEGER N, L, LAG
+      DOUBLE PRECISION Y(N,L), OUTMIN(L), OUTMAX(L), C(0:LAG,L,L),
+     1                 R(0:LAG,L,L), YMEAN(L)
 C
 C  ...  read in multivariate time series  ...
 C

@@ -59,23 +59,24 @@ simssm <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL, a
   if (is.null(ix))
     ix <- -1
 
-  z <- .Call("SimssmC",
-             as.integer(m1),
-             as.integer(m2),
-             as.integer(m3),
-             as.integer(m),
-             as.integer(k),
-             as.integer(n),
-             as.integer(ix),
-             as.double(sigma2),
-             as.integer(period),
-             as.double(tau1),
-             as.double(tau2),
-             as.double(tau3),
-             as.double(arcoef),
-             as.double(x))
+  z <- .Fortran(C_simssmf,
+                as.integer(m1),
+                as.integer(m2),
+                as.integer(m3),
+                as.integer(m),
+                as.integer(k),
+                as.integer(n),
+                as.integer(ix),
+                as.double(sigma2),
+                as.integer(period),
+                as.double(tau1),
+                as.double(tau2),
+                as.double(tau3),
+                as.double(arcoef),
+                as.double(x),
+                y = double(n))
 
-  out <- z[[1L]]
+  out <- z$y
   class(out) <- "simulate"
 
   if (plot) {
@@ -217,27 +218,28 @@ ngsim <- function(n = 200, trend = NULL, seasonal.order = 0, seasonal = NULL, ar
     vmax <- vminmax[2]
   }
 
-  z <- .Call("NgsimC",
-             as.integer(m1),
-             as.integer(m2),
-             as.integer(m3),
-             as.integer(m),
-             as.integer(k),
-             as.integer(n),
-             as.integer(ix),
-             as.integer(noisew),
-             as.double(wmin),
-             as.double(wmax),
-             as.double(pw),
-             as.integer(noisev),
-             as.double(vmin),
-             as.double(vmax),
-             as.double(pv),
-             as.integer(period),
-             as.double(arcoef),
-             as.double(x))
+  z <- .Fortran(C_ngsimf,
+                as.integer(m1),
+                as.integer(m2),
+                as.integer(m3),
+                as.integer(m),
+                as.integer(k),
+                as.integer(n),
+                as.integer(ix),
+                as.integer(noisew),
+                as.double(wmin),
+                as.double(wmax),
+                as.double(pw),
+                as.integer(noisev),
+                as.double(vmin),
+                as.double(vmax),
+                as.double(pv),
+                as.integer(period),
+                as.double(arcoef),
+                as.double(x),
+                y = double(n))
 
-  out <- z[[1L]]
+  out <- z$y
   class(out) <- "simulate"
 
   if (plot) {

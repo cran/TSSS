@@ -1,7 +1,7 @@
 C     PROGRAM  8.2  LSAR2
-      SUBROUTINE LSAR2F( Y,N,K,N0,N1,N2,NE, AICS,AICMIN,MMIN )
+      SUBROUTINE LSAR2( Y,N,K,N0,N1,N2,NE, AICS,AICMIN,MMIN )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Estimation of the change point  ...
 C
@@ -28,9 +28,10 @@ cxx      DIMENSION  Y(N)
 cxx      DIMENSION  AIC1(N2-N1), AIC2(N2-N1), AICS(N2-N1)
 C     DIMENSION  DATA(200)
 C
-      INTEGER :: N, K, N0, N1, N2, NE, MMIN
-      REAL(8) :: Y(N), AICS(N2-N1), AICMIN
-      REAL(8) :: AIC1(N2-N1), AIC2(N2-N1)
+      INTEGER N, K, N0, N1, N2, NE, MMIN
+      DOUBLE PRECISION Y(N), AICS(N2-N1), AICMIN
+c local
+      DOUBLE PRECISION AIC1(N2-N1), AIC2(N2-N1)
 C
 cc      READ( 5,* )  K, N0, N1, N2, NE
       NS = 1
@@ -101,9 +102,10 @@ cxx      DIMENSION  X(MJ,K+1), AIC(M), A(K,K), AICS(0:K)
 cxx      DIMENSION  Z(N), SIG2(0:K)
 C
 C
-      INTEGER :: N, N0, N1, M, NS, K, MJ
-      REAL(8) :: Z(N), AIC(M)
-      REAL(8) :: SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
+      INTEGER N, N0, N1, M, NS, K, MJ
+      DOUBLE PRECISION Z(N), AIC(M)
+c local
+      DOUBLE PRECISION SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
       EXTERNAL  SETXAR
 C
       NMK = N1 - K - N0
@@ -146,9 +148,10 @@ cxx      DIMENSION  X(MJ,K+1), AIC(M), A(K,K), AICS(0:K)
 cx      DIMENSION  Z(1), SIG2(0:K)
 cxx      DIMENSION  Z(N), SIG2(0:K)
 C
-      INTEGER :: N2, N, M, NS, K, MJ
-      REAL(8) :: Z(N), AIC(M)
-      REAL(8) :: SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
+      INTEGER N2, N, M, NS, K, MJ
+      DOUBLE PRECISION Z(N), AIC(M)
+c local
+      DOUBLE PRECISION SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
       EXTERNAL  SETXAR
 C
       NMK = N - N2
@@ -189,9 +192,10 @@ C
 cxx      IMPLICIT  REAL*8 (A-H,O-Z)
 cxx      DIMENSION  X(MJ1,K) , D(MJ1)
 C
-      INTEGER :: MJ1, N, K
-      REAL(8) :: X(MJ1,K)
-      REAL(8) :: D(MJ1), TOL, D1, H, G, S
+      INTEGER MJ1, N, K
+      DOUBLE PRECISION X(MJ1,K)
+c local
+      DOUBLE PRECISION D(MJ1), TOL, D1, H, G, S
 C
            TOL = 1.0D-30
 C

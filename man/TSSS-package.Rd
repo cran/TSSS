@@ -34,16 +34,16 @@
   \emph{Introduction to Time Series Modeling with Applications in R}. Chapman & Hall/CRC.
 
   Kitagawa, G. (1993)
-  \emph{FORTRAN 77 Programming for Time Series Analysis (in Japanese)}.
-  The Iwanami Computer Science Series.
+  \emph{FORTRAN 77 Programming for Time Series Analysis}.
+  The Iwanami Computer Science Series, Iwanami Publishing Company (in Japanese).
 
   Kitagawa, G. (2005)
-  \emph{Introduction to Time Series Analysis (in Japanese)}.
-  Iwanami Publishing Company.
+  \emph{Introduction to Time Series Analysis}.
+  Iwanami Publishing Company (in Japanese).
 
   Kitagawa, G. (2020)
-  \emph{Introduction to Time Series Modeling with R (in Japanese)}.
-  Iwanami Publishing Company.
+  \emph{Introduction to Time Series Modeling with R}.
+  Iwanami Publishing Company (in Japanese).
 }
 
 \keyword{package}

@@ -2,7 +2,7 @@ C     PROGRAM 15.1  SIMSSM
       SUBROUTINE SIMSSMF( M1,M2,M3,M,K,N,INI,SIG2,PERIOD,TAU1,TAU2,TAU3,
      &                    AR,X,Y )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  SIMULATION BY GAUSSIAN STATE SPACE MODEL  ...
 C
@@ -27,9 +27,10 @@ cc      INI = 1992092521
 cxx      DIMENSION  X(M), F(M,M), G(M,K), H(M)
 cxx      DIMENSION  Q(K,K), Y(N), AR(M3), R(1,1)
 C
-      INTEGER :: M1, M2, M3, M, K, N, INI, PERIOD
-      REAL(8) :: SIG2, TAU1, TAU2, TAU3, AR(M3), X(M), Y(N)
-      REAL(8) :: F(M,M), G(M,K), H(M), Q(K,K), R(1,1)
+      INTEGER M1, M2, M3, M, K, N, INI, PERIOD
+      DOUBLE PRECISION SIG2, TAU1, TAU2, TAU3, AR(M3), X(M), Y(N)
+c local
+      DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), R(1,1)
 C
 cc      MM = 0
 C
@@ -94,9 +95,11 @@ cxx      DIMENSION X(M), F(M,M), G(M,K), H(L,M)
 cxx      DIMENSION Q(K,K), R(L,L), SQ(K,K), SR(L,L)
 cxx      DIMENSION XT(M), T(L), V(K), W(L), Y(NN,L)
 C
-      INTEGER :: N, M, L, K, IX, NN
-      REAL(8) :: F(M,M), G(M,K), H(L,M), Q(K,K), R(L,L), X(M), Y(NN,L)
-      REAL(8) :: SQ(K,K), SR(L,L), XT(M), T(L), V(K), W(L)
+      INTEGER N, M, L, K, IX, NN
+      DOUBLE PRECISION F(M,M), G(M,K), H(L,M), Q(K,K), R(L,L), X(M),
+     1                 Y(NN,L)
+c local
+      DOUBLE PRECISION SQ(K,K), SR(L,L), XT(M), T(L), V(K), W(L)
 C
 C  ...  CHOLESKY DECOMPOSITION OF Q AND R  ...
 C
@@ -175,9 +178,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION Q(K,K),W(100),V(K)
 cxx      DIMENSION Q(K,K),W(K),V(K)
 C
-      INTEGER :: K
-      REAL(8) :: Q(K,K), V(K)
-      REAL(8) :: RGAUSS, W(K), V2, S, SUM
+      INTEGER K
+      DOUBLE PRECISION Q(K,K), V(K)
+c local
+      DOUBLE PRECISION RGAUSS, W(K), V2, S, SUM
 C
       IC = 0
       DO 10 I=1,K
@@ -204,10 +208,11 @@ C
 C  ...  GAUSSIAN RANDON NUMBER GENERATOR (MARSAGLIA'S ALGORITHM)  ...
 C
 cxx      IMPLICIT REAL*8( A-H,O-Z)
-      INTEGER :: ICOUNT
-      REAL(8) :: V2, S
-cxx      REAL(8) :: RUNI, U1, U2, V1
-      REAL(8) :: U1, U2, V1, random
+      INTEGER ICOUNT
+      DOUBLE PRECISION V2, S
+c local
+cxx      DOUBLE PRECISION RUNI, U1, U2, V1
+      DOUBLE PRECISION U1, U2, V1, random
 
 cc      DATA  ICOUNT /0/
 C

@@ -1,8 +1,8 @@
 C     PROGRAM 13.2  TVAR
-      SUBROUTINE TVARF(Y, N, M, K, NOBS, IOPT, NOUT, LOUT, TAU20, DELTA,
-     *                 TAUMAX, SIG2, FF, AIC, TAR, PAR )
+      SUBROUTINE TVAR(Y, N, M, K, NOBS, IOPT, NOUT, LOUT, TAU20, DELTA,
+     *                TAUMAX, SIG2, FF, AIC, TAR, PAR )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Time Varying AR model  ...
 C
@@ -19,8 +19,6 @@ C        MJ:      Adjustable dimension of XF, VF, etc.
 C        NDIM:    Adjustable dimension OF VFS, VSS, etc.
 C     @TEST.FILTER2:  SEP.08,1990
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: TVARF
-C
 cc      PARAMETER( NMAX=3000,MJ=20,NDIM=200 )
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Y(N)
@@ -35,14 +33,16 @@ cxx      DIMENSION  VPS(M*K,M*K,N/NOBS), VFS(M*K,M*K,N/NOBS)
 cxx      DIMENSION  VSS(M*K,M*K,N/NOBS)
 cxx      DIMENSION  XF(M*K), VF(M*K,M*K)
 C
-      INTEGER :: N, M, K, NOBS, IOPT, NOUT, LOUT(NOUT)
-      REAL(8) :: Y(N), TAU20, DELTA, TAUMAX, SIG2, FF, AIC,
-     1           TAR(M,N/NOBS), PAR(M,N/NOBS)
-      INTEGER :: MM(M), LLOUT(N/NOBS)
-      REAL(8) :: A(K,M), XPS(M*K,N/NOBS), XFS(M*K,N/NOBS),
-     1           XSS(M*K,N/NOBS), VPS(M*K,M*K,N/NOBS),
-     2           VFS(M*K,M*K,N/NOBS), VSS(M*K,M*K,N/NOBS), XF(M*K),
-     3           VF(M*K,M*K), OUTMIN, OUTMAX, FMAX, TAU2, FLK, SIG2M
+      INTEGER N, M, K, NOBS, IOPT, NOUT, LOUT(NOUT)
+      DOUBLE PRECISION Y(N), TAU20, DELTA, TAUMAX, SIG2, FF, AIC,
+     1                 TAR(M,N/NOBS), PAR(M,N/NOBS)
+c local
+      INTEGER MM(M), LLOUT(N/NOBS)
+      DOUBLE PRECISION A(K,M), XPS(M*K,N/NOBS), XFS(M*K,N/NOBS),
+     1                 XSS(M*K,N/NOBS), VPS(M*K,M*K,N/NOBS),
+     2                 VFS(M*K,M*K,N/NOBS), VSS(M*K,M*K,N/NOBS),
+     3                 XF(M*K), VF(M*K,M*K), OUTMIN, OUTMAX, FMAX, TAU2,
+     4                 FLK, SIG2M
 C
       DATA  OUTMIN, OUTMAX /-1.0D30, 1.0D30/
 cc      DATA  LLOUT /NDIM*0/
@@ -132,8 +132,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  A(2,*), MM(*)
 cxx      DIMENSION  A(K,M), MM(M)
 C
-      INTEGER :: M, K, MM(M)
-      REAL(8) :: A(K,M)
+      INTEGER M, K, MM(M)
+      DOUBLE PRECISION A(K,M)
 C
       IF( K.EQ.1 )  THEN
 cxx        DO 10 I=1,M
@@ -189,12 +189,13 @@ cxx      DIMENSION  VFS(MJ,MJ,NDIM), VPS(MJ,MJ,NDIM)
 cc      DIMENSION  VH(40), GAIN(40)
 cxx      DIMENSION  VH(MJ), GAIN(MJ)
 C
-      INTEGER :: M, K, N, NOBS, MJ, NDIM, LLOUT(N/NOBS)
-      REAL(8) :: Y(N), XF(MJ), VF(MJ,MJ), Q, OUTMIN, OUTMAX,
-     1           VFS(MJ,MJ,NDIM), VPS(MJ,MJ,NDIM), XFS(MJ,NDIM),
-     2           XPS(MJ,NDIM), FF, SIG2
-      REAL(8) :: XP(MJ), VP(MJ,MJ), VH(MJ), GAIN(MJ), PI, SDET, SUM,
-     1           PERR, PVAR
+      INTEGER M, K, N, NOBS, MJ, NDIM, LLOUT(N/NOBS)
+      DOUBLE PRECISION Y(N), XF(MJ), VF(MJ,MJ), Q, OUTMIN, OUTMAX,
+     1                 VFS(MJ,MJ,NDIM), VPS(MJ,MJ,NDIM), XFS(MJ,NDIM),
+     2                 XPS(MJ,NDIM), FF, SIG2
+c local
+      DOUBLE PRECISION XP(MJ), VP(MJ,MJ), VH(MJ), GAIN(MJ), PI, SDET,
+     1                 SUM, PERR, PVAR
 C
       DATA   PI  /3.1415926535D0/
 C
@@ -390,8 +391,8 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  XF(MJ), VF(MJ,MJ)
 C
-      INTEGER :: M, K, MJ
-      REAL(8) :: XF(MJ), VF(MJ,MJ)
+      INTEGER M, K, MJ
+      DOUBLE PRECISION XF(MJ), VF(MJ,MJ)
 C
       MK = M*K
 cxx      DO 10  J=1,MK
@@ -433,9 +434,10 @@ cxx      DIMENSION  XSS(MJ,N/NOBS), WRK(M,N/NOBS)
 cxx      DIMENSION  AR(M), PAR(M), TAR(M,N/NOBS)
 cc      DIMENSION  DATA(400), VNAME(20), VALUE(20)
 C
-      INTEGER :: N, NOBS, MJ, M, K
-      REAL(8) :: XSS(MJ,N/NOBS), TAR(M,N/NOBS), WRK(M,N/NOBS)
-      REAL(8) :: AR(M), PAR(M), FN
+      INTEGER N, NOBS, MJ, M, K
+      DOUBLE PRECISION XSS(MJ,N/NOBS), TAR(M,N/NOBS), WRK(M,N/NOBS)
+c local
+      DOUBLE PRECISION AR(M), PAR(M), FN
 C
 cc      VNAME(1) = 'M     = '
 cc      VNAME(2) = 'K     = '

@@ -3,7 +3,7 @@
 
 \title{Kullback-Leibler Information}
 \description{
-  Computes Kullback-Leibler information.}
+  Compute Kullback-Leibler information.}
 \usage{
 klinfo(distg = 1, paramg = c(0, 1), distf = 1, paramf, xmax = 10)
 }

@@ -1,6 +1,8 @@
 C     PROGRAM 10.1  ARMAFT
-      SUBROUTINE ARMAFT2F( Y0,N,MMAX,LMAX,MLMAX,TSIG2,TFF,TAIC,AR,CMA,
-     1                     IER )
+      SUBROUTINE ARMAFT2( Y0,N,MMAX,LMAX,MLMAX,TSIG2,TFF,TAIC,AR,CMA,
+     1                    IER )
+C
+      INCLUDE 'TSSS.h'
 C
 C  ...  ARMA MODEL FITTING  ...
 C
@@ -26,15 +28,17 @@ cc      COMMON  /C92907/  ALIMIT
 cc      COMMON  /C92908/  M, L, N
 cc      COMMON  /C92909/  FLK, SIG2
 cc      COMMON  / CCC /  ISW, IPR, ISMT, IDIF
-      INTEGER :: N, MMAX, LMAX, MLMAX, IER
-      REAL(8) :: Y0(N), TSIG2(0:MMAX, 0:LMAX), TFF(0:MMAX,0:LMAX),
-     1           TAIC(0:MMAX, 0:LMAX), AR(MMAX, 0:MMAX, 0:LMAX),
-     2           CMA(LMAX, 0:MMAX, 0:LMAX)
-      INTEGER :: IPRAM, IOPT, IDIF
-      REAL(8) :: Y(N), PI, SUM, YMEAN, YVAR, ALIMIT, OUTMIN, OUTMAX,
-     1           PAR(MLMAX), AA(MMAX+LMAX), SIG2, FLK, AIC,
-     2           SAA(MMAX+LMAX, 0:MMAX, 0:LMAX)
-
+c
+      INTEGER N, MMAX, LMAX, MLMAX, IER(3)
+      DOUBLE PRECISION Y0(N), TSIG2(0:MMAX, 0:LMAX), TFF(0:MMAX,0:LMAX),
+     1                 TAIC(0:MMAX, 0:LMAX), AR(MMAX, 0:MMAX, 0:LMAX),
+     2                 CMA(LMAX, 0:MMAX, 0:LMAX)
+c local
+      INTEGER IPRAM, IOPT, IDIF, NSUM
+      DOUBLE PRECISION Y(N), PI, SUM, YMEAN, YVAR, ALIMIT, OUTMIN,
+     1                 OUTMAX, PAR(MLMAX), AA(MMAX+LMAX), SIG2, FLK,
+     2                 AIC, SAA(MMAX+LMAX, 0:MMAX, 0:LMAX)
+c
       EXTERNAL  FFARMA
       PI = 3.1415926530D0
 cc      IPR = 0
@@ -47,6 +51,7 @@ c
       PAR(1:MLMAX) = 0.0D0
       AA(1:(MMAX+LMAX)) = 0.0D0
       SAA(1:(MMAX+LMAX), 0:MMAX, 0:LMAX) = 0.0D0
+      IER(1:3) = 0
 C
 C  ...  Read Time Series  ...
 C
@@ -57,12 +62,13 @@ cc      CALL  READTS( 1,Y,N )
 C
 C  ...  Subtrac Mean Value  ...
 C
-      SUM = 0.0D0
-      DO 10 I=1,N
-cc   10 SUM = SUM + Y(I)
-      SUM = SUM + Y(I)
-   10 CONTINUE
-      YMEAN = SUM/N
+cc      SUM = 0.0D0
+cc      DO 10 I=1,N
+cccc   10 SUM = SUM + Y(I)
+cc      SUM = SUM + Y(I)
+cc   10 CONTINUE
+cc      YMEAN = SUM/N
+      CALL  MEAN( Y,N,-1.0D30,1.0D30,NSUM,YMEAN )
       DO 20 I=1,N
 cc   20 Y(I) = Y(I) - YMEAN
       Y(I) = Y(I) - YMEAN
@@ -89,12 +95,14 @@ cc      DO 100  M=0,MMAX
       
 cc      write(3,*) M, L
       IF( M.EQ.0 .and. L.EQ.0 )  THEN
-         SUM = 0.0D0
-         DO 110 I=1,N
-cc  110    SUM = SUM + Y(I)**2
-         SUM = SUM + Y(I)**2
-  110    CONTINUE
+cc         SUM = 0.0D0
+cc         DO 110 I=1,N
+cccc  110    SUM = SUM + Y(I)**2
+cc         SUM = SUM + Y(I)**2
+cc  110    CONTINUE
+         CALL  MEAN2( Y,N,-1.0D30,1.0D30,SUM )
          YVAR = SUM/N
+         TSIG2(0,0) = YVAR
          TFF(0,0) = -0.5D0*N*(DLOG(2*PI*YVAR) + 1)
          TAIC(0,0) = -2*TFF(0,0) + 2
          GO TO 100
@@ -163,10 +171,13 @@ C  ...  Maximum Likelihood Method  ...
 C
 cc      write(3,*)  (AA(I),I=1,M+L)
 cc      IF( IOPT.EQ.1 )  CALL  DAVIDN( FFARMA,AA,M+L,2 )
-      ier = 0
       IF( IOPT.EQ.1 )  CALL  DAVIDN( FFARMA,AA,M+L,2,
-     *    Y,N,M,L,MLMAX,OUTMIN,OUTMAX,ALIMIT,FLK,SIG2,IER )
-      if( ier.ne.0 ) return
+     *    Y,N,M,L,MLMAX,OUTMIN,OUTMAX,ALIMIT,FLK,SIG2,IER(1) )
+      if( ier(1).ne.0 ) then
+         ier(2) = m
+         ier(3) = l
+         return
+      end if
 C
 C
       DO 50 I=1,M
@@ -217,5 +228,27 @@ cc      close( 2 )
 cc      close( 3 )
 cc  600 FORMAT( 11F10.4 )
 cc      STOP
+      RETURN
+      E N D
+      SUBROUTINE  MEAN2( Y,N,OUTMIN,OUTMAX,YSUM )
+C
+C     Inputs:
+C        Y(I):    time series
+C        N:       data length
+C        OUTMIN:  bound for outliers in low side
+C        OUTMAX:  bound for outliers in high side
+C     Outputs:
+C        YSUM:    sum of non-outlier observations
+C
+      INTEGER N
+      DOUBLE PRECISION Y(N), OUTMIN, OUTMAX, YSUM
+C
+      YSUM = 0.0D0
+      DO 10 I=1,N
+      IF( Y(I) .GT.OUTMIN .AND. Y(I).LT.OUTMAX ) THEN
+         YSUM = YSUM + Y(I)**2
+      END IF
+   10 CONTINUE
+C
       RETURN
       E N D

@@ -12,22 +12,31 @@ tvvar <- function(y, trend.order, tau2.ini = NULL, delta, plot = TRUE, ...)
     delta <- 0
   }
 
-  z <- .Call("TvvarC",
+  n2 <- n / 2
+  
+  z <- .Fortran(C_tvvarf,
              as.double(y),
              as.integer(n),
              as.integer(m),
              as.double(tau2.ini),
              as.integer(iopt),
-             as.double(delta))
+             as.double(delta),
+             tvvar = double(n2),
+             nordat = double(n),
+             y1 = double(n2),
+             n1 = integer(1),
+             trend = double(n2 * 3),
+             noise = double(n2),
+             taumax = double(1),
+             sig2m = double(1),
+             ffmax = double(1),
+             aic = double(1))
 
-  nordata <- z[[2L]]
-  sm <- z[[3L]]
-  trend <- array(z[[5L]], dim = c(z[[4L]], 3))
-  noise <- z[[6L]]
+  trend <- array(z$trend, dim = c(z$n1, 3))
 
-  tvvar.out <- list(tvv = z[[1L]], nordata = nordata, sm = sm, trend = trend,
-                    noise = noise, tau2 = z[[7L]], sigma2 = z[[8L]],
-                    llkhood = z[[9L]], aic = z[[10L]],
+  tvvar.out <- list(tvv = z$tvvar, nordata = z$nordat, sm = z$y1, trend = trend,
+                    noise = z$noise, tau2 = z$taumax, sigma2 = z$sig2m,
+                    llkhood = z$ffmax, aic = z$aic,
                     tsname = deparse(substitute(y)))
   class(tvvar.out) <- "tvvar"
 
@@ -112,25 +121,31 @@ tvar <- function (y, trend.order = 2, ar.order = 2, span, outlier = NULL,
     delta <- 0
   }
 
-  z <- .Call("TvarC",
-             as.double(y),
-             as.integer(n),
-             as.integer(ar.order),
-             as.integer(trend.order),
-             as.integer(span),
-             as.integer(iopt),
-             as.integer(nout),
-             as.integer(outlier),
-             as.double(tau2.ini),
-             as.double(delta))
-
   nn <- n/span
-  sigma2 <- z[[2L]]
-  arcoef <- array(z[[5L]], dim = c(ar.order, nn))
-  parcor <- array(z[[6L]], dim = c(ar.order, nn))
+  
+  z <- .Fortran(C_tvar,
+                as.double(y),
+                as.integer(n),
+                as.integer(ar.order),
+                as.integer(trend.order),
+                as.integer(span),
+                as.integer(iopt),
+                as.integer(nout),
+                as.integer(outlier),
+                as.double(tau2.ini),
+                as.double(delta),
+                tau2 = double(1),
+                sigma2 = double(1),
+                lkhood = double(1),
+                aic = double(1),
+                arcoef = double(nn * ar.order),
+                parcor = double(nn * ar.order))
 
-  tvar.out <- list(arcoef = arcoef, sigma2 = sigma2, tau2 = z[[1L]],
-                   llkhood = z[[3L]], aic = z[[4L]], parcor = parcor)
+  arcoef <- array(z$arcoef, dim = c(ar.order, nn))
+  parcor <- array(z$parcor, dim = c(ar.order, nn))
+
+  tvar.out <- list(arcoef = arcoef, sigma2 = z$sigma2, tau2 = z$tau2,
+                   llkhood = z$lkhood, aic = z$aic, parcor = parcor)
   class(tvar.out) <- "tvvar"
 
   if (plot)
@@ -180,17 +195,20 @@ tvspc <- function (arcoef, sigma2, var = NULL, span = 20, nf = 200)
 # span                          # local stationary span
 # nf                            # number of frequencies
 
-  z1 <- .Call("TvspcC",
-              as.integer(n),
-              as.integer(ar.order),
-              as.integer(span),
-              as.integer(nf),
-              as.integer(ivar),
-              as.double(sigma2),
-              as.double(arcoef),
-              as.double(var))
+  nf1 <- nf + 1
+  
+  z <- .Fortran(C_tvspc,
+                 as.integer(n),
+                 as.integer(ar.order),
+                 as.integer(span),
+                 as.integer(nf),
+                 as.integer(ivar),
+                 as.double(sigma2),
+                 as.double(arcoef),
+                 as.double(var),
+                 spec = double(nf1 * n))
 
-  spectra <- array(z1[[1L]], dim = c(nf+1, n))
+  spectra <- array(z$spec, dim = c(nf1, n))
   yy <- seq(0, n*span, length = n)
 
   out <- list(y = yy, z = spectra)

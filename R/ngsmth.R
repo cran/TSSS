@@ -38,27 +38,28 @@ ngsmth <- function(y, noisev = 2,tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
   npe <- n
   k1 <- k+1
 
-  z <- .Call("NgsmthC",
-             as.double(y),
-             as.integer(n),
-             as.integer(noisev),
-             as.double(tau2),
-             as.double(bv),
-             as.integer(noisew),
-             as.double(sigma2),
-             as.double(bw),
-             as.integer(initd),
-             as.integer(ns),
-             as.integer(nfe),
-             as.integer(npe),
-             as.integer(k1))
+  z <- .Fortran(C_ngsmthf,
+                as.double(y),
+                as.integer(n),
+                as.integer(noisev),
+                as.double(tau2),
+                as.double(bv),
+                as.integer(noisew),
+                as.double(sigma2),
+                as.double(bw),
+                as.integer(initd),
+                trend = double(npe * 7),
+                smt = double(k1 * npe),
+                lkhood = double(1),
+                as.integer(ns),
+                as.integer(nfe),
+                as.integer(npe),
+                as.integer(k1))
 
-  trend <- array(z[[1L]], dim = c(n, 7))
-  smt <- array(z[[2L]], dim = c(k1, n))
-  ll <- z[[3L]]
-  message(gettextf("\n log-likelihood\t%12.3f", ll), domain = NA)
+  trend <- array(z$trend, dim = c(n, 7))
+  smt <- array(z$smt, dim = c(k1, n))
 
-  ngsmth.out <- list(trend = trend, smt = smt)
+  ngsmth.out <- list(llkhood = z$lkhood, trend = trend, smt = smt)
   class(ngsmth.out) <- "ngsmth"
 
   if (plot)
@@ -66,6 +67,11 @@ ngsmth <- function(y, noisev = 2,tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
 
   return(ngsmth.out)
 }
+
+print.ngsmth <- function(x, ...) {
+  message(gettextf("\n log-likelihood\t%12.3f", x$llkhood), domain = NA)
+}
+
 
 plot.ngsmth <- function(x, type = c("trend", "smt"), theta = 0, phi = 15,
                         expand = 1, col = "lightblue", ticktype= "detail", ...)

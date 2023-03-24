@@ -40,11 +40,10 @@ tsmooth <- function( y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
   if (is.null(predict.end))
     predict.end <- n   # end point of prediction
   if (filter.end > predict.end)
-    stop("'predict.end' is less than or equal to n (data length)")
+    stop("'filter.end' is less than or equal to n (data length)")
 
   outmin <- minmax[1]   # lower limits of observations
   outmax <- minmax[2]   # upper limits of observations
-
 
   startp <- missed
   if (is.null(startp) || is.null(np)) {
@@ -57,7 +56,9 @@ tsmooth <- function( y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
     np <- np[1:nmiss]                       # number of missed observations
   }
 
-  z <- .Call("smooth",
+  npe <- predict.end
+
+  z <- .Fortran(C_smoothf,
              as.double(y),
              as.integer(n),
              as.integer(m),
@@ -70,20 +71,31 @@ tsmooth <- function( y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
              as.double(x0),
              as.double(v0),
              as.integer(filter.end),
-             as.integer(predict.end),
+             as.integer(npe),
              as.double(outmin),
              as.double(outmax),
              as.integer(nmiss),
              as.integer(startp),
-             as.integer(np))
+             as.integer(np),
+             xss = double(m * npe),
+             vss = double(m * m * npe),
+             lkhood = double(1),
+             aic = double(1))
 
-  npe <- predict.end
-  xss <- array(z[[1L]], dim = c(m, npe)) + ymean
-  vss <- array(z[[2L]], dim = c(m, m, npe))
+  xss <- array(z$xss, dim = c(m, npe)) + ymean
+  vss <- array(z$vss, dim = c(m, m, npe))
   cov.smooth <- array(,dim = c(m, npe))
   for (i in 1:m)
     cov.smooth[i, ] <- vss[i, i, ]
   err <- NULL
+
+  if (filter.end < n) {
+    err <- rep(0, npe)
+    nps <- filter.end + 1
+    for (i in nps:npe)
+      err[i] <- y[i] - xss[1, i]
+  }
+
   if (nmiss != 0) {
     err <- rep(0, npe)
     for (i in 1:n)
@@ -91,7 +103,7 @@ tsmooth <- function( y, f, g, h, q, r, x0 = NULL, v0 = NULL, filter.end = NULL,
   }
 
   tsmooth.out <- list(mean.smooth = xss, cov.smooth = cov.smooth, 
-                      llkhood = z[[3L]], aic = z[[4L]])
+                      esterr = err, llkhood = z$lkhood, aic = z$aic)
   class(tsmooth.out) <- c("smooth")
 
   if (plot) {
@@ -129,8 +141,8 @@ plot.smooth <- function(x, rdata = NULL, ...)
   c1 <- xss1 + sqrt(cov[1, ])
   c2 <- xss1 - sqrt(cov[1, ])
 
-  err <- NULL
-  if (is.null(rdata) == FALSE) {
+  err <- x$esterr
+  if (is.null(rdata) == FALSE && is.null(err)) {
     err <- rep(0, npe)
     n <- length(rdata)
     for (i in 1:n)
@@ -138,6 +150,7 @@ plot.smooth <- function(x, rdata = NULL, ...)
     if (min(err) == 0 && max(err) == 0)
       err <- NULL
   }
+
   if (is.null(err) == FALSE)
     par(mfcol=c(2,1))
   par(mar = new.mar, xpd=T)

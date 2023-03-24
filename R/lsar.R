@@ -8,43 +8,60 @@ lsar <- function (y, max.arorder = 20, ns0, plot = TRUE, ...)
   nb <- as.integer(n / ns0)
   nf0 <- 100             # Initial number of frequencies for computing spectrum
 
-  z <- .Call("Lsar1C",
-	     as.double(y),
-	     as.integer(n),
-	     as.integer(lag),
-	     as.integer(ns0),
-	     as.integer(nb),
-	     as.integer(nf0))
+  z <- .Fortran(C_lsar1,
+                as.double(y),
+	            as.integer(n),
+                as.integer(lag),
+                as.integer(ns0),
+                as.integer(nb),
+                as.integer(nf0),
+                ns = integer(nb),
+                n0 = integer(nb),
+                n1 = integer(nb),
+                iflag = integer(nb),
+                ms = integer(nb),
+                sds = double(nb),
+                aics = double(nb),
+                mp = integer(nb),
+                sdp = double(nb),
+                aicp = double(nb),
+                as = double(nb*lag),
+                mfs = integer(nb),
+                sig2s = double(nb),
+                nnf = integer(nb),
+                ier = integer(1))
 
-  nns <- z[[1L]]
-  n0 <- z[[2L]]
-  n1 <- z[[3L]]
-  sub <- list(start = n0, end = n1)
-  model <- z[[4L]]
-  ms <- z[[5L]]
-  sds <- z[[6L]]
-  aics <- z[[7L]]
-  mp <- z[[8L]]
-  sdp <- z[[9L]]
-  sdp[1] <- NA
-  aicp <- z[[10L]]
-  aicp[1] <- NA
-  as <- array(z[[11L]], dim = c(lag, nb))
-  mfs <- z[[12L]]
-  sig2s <- z[[13L]]
-  nnf <- z[[14L]]
+  if (z$ier == 0) {
+    model <- z$iflag
+    sub <- list(start = z$n0, end = z$n1)
+    as <- array(z$as, dim = c(lag, nb))
+    nnf <- z$nnf
 
-  spec <- sub.arsp(model, sub, as, mfs, sig2s, nnf)
+    spec <- sub.arsp(model, sub, as, z$mfs, z$sig2s, nnf)
+    sdp <- z$sdp
+    sdp[1] <- NA
+    aicp <- z$aicp
+    aicp[1] <- NA
 
-  lsar.out <- list(model = model, ns = nns, span = sub, nf = nnf, ms = ms,
-                   sds = sds, aics = aics, mp = mp, sdp = sdp, aicp = aicp,
-                   spec = spec, tsname = deparse(substitute(y)))
-  class(lsar.out) <- "lsar"
 
-  if (plot)
-    plot.lsar(lsar.out, ...)
+    if (ns0 < max.arorder * 2)
+      warning("the length of basic local span (ns0) is too small. 
+ns0 should be at least twice as large as the maximum AR order")
 
-  return(lsar.out)
+    lsar.out <- list(model = model, ns = z$ns, span = sub, nf = nnf, ms = z$ms,
+                     sds = z$sds, aics = z$aics, mp = z$mp, sdp = sdp, aicp = aicp,
+                     spec = spec, tsname = deparse(substitute(y)))
+    class(lsar.out) <- "lsar"
+
+    if (plot)
+      plot.lsar(lsar.out, ...)
+
+    return(lsar.out)
+
+  } else {
+    stop("estimation error: the length of basic local span (ns0) is too small. 
+ns0 should be at least twice as large as the maximum AR order")
+  }
 }
 
 sub.arsp <- function(model, sub, as, mfs, sig2s, nf)
@@ -62,18 +79,20 @@ sub.arsp <- function(model, sub, as, mfs, sig2s, nf)
       a <- as[, i]
       m <- mfs[i]
       sig2 <- sig2s[i]
-      nnf <- nf[i]
+##      nnf <- nf[i]
+      nnf <- max(nf[i], 100)
 
-      z <- .Call("arsp",
-                 as.double(a),
-                 as.integer(m),
-                 as.double(b),
-                 as.integer(l),
-                 as.double(sig2),
-                 as.integer(nnf))
+      z <- .Fortran(C_armasp,
+                   as.double(a),
+                   as.integer(m),
+                   as.double(b),
+                   as.integer(l),
+                   as.double(sig2),
+                   as.integer(nnf),
+                   spec = double(nnf + 1))
 
       k <- k + 1
-      spec[[k]] <- z[[1L]]
+      spec[[k]] <- z$spec
       ed <- c(ed, sub$end[i])
       st <- c(st, sub$start[i + 1])
     }
@@ -83,16 +102,17 @@ sub.arsp <- function(model, sub, as, mfs, sig2s, nf)
   sig2 <- sig2s[nb]
   nnf <- nf[nb]
 
-  z <- .Call("arsp",
-             as.double(a),
-             as.integer(m),
-             as.double(b),
-             as.integer(l),
-             as.double(sig2),
-             as.integer(nnf))
+  z <- .Fortran(C_armasp,
+                as.double(a),
+                as.integer(m),
+                as.double(b),
+                as.integer(l),
+                as.double(sig2),
+                as.integer(nnf),
+                spec = double(nnf + 1))
 
   k <- k + 1
-  spec[[k]] <- z[[1L]]
+  spec[[k]] <- z$spec
   ed[k] <- sub$end[nb]
 
   spec <- list(subspec = spec, start = st, end = ed)
@@ -110,7 +130,6 @@ plot.lsar <- function(x, ...)
   ylim <- c(floor(min(sp)), ceiling(max(sp)))
 
   old.par <- par(no.readonly = TRUE)
-#  par(mfrow = c(2, 2), xaxs = "i", yaxs = "i")
   par(mfrow = c(3, 3), xaxs = "i", yaxs = "i")
   ic <- 0
   for (i in 1:k) {
@@ -195,27 +214,26 @@ lsar.chgpt <- function (y, max.arorder = 20, subinterval, candidate,
     the end point of 'candidate', \n k is max.arorder and ne is the end point of
     'subinterval'.")
 
-
-  z <- .Call("Lsar2C",
-             as.double(y),
-	         as.integer(n),
-	         as.integer(max.arorder),
-	         as.integer(n0),
-	         as.integer(n1),
-	         as.integer(n2),
-	         as.integer(ne))
-
   m <- n2 - n1
-  aics <- z[[1L]]
-  aicm <- z[[2L]]
-  cpt <- z[[3L]]
-  change.pt <- n1 + cpt
+
+  z <- .Fortran(C_lsar2,
+                as.double(y),
+                as.integer(n),
+                as.integer(max.arorder),
+                as.integer(n0),
+                as.integer(n1),
+                as.integer(n2),
+                as.integer(ne),
+                aics = double(m),
+                aicmin = double(1),
+                nmin = integer(1))
+
+  change.pt <- n1 + z$nmin
   subint <- list(tsname = deparse(substitute(y)), st = n1+1, ed = n2,
                  y = y[(n1+1):n2])
 
-
-  lsar.chgpt.out <- list(aic = aics, aicmin = aicm, change.point = change.pt,
-                         subint = subint )
+  lsar.chgpt.out <- list(aic = z$aics, aicmin = z$aicmin,
+                         change.point = change.pt, subint = subint )
   class(lsar.chgpt.out) <- "chgpt"
 
   if (plot) {

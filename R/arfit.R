@@ -2,8 +2,12 @@
 arfit <- function(y, lag = NULL, method = 1, plot = TRUE, ...)
 {
   n <- length(y)             # data length
-  if (is.null(lag))
+  if (is.null(lag)) {
     lag <- as.integer(2 * sqrt(n))    # highest order of AR model
+  } else if (lag < 1) {
+    stop("lag is not a positive integer.\n")
+  }
+
 # method                     # estimation procedure
   nf <- 200                  # number of frequencies for computing spectrum
 # mj2                        # Adjustable dimension in Fortran
@@ -15,33 +19,48 @@ arfit <- function(y, lag = NULL, method = 1, plot = TRUE, ...)
     mj2 <- 1
   }
 
-  z <- .Call("ArfitC",
-             as.double(y),
-             as.integer(n),
-             as.integer(lag),
-             as.integer(nf),
-			 as.integer(mj2),
-             as.integer(method))
+  yy <- y
+  ier <- 0
+  if (anyNA(yy) == TRUE) {
+    if (method == 1) {
+      outmax <- 1.0e+30
+      yy[is.na(yy)] <- outmax + 1
+    } else {
+      stop("Cannot handle the data with missing values.\n")
+    }
+  }
 
-  sig2 <- z[[1L]]
-  aic <- z[[2L]]
-  mmin <- z[[3]]
-  a <- array(z[[4L]], dim = c(lag, lag))
+  z <- .Fortran(C_arfit,
+                as.double(yy),
+                as.integer(n),
+                as.integer(lag),
+                as.integer(nf),
+                as.integer(mj2),
+                as.integer(method),
+			    sig = double(lag+1),
+			    aic = double(lag+1),
+		        mar = integer(1),
+			    a = double(lag*lag),
+			    par = double(lag),
+			    sp = double(nf+1))
+
+  mmin <- z$mar
+  a <- array(z$a, dim = c(lag, lag))
   arcoef <- list()
   for (i in 1:lag)
     arcoef[[i]] <- a[1:i, i]
-  parcor <- z[[5L]]
-  spec <- z[[6L]]
 
-  arfit.out <- list(sigma2 = sig2, maice.order = mmin, aic = aic,
-                    arcoef = arcoef, parcor = parcor, spec = spec,
+  arfit.out <- list(sigma2 = z$sig, maice.order = mmin, aic = z$aic,
+                    arcoef = arcoef, parcor = z$par, spec = z$sp,
                     tsname = deparse(substitute(y)))
+
   class(arfit.out) <- "arfit"
 
   if (plot) {
     plot.arfit(arfit.out, ...)
     invisible(arfit.out)
   } else arfit.out
+
 }
 
 plot.arfit <- function(x, ...)

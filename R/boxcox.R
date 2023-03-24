@@ -6,21 +6,21 @@ boxcox <- function(y, plot = TRUE, ...)
     if ((y[i] == 0) || (y[i] < 0))
       stop("Log-transformation cannot be applied to zeros and nagative numbers")
 
-  z <- .Call("BoxcoxC",
-             as.double(y),
-             as.integer(n))
+  z <- .Fortran(C_boxcoxf,
+                as.double(y),
+                as.integer(n),
+                aiczt = double(21),
+                ffzt = double(21),
+                aicz = double(21),
+                ffz = double(21),
+                mean = double(21),
+                var = double(21),
+                zz = double(n))
 
-  aiczt <- z[[1L]]
-  ffzt <- z[[2L]]
-  aicz <- z[[3L]]
-  ffz <- z[[4L]]
-  mean <- z[[5L]]
-  var <- z[[6L]]
-  z <- z[[7L]]
+  boxcox.out <- list(y, mean = z$mean, var = z$var, aic = z$aicz,
+                     llkhood = z$ffz, z = z$zz, aic.z = z$aiczt,
+                     llkhood.z = z$ffzt)
 
-
-  boxcox.out <- list(y, mean = mean, var = var, aic = aicz, llkhood = ffz,
-                     z = z, aic.z = aiczt, llkhood.z = ffzt)
   class(boxcox.out) <- "boxcox"
 
   if (plot) {

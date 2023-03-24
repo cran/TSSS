@@ -3,16 +3,20 @@ klinfo <- function(distg = 1, paramg = c(0, 1), distf = 1, paramf, xmax = 10)
 {
   xmin <- -xmax
 
-  z <- .Call("KlinfoC",
-             as.integer(distg),
-             as.double(paramg),
-             as.integer(distf),
-             as.double(paramf),
-             as.double(xmin),
-             as.double(xmax))
-
-  klinfo.out <- list(nint = z[[1L]], dx = z[[2L]], KLI = z[[3L]],
-                     gint = z[[4L]], xmax = xmax)
+  z <- .Fortran(C_klinfof,
+                as.integer(distg),
+                as.double(paramg),
+                as.integer(distf),
+                as.double(paramf),
+                as.double(xmin),
+                as.double(xmax),
+                nint = integer(4),
+                dx = double(4),
+                fkli = double(4),
+                gint = double(4))
+			 
+  klinfo.out <- list(nint = z$nint, dx = z$dx, KLI = z$fkli,
+                     gint = z$gint, xmax = xmax)
   class(klinfo.out) <- "klinfo"
   return(klinfo.out)
 }

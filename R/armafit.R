@@ -12,27 +12,42 @@ armafit <- function (y, ar.order, ar = NULL, ma.order, ma = NULL)
   } else {
     iparam <- 1
   }
-    
-  z <- .Call("armaft",
-             as.double(y),
-             as.integer(n),
-             as.integer(m),
-             as.integer(l),
-             as.integer(mlmax),
-             as.integer(iparam),
-             as.double(ar),
-             as.double(ma))
 
-  ier <- z[[6L]]
-  if (ier == 1)
+  yy <- y
+  if (anyNA(yy) == TRUE) {
+    outmax <- 1.0e+30
+    yy[is.na(yy)] <- outmax + 1
+  }
+
+  z <- .Fortran(C_armaft,
+                as.double(yy),
+                as.integer(n),
+                as.integer(m),
+                as.integer(l),
+                as.integer(mlmax),
+                as.integer(iparam),
+                as.double(ar),
+                as.double(ma),
+                sig2 = double(1),
+                flk = double(1),
+                aic = double(1),
+                ar = double(m),
+                ma = double(l),
+                ier = integer(1))
+
+  ier <- z$ier
+  if (ier == 1) {
     stop(" Matrix with zero row in decompose" )
-  if (ier == 2)
+  } else if (ier == 2) {
     stop(" Singular matrix in decompose.zero divide in solve" )
-  if (ier == 3)
+  } else if (ier == 3) {
     stop(" Convergence in impruv.matrix is nearly singular" )
+  } else if (ier == -1) {
+    stop(gettextf(" The model of the order (%d , %d) cannot be estimated", m,l), domain = NA )
+  }
 
-  armafit.out <- list(sigma2 = z[[1L]], llkhood = z[[2L]], aic = z[[3L]],
-                      arcoef = z[[4L]], macoef = z[[5L]])
+  armafit.out <- list(sigma2 = z$sig2, llkhood = z$flk, aic = z$aic,
+                      arcoef = z$ar, macoef = z$ma)
   class(armafit.out) <- "armafit"
 
   return(armafit.out)
@@ -70,26 +85,46 @@ armafit2 <- function (y, ar.order, ma.order)
   lmax <- ma.order
   mlmax <- max(mmax, lmax, 1) + 1
 
-  z <- .Call("armaft2",
-             as.double(y),
-             as.integer(n),
-             as.integer(mmax),
-             as.integer(lmax),
-             as.integer(mlmax))
+  yy <- y
+  if (anyNA(yy) == TRUE) {
+    outmax <- 1.0e+30
+    yy[is.na(yy)] <- outmax + 1
+  }
 
-  ier <- z[[6L]]
-  if (ier == 1)
+  mmax1 = mmax + 1;
+  lmax1 = lmax + 1;
+	
+  z <- .Fortran(C_armaft2,
+                as.double(yy),
+                as.integer(n),
+                as.integer(mmax),
+                as.integer(lmax),
+                as.integer(mlmax),
+                sig2 = double(mmax1*lmax1),
+                flk = double(mmax1*lmax1),
+                aic = double(mmax1*lmax1),
+                ar = double(mmax*mmax1*lmax1),
+                ma = double(lmax*mmax1*lmax1),
+                ier = integer(3))
+
+  ier <- z$ier
+  if (ier[1] == 1)
     stop(" Matrix with zero row in decompose" )
-  if (ier == 2)
+  if (ier[1] == 2)
     stop(" Singular matrix in decompose.zero divide in solve" )
-  if (ier == 3)
+  if (ier[1] == 3)
     stop(" Convergence in impruv.matrix is nearly singular" )
+  if (ier[1] == -1) {
+    m <- ier[2]
+    l <- ier[3]
+    stop(gettextf(" The model of the order (%d , %d) cannot be estimated", m,l), domain = NA )
+  }
 
-  sig2 <- array(z[[1L]], c(mmax + 1, lmax + 1))
-  flk <- array(z[[2L]], c(mmax + 1, lmax + 1))
-  aic <- array(z[[3L]], c(mmax + 1, lmax + 1))
-  ar <- array(z[[4L]], c(mmax, mmax + 1, lmax + 1))
-  ma <- array(z[[5L]], c(lmax, mmax + 1, lmax + 1))
+  sig2 <- array(z$sig2, c(mmax1, lmax1))
+  flk <- array(z$flk, c(mmax1, lmax1))
+  aic <- array(z$aic, c(mmax1, lmax1))
+  ar <- array(z$ar, c(mmax, mmax1, lmax1))
+  ma <- array(z$ma, c(lmax, mmax1, lmax1))
   ar <- aperm(ar, c(2, 3, 1))
   ma <- aperm(ma, c(2, 3, 1))
 

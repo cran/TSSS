@@ -1,8 +1,8 @@
 C     PROGRAM 14.1  NGSMTH
       SUBROUTINE  NGSMTHF( Y,N,NOISEV,TAU2,BV,NOISEW,SIG2,BW,INITD,
-     *                     TREND,SS,FF,NS,NFE,NPE,K )
+     *                    TREND,SS,FF,NS,NFE,NPE,K )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  NON-GAUSSIAN SMOOTHING  ...
 C
@@ -19,8 +19,6 @@ C        K:        NUMBER OF INTERVALS + 1
 C     @NFILTER.F:   5/14/85, 6/11/87, 5/19/88, 2/14/91
 C     MODIFIED  2/16/93
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: NGSMTHF
-C
 cc      PARAMETER( MJ=500, K=201 )
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      CHARACTER  TITLE*72
@@ -32,11 +30,13 @@ cxx      DIMENSION  YM(2), ST(7), TREND(NPE,7), LOC(NPE)
 cxx      REAL*4     SS(K,NPE)
 cxx      REAL*8     SS(K,NPE)
 C
-      INTEGER :: N, NOISEV, NOISEW, INITD, NS, NFE, NPE, K
-      REAL(8) :: Y(N), TAU2, BV, SIG2, BW, TREND(NPE,7), SS(K,NPE), FF
-      INTEGER :: LOC(NPE)
-      REAL(8) :: F(K), Q(-K:K), YM(2), ST(7), DX, XMIN, XMAX, OUTMIN,
-     1           OUTMAX, SSUM
+      INTEGER N, NOISEV, NOISEW, INITD, NS, NFE, NPE, K
+      DOUBLE PRECISION Y(N), TAU2, BV, SIG2, BW, TREND(NPE,7),
+     1                 SS(K,NPE), FF
+c local
+      INTEGER LOC(NPE)
+      DOUBLE PRECISION F(K), Q(-K:K), YM(2), ST(7), DX, XMIN, XMAX,
+     1                 OUTMIN, OUTMAX, SSUM
 C
 cc      COMMON   /COMAAA/  Y
 cc      COMMON   /C91214/  XMIN, XMAX, FIGMIN, FIGMAX, YM
@@ -114,9 +114,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(500)
 cxx      DIMENSION  Y(N)
 C
-      INTEGER :: N
-      REAL(8) :: Y(N), XMIN, XMAX, OUTMIN, OUTMAX
-      REAL(8) :: DY
+      INTEGER N
+      DOUBLE PRECISION Y(N), XMIN, XMAX, OUTMIN, OUTMAX
+c local
+      DOUBLE PRECISION DY
 C
 cc      COMMON   /COMAAA/  Y
 cc      COMMON   /C91214/  XMIN, XMAX, FIGMIN, FIGMAX, YM(10)
@@ -167,10 +168,11 @@ cxx      DIMENSION  P(K), F(K), S(K), T(K), Y(N), Q(-K:K), LOC(NPE)
 cxx      REAL*4     PS(K,NPE), SS(K,NPE)
 cxx      DIMENSION     PS(K,NPE), SS(K,NPE)
 C
-      INTEGER :: NOISEW, N, K, LOC(NPE), NS, NFE, NPE
-      REAL(8) :: SIG2, BW, Y(N), F(K), DX, XMIN, Q(-K:K), FF, SS(K,NPE),
-     1           OUTMIN, OUTMAX
-      REAL(8) :: P(K), S(K), T(K), PS(K,NPE), PSUM, FINT, TSUM
+      INTEGER NOISEW, N, K, LOC(NPE), NS, NFE, NPE
+      DOUBLE PRECISION SIG2, BW, Y(N), F(K), DX, XMIN, Q(-K:K), FF,
+     1                 SS(K,NPE), OUTMIN, OUTMAX
+c local
+      DOUBLE PRECISION P(K), S(K), T(K), PS(K,NPE), PSUM, FINT, TSUM
 C
 cc      COMMON   /C91215/  NOISEV, NOISEW, INITD, ITF, ITH
 cc      COMMON   /C91216/  B, OUTMIN, OUTMAX
@@ -268,9 +270,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  P(K), Y(7), PROB(7), P1(401)
 cxx      DIMENSION  P(K), Y(7), PROB(7), P1(K)
 C
-      INTEGER :: K
-      REAL(8) :: P(K), XMIN, DX, Y(7)
-      REAL(8) :: PROB(7), P1(K), PP
+      INTEGER K
+      DOUBLE PRECISION P(K), XMIN, DX, Y(7)
+c local
+      DOUBLE PRECISION PROB(7), P1(K), PP
 C
       DATA  PROB /0.0013D0, 0.0227D0, 0.1587D0, 0.5000D0, 0.8413D0,
      *            0.9773D0,0.9987D0/
@@ -298,9 +301,10 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  S(K), P(K), Q(-K:K)
 C
-      INTEGER :: K
-      REAL(8) :: Q(-K:K), S(K), P(K)
-      REAL(8) :: SUM
+      INTEGER K
+      DOUBLE PRECISION Q(-K:K), S(K), P(K)
+c local
+      DOUBLE PRECISION SUM
 C
       DO 20 I=1,K
       J1 = 1-I
@@ -321,9 +325,10 @@ cc      SUBROUTINE  SCONVL( Q,P,R,S,K,T )
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  S(K), P(K), R(K), T(K), Q(-K:K)
 C
-      INTEGER :: K
-      REAL(8) :: Q(-K:K), P(K), R(K), S(K), T(K)
-      REAL(8) :: SUM
+      INTEGER K
+      DOUBLE PRECISION Q(-K:K), P(K), R(K), S(K), T(K)
+c local
+      DOUBLE PRECISION SUM
 C
       DO 20 I=1,K
       J1 = 1-I
@@ -342,9 +347,10 @@ cxx   20 T(I) = S(I)*SUM
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Q(-K:K), PARAM(3)
 C
-      INTEGER :: K
-      REAL(8) :: DX, TAU2, BV, Q(-K:K)
-      REAL(8) :: USERV, PARAM(3), X0, X, SUM
+      INTEGER K
+      DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
+c local
+      DOUBLE PRECISION USERV, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
 C
@@ -372,9 +378,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Q(-K:K), PARAM(3)
 C
-      INTEGER :: K
-      REAL(8) :: DX, TAU2, BV, Q(-K:K)
-      REAL(8) :: GAUSS, PARAM(3), X0, X, SUM
+      INTEGER K
+      DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
+c local
+      DOUBLE PRECISION GAUSS, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
 C
@@ -402,9 +409,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Q(-K:K), PARAM(3)
 C
-      INTEGER :: K
-      REAL(8) :: DX, TAU2, BV, Q(-K:K)
-      REAL(8) :: PEARSN, PARAM(3), X0, X, SUM
+      INTEGER K
+      DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
+c local
+      DOUBLE PRECISION PEARSN, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
 C
@@ -432,9 +440,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Q(-K:K), PARAM(3)
 C
-      INTEGER :: K
-      REAL(8) :: DX, TAU2, BV, Q(-K:K)
-      REAL(8) :: TWOEXP, PARAM(3), X0, X, SUM
+      INTEGER K
+      DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
+c local
+      DOUBLE PRECISION TWOEXP, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
 C
@@ -462,8 +471,8 @@ C
       SUBROUTINE  NORMLZ( P,K,DX,SUM )
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  P(K)
-      INTEGER :: K
-      REAL(8) :: P(K), DX, SUM
+      INTEGER K
+      DOUBLE PRECISION P(K), DX, SUM
 C
       SUM = 0.0D0
       DO 10 I=1,K
@@ -484,9 +493,10 @@ cxx      IMPLICIT REAL*8( A-H,O-Z )
 cxx      DIMENSION  P(K), PARAM(3)
 cc      COMMON   /C91215/  NOISEV, NOISEW, INITD, ITF, ITH
 C
-      INTEGER :: K, INITD 
-      REAL(8) :: P(K), P1, P2, XMIN, DX
-      REAL(8) :: USERI, GAUSS, PARAM(3), X
+      INTEGER K, INITD 
+      DOUBLE PRECISION P(K), P1, P2, XMIN, DX
+c local
+      DOUBLE PRECISION USERI, GAUSS, PARAM(3), X
 C
       PARAM(1) = P1
       PARAM(2) = P2
@@ -513,9 +523,10 @@ cc      EXTERNAL  PEARSN
 cc      EXTERNAL  TWOEXP
 cc      EXTERNAL  DBLEXP
 C
-      INTEGER :: NOISEW, K, LSHIFT
-      REAL(8) :: SIG2, BW, P(K), XMIN, DX, Y, F(K)
-      REAL(8) :: USERW, GAUSS, PEARSN, TWOEXP, DBLEXP, PARAM(3)
+      INTEGER NOISEW, K, LSHIFT
+      DOUBLE PRECISION SIG2, BW, P(K), XMIN, DX, Y, F(K)
+c local
+      DOUBLE PRECISION USERW, GAUSS, PEARSN, TWOEXP, DBLEXP, PARAM(3)
 C
       PARAM(2) = SIG2
       PARAM(3) = BW
@@ -534,8 +545,9 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(3)
 C
-      REAL(8) :: Y, PARAM(3)
-      REAL(8) :: C1, YMEAN, VAR
+      DOUBLE PRECISION Y, PARAM(3)
+c local
+      DOUBLE PRECISION C1, YMEAN, VAR
       DATA  C1  /2.506628275D0/
 C
       YMEAN = 0.0D0
@@ -547,8 +559,9 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(3)
 C
-      REAL(8) :: X, PARAM(3)
-      REAL(8) :: C1
+      DOUBLE PRECISION X, PARAM(3)
+c local
+      DOUBLE PRECISION C1
       DATA  C1  /2.506628275D0/
 C
       USERV = DEXP( -(X-PARAM(1))**2/(2*PARAM(2)) )
@@ -558,7 +571,7 @@ C
       DOUBLE PRECISION FUNCTION  TWOEXP( X,PARAM )
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(2)
-      REAL(8) :: X, PARAM(2)
+      DOUBLE PRECISION X, PARAM(2)
 C
       TWOEXP = DEXP( -DABS(X-PARAM(1))*PARAM(2) )*PARAM(2)/2.0D0
       RETURN
@@ -570,9 +583,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cx      DIMENSION  F(K), T(K), LOC(*)
 cxx      DIMENSION  F(K), T(K), LOC(N)
 C
-      INTEGER :: K, II, N, LOC(N)
-      REAL(8) :: F(K), T(K)
-      REAL(8) :: PMAX
+      INTEGER K, II, N, LOC(N)
+      DOUBLE PRECISION F(K), T(K)
+c local
+      DOUBLE PRECISION PMAX
 C
 C  ...  FIND THE POSTERIOR MODE AND SHIFT ORIGIN  ...
 C
@@ -606,9 +620,10 @@ cc      DIMENSION  YH(2000), FF(801), LOC(N)
 cxx      REAL*8     FF(-K:2*K)
 cxx      DIMENSION  LOC(N)
 C
-      INTEGER :: K, N, LOC(N)
-      REAL(8) :: F(K,N)
-      REAL(8) :: FF(-K:2*K)
+      INTEGER K, N, LOC(N)
+      DOUBLE PRECISION F(K,N)
+c local
+      DOUBLE PRECISION FF(-K:2*K)
 C
 cc      COMMON   /C91214/  X0, X1, F0, F1, YM(10)
 cc      ANGLE = 70.0
@@ -673,26 +688,14 @@ C
 cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cxx      DIMENSION  PARAM(2)
 C
-      REAL(8) :: X, PARAM(2)
-      REAL(8) :: SIGMA
+      DOUBLE PRECISION X, PARAM(2)
+c local
+      DOUBLE PRECISION SIGMA
 C
       SIGMA = DSQRT( PARAM(2) )
          USERI = SIGMA*DEXP( -SIGMA*DABS(X-PARAM(1)) )/2
       RETURN
       E N D
-cxxcc      DOUBLE PRECISION FUNCTION  UNIF( X,PARAM )
-cxx      DOUBLE PRECISION FUNCTION  UNIF( X )
-cxxC
-cxxC  ...  uniform distribution  f(x) = 1  ...
-cxxC
-cxxC     Output:
-cxxC        UNIF:    density at X (=1)
-cxxC
-cxx      IMPLICIT REAL*8(A-H,O-Z)
-cxxC
-cxx      UNIF = 1.0D0
-cxx      RETURN
-cxx      E N D
 cc      SUBROUTINE  MAXMIN( X,N,XMIN0,XMAX0,DXL )
       SUBROUTINE  MAXMINK( X,N,XMIN0,XMAX0,DXL )
 C
@@ -710,9 +713,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION X(N)
 C
-      INTEGER :: N
-      REAL(8) :: X(N), XMIN0, XMAX0, DXL
-      REAL(8) :: XMIN, XMAX, DX, DIF
+      INTEGER N
+      DOUBLE PRECISION X(N), XMIN0, XMAX0, DXL
+c local
+      DOUBLE PRECISION XMIN, XMAX, DX, DIF
 C
       XMIN = 1.0D30
       XMAX =-1.0D30

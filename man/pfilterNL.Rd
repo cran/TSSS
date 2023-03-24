@@ -23,7 +23,7 @@ pfilterNL(y, m = 10000, lag = 20, sigma2, tau2, xrange = NULL, seed = NULL,
   \item{\dots}{graphical arguments passed to the \code{plot} method.}
 }
 \details{
-  This function performs paricle filtering and smoothing for the following nonlinear state-space model;
+  This function performs particle filtering and smoothing for the following nonlinear state-space model;
 
   \tabular{ll}{
     \eqn{x_n = \frac{1}{2} x_{n-1} + \frac{25 x_{n-1}}{x_{n-1}^2 + 1} + 8cos(1.2n) + v_n,}{%
@@ -61,7 +61,7 @@ For more details, please refer to Kitagawa (1996) and Doucet et al. (2001).
  J. of Comp. and Graph. Statist., 5, 1-25.
 
   Doucet, A., de Freitas, N. and Gordon, N. (2001)
-  \emph{Sequential Monte Carlo Methods in Praactice}, Springer, New York.
+  \emph{Sequential Monte Carlo Methods in Practice}, Springer, New York.
 
   Kitagawa, G. (2020)
   \emph{Introduction to Time Series Modeling with Applications in R}. Chapman & Hall/CRC.

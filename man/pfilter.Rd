@@ -79,7 +79,7 @@ For more details, please refer to Kitagawa (1996) and Doucet et al. (2001).
  J. of Comp. and Graph. Statist., 5, 1-25.
 
   Doucet, A., de Freitas, N. and Gordon, N. (2001)
-  \emph{Sequential Monte Carlo Methods in Praactice}, Springer, New York.
+  \emph{Sequential Monte Carlo Methods in Practice}, Springer, New York.
 
   Kitagawa, G. (2020)
   \emph{Introduction to Time Series Modeling with Applications in R}. Chapman & Hall/CRC.

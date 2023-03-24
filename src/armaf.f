@@ -1,7 +1,7 @@
-      SUBROUTINE ARMAF(M,L,A,B,SIG2,K,KMAX,NF,G,COV,PAR,SP,
+      SUBROUTINE ARMA(M,L,A,B,SIG2,K,KMAX,NF,G,COV,PAR,SP,
      * ROOTA,ROOTB,IER,JER)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C     PROGRAM 6.1  ARMA
 C
@@ -26,8 +26,6 @@ C               =2 : SINGULAR MATRIX IN DECOMPOSE.ZERO DIDIVIDE IN SOLVE
 C               =3 : CONVERGENCE IN IMPRUV.MATRIX IS NEARLY SINGULAR
 C         JER:  =1 : NON-CONVERGENCE AT POLYRT
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT::ARMAF
-C
 cc      PARAMETER( NF=200,MJ=100,IDEV=1 )
 cxx      IMPLICIT REAL*8( A-H,O-Z )
 cc      DIMENSION  A(MJ), B(MJ), PAR(MJ), ROOTA(MJ,2), ROOTB(MJ,2)
@@ -38,10 +36,11 @@ cxx      DIMENSION  A(M), B(L), PAR(K), ROOTA(M,2), ROOTB(L,2)
 cxx      DIMENSION  G(0:KMAX), COV(0:K), SP(0:NF)
 cxx      DIMENSION  WRK1(0:K), WRK2(0:K), WRK3(K,K)
 C
-      INTEGER :: M, L, K, KMAX, NF, IER, JER
-      REAL(8) :: A(M), B(L), SIG2, G(0:KMAX), COV(0:K), PAR(K),
-     1           SP(0:NF), ROOTA(M,2), ROOTB(L,2)
-      REAL(8) :: WRK1(0:K), WRK2(0:K), WRK3(K,K)
+      INTEGER M, L, K, KMAX, NF, IER, JER
+      DOUBLE PRECISION A(M), B(L), SIG2, G(0:KMAX), COV(0:K), PAR(K),
+     1                 SP(0:NF), ROOTA(M,2), ROOTB(L,2)
+c local
+      DOUBLE PRECISION WRK1(0:K), WRK2(0:K), WRK3(K,K)
 C
 cc      WRITE( 6,* )  'K = ?'
 cc      READ( 5,* )   K
@@ -92,9 +91,10 @@ cxx      DIMENSION  A(M), ROOT(MJ,2)
 cc      DIMENSION  C(50), CW(50)
 cxx      DIMENSION  C(M+1)
 C
-      INTEGER :: M, MJ, IER
-      REAL(8) :: A(M), ROOT(MJ,2)
-      REAL(8) :: C(M+1)
+      INTEGER M, MJ, IER
+      DOUBLE PRECISION A(M), ROOT(MJ,2)
+c local
+      DOUBLE PRECISION C(M+1)
 C
       IER = 0
 C
@@ -135,10 +135,11 @@ cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cc      DIMENSION A(1), B(1), ROOTR(1), ROOTI(1)
 cxx      DIMENSION A(M+1), B(M+3), ROOTR(M), ROOTI(M)
 C
-      INTEGER :: M, IER 
-      REAL(8) :: A(M+1), ROOTR(M), ROOTI(M)
-      REAL(8) :: B(M+3), XPR, YPR, X, XO, Y, YO, UX, UY, U, V, XT, YT,
-     1           XT2, YT2, FI, SUM, DX, DY, TEM, ALPH
+      INTEGER M, IER 
+      DOUBLE PRECISION A(M+1), ROOTR(M), ROOTI(M)
+c local
+      DOUBLE PRECISION B(M+3), XPR, YPR, X, XO, Y, YO, UX, UY, U, V,
+     1                 XT, YT, XT2, YT2, FI, SUM, DX, DY, TEM, ALPH
 C
       IFIT = 0
       ISW = 0
@@ -270,4 +271,3 @@ C
   300 IER = 1
       RETURN
       E N D
-

@@ -3,7 +3,7 @@
 
 \title{Box-Cox Transformation}
 \description{
-  Computes Box-Cox transformation and find an optimal lambda with minimum AIC.}
+  Compute Box-Cox transformation and find an optimal lambda with minimum AIC.}
 \usage{
 boxcox(y, plot = TRUE, \dots)
 }

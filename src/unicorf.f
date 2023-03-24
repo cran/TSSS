@@ -1,7 +1,7 @@
 C     PROGRAM 2.1  UNICOR
       SUBROUTINE UNICORF(Y,N,LAG,OUTMIN,OUTMAX,COV,YMEAN)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  This program computes sample autocovariance and sample
 C       autocorrelation function  ...
@@ -24,8 +24,8 @@ cc      DIMENSION  Y(NMAX), COV(0:LAG,4)
 cxx      DIMENSION  Y(N), COV(0:LAG,4)
 cc      DATA  OUTMIN/-1.0D30/, OUTMAX/ 1.0D30/
 C
-      INTEGER :: N, LAG
-      REAL(8) :: Y(N), OUTMIN, OUTMAX, COV(0:LAG,4), YMEAN
+      INTEGER N, LAG
+      DOUBLE PRECISION Y(N), OUTMIN, OUTMAX, COV(0:LAG,4), YMEAN
 C
 C  ...  read in data  ...
 C

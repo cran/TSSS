@@ -6,18 +6,22 @@ C     @NFILTER.SIM4:    FORWARD SMOOTHING   NOV.20,1992
 C     @NFILTER.SIM3:    SMOOTHING           NOV.19,1992
 C     @NFILTER.SIM2:    MONTE CARLO METHOD  NOV.02,1992
 C
-      SUBROUTINE PFILTERF(Y,N,M,MODEL,LAG,INID,SIG2,TAU2,ALPHA,BIGTAU2,
-     *                    SIG2I,XMIN,XMAX,IX,T,FF)
+      SUBROUTINE PFILTER(Y,N,M,MODEL,LAG,INID,SIG2,TAU2,ALPHA,BIGTAU2,
+     *                   SIG2I,XMIN,XMAX,IX,T,FF)
+C
+      INCLUDE 'TSSS.h'
+C
 cc      PARAMETER( NMAX=500,IDEV=1,MM=1000000, LAG=20 )
 cc      IMPLICIT REAL*8(A-H,O-Z)
 cc	  real*4  PS, PST
 cc      DIMENSION  Y(NMAX), T(NMAX,8), PS(MM,0:LAG), PST(MM,0:LAG)
 cc      CHARACTER   DATE*8, TIME2*10
-      INTEGER :: N, M, MODEL, LAG, INID, IX
-      REAL(8) :: Y(N), SIG2, TAU2, ALPHA, BIGTAU2, SIG2I, XMIN, XMAX,
-     *           T(N,8), FF
-      INTEGER :: L
-      REAL(8) :: PS(M,0:LAG), PST(M,0:LAG)
+      INTEGER N, M, MODEL, LAG, INID, IX
+      DOUBLE PRECISION Y(N), SIG2, TAU2, ALPHA, BIGTAU2, SIG2I, XMIN,
+     *                 XMAX, T(N,8), FF
+c local
+      INTEGER L
+      DOUBLE PRECISION PS(M,0:LAG), PST(M,0:LAG)
 cc      COMMON  /INIT/ IX
 cc      common  /COMIST/  IST
 
@@ -86,12 +90,13 @@ cc	  real*4  PS, PST
 cc      DIMENSION  Y(N), F(1000000), P(1000000), S(1000000)
 cc      DIMENSION  PS(MM,0:LAG), T(NMAX,8), PST(MM,0:LAG)
 cc      DIMENSION  TT(7)
-      INTEGER :: N, M, L, MODEL, LAG, INID, IX
-      REAL(8) :: Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2, TAU2,
-     *           ALPHA, BIGTAU2, SIG2I, XMIN, XMAX, FF
-      REAL(8) :: PI, TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM, GAUS2, 
+      INTEGER N, M, L, MODEL, LAG, INID, IX
+      DOUBLE PRECISION Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2,
+     *                 TAU2, ALPHA, BIGTAU2, SIG2I, XMIN, XMAX, FF
+c local
+      DOUBLE PRECISION PI, TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM, 
 ccx     1           RUNIFT
-     1           random, BIGTAU, GB, ymin, ymax
+     1                 GAUS2, random, BIGTAU, GB, ymin, ymax
 cc      COMMON  /INIT/ IX
       DATA  PI /3.1415926535D0/
 c
@@ -235,10 +240,11 @@ C
 
       double precision FUNCTION  RNOR( GB )
 cc      IMPLICIT REAL*8(A-H,O-Z)
-      REAL(8) :: GB
-      INTEGER :: I
-ccx      REAL(8) :: X, Y, S, RUNIFT
-      REAL(8) :: X, Y, S, random
+      DOUBLE PRECISION GB
+c local
+      INTEGER I
+ccx      DOUBLE PRECISION X, Y, S, RUNIFT
+      DOUBLE PRECISION X, Y, S, random
 cc      COMMON  /INIT/ IX
       DATA   I /0/
       data   y/0.0d0/
@@ -265,7 +271,7 @@ C      WRITE(6,*)  RNOR
       DOUBLE PRECISION FUNCTION  GAUS2( X,SIG2 )
 C
 cc      IMPLICIT  REAL*8(A-H,O-Z)
-      REAL(8) :: X, SIG2, C1
+      DOUBLE PRECISION X, SIG2, C1
       DATA  C1  /2.506628275D0/
 C
       GAUS2 = DEXP( -X**2/(2*SIG2) )/(C1*DSQRT(SIG2))
@@ -275,7 +281,7 @@ C
       DOUBLE PRECISION FUNCTION  CAUC2( X,SIG2 )
 C
 cc      IMPLICIT  REAL*8(A-H,O-Z)
-      REAL(8) :: X, SIG2, PI
+      DOUBLE PRECISION X, SIG2, PI
       DATA  PI  /3.141592653D0/
 C
       CAUC2 = DSQRT(SIG2)/PI/(X**2 + SIG2)
@@ -285,8 +291,10 @@ C
       SUBROUTINE  SORT( Y,N )
 cc      IMPLICIT REAL*8 (A-H,O-Z)
 cc      DIMENSION  Y(N)
-      INTEGER :: N
-      REAL(8) :: Y(N), YY
+      INTEGER N
+      DOUBLE PRECISION Y(N)
+c local
+      DOUBLE PRECISION YY
 C
       IF( Y(2).LT.Y(1) )  THEN
          YY   = Y(1)
@@ -316,10 +324,12 @@ cc	  real*4  P
 cc      REAL*4  PROB
 cc      DIMENSION  P(M), Q(1000), QQ(0:1000), PROB(7), T(7)
       SUBROUTINE  DENSTY1( P,M,T,XMIN,XMAX )
-      INTEGER :: M
-      REAL(8) :: P(M), T(7),XMIN, XMAX
+
+      INTEGER M
+      DOUBLE PRECISION P(M), T(7), XMIN, XMAX
+c local
       PARAMETER(K = 1000)
-      REAL(8) :: Q(K), QQ(0:K), PROB(7), PP, DX
+      DOUBLE PRECISION Q(K), QQ(0:K), PROB(7), PP, DX
 cc      DATA  PROB /0.0013, 0.0227, 0.1587, 0.5000, 0.8413, 0.9773,
 cc     *            0.9987/
       DATA  PROB /0.0013D0, 0.0227D0, 0.1587D0, 0.5D0, 0.8413D0,

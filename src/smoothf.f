@@ -2,7 +2,7 @@ C     PROGRAM 9.1  SMOOTH
       SUBROUTINE SMOOTHF(Y,N,M,K,F,G,H,Q,R,XF,VF,NFE,NPE,OUTMIN,
      *                   OUTMAX,NMISS,N0,NN,XSS,VSS,FLK,AIC)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Prediction and Interpolation of Time Series  ...
 C
@@ -29,8 +29,6 @@ C        ISW:      =1 (R is specified)
 C     @TEST.FILTER2:  SEP.08,1990, SEP.02,1992
 C     MODIFIED  2/15/93
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT::SMOOTHF
-C
 cc      PARAMETER( NMAX=1000,MJ=20,K=1,ISW=1,IDEV=1 )
       PARAMETER( ISW=1 )
 cxx      IMPLICIT REAL*8(A-H,O-Z)
@@ -48,12 +46,13 @@ cxx      DIMENSION  XF(M), VF(M,M)
 cxx      DIMENSION  N0(NMISS), NN(NMISS)
 cxx      DIMENSION  YMEAN(L), YVAR(L)
 C
-      INTEGER :: N, M, K, NFE, NPE, NMISS, N0(NMISS), NN(NMISS)
-      REAL(8) :: Y(N), F(M,M), G(M,K), H(M), Q(K,K), R,
-     1           XF(M), VF(M,M), OUTMIN, OUTMAX, XSS(M,NPE),
-     2           VSS(M,M,NPE),FLK, AIC
-      REAL(8) :: YMISS(N), XPS(M,NPE), XFS(M,NPE), VPS(M,M,NPE),
-     1           VFS(M,M,NPE), YMEAN, YVAR, FF, SIG2
+      INTEGER N, M, K, NFE, NPE, NMISS, N0(NMISS), NN(NMISS)
+      DOUBLE PRECISION Y(N), F(M,M), G(M,K), H(M), Q(K,K), R, XF(M),
+     1                 VF(M,M), OUTMIN, OUTMAX, XSS(M,NPE),
+     2                 VSS(M,M,NPE), FLK, AIC
+c local
+      DOUBLE PRECISION YMISS(N), XPS(M,NPE), XFS(M,NPE), VPS(M,M,NPE),
+     1                 VFS(M,M,NPE), YMEAN, YVAR, FF, SIG2
 C
       NMAX = N
       MJ = M
@@ -173,12 +172,13 @@ cxx      DIMENSION  VFS(M,M,NDIM), VPS(M,M,NDIM)
 cxx      DIMENSION  WRK(M,M), WRK1(M,K), WRK2(L), VH(M,L), GAIN(M,L)
 cxx      DIMENSION  R(L,L), PVAR(L,L), PERR(L)
 C
-      INTEGER :: N, M, K, ISW, NS, NFE, NPE, NDIM
-      REAL(8) :: Y(N), XF(M), VF(M,M), F(M,M), G(M,K), H(M),
-     1           Q(K,K),R, OUTMIN, OUTMAX, VFS(M,M,NDIM),
-     2           VPS(M,M,NDIM),XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
-      REAL(8) :: XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M), GAIN(M),
-     1           PVAR, PERR, PI, SDET, SUM
+      INTEGER N, M, K, ISW, NS, NFE, NPE, NDIM
+      DOUBLE PRECISION Y(N), XF(M), VF(M,M), F(M,M), G(M,K), H(M),
+     1                 Q(K,K),R, OUTMIN, OUTMAX, VFS(M,M,NDIM),
+     2                 VPS(M,M,NDIM),XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
+c local
+      DOUBLE PRECISION XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M),
+     1                 GAIN(M), PVAR, PERR, PI, SDET, SUM
 C
       DATA   PI  /3.1415926535D0/
 C
@@ -344,7 +344,8 @@ cxx  360 VFS(I,J,II) = VF(I,J)
 C
   500 CONTINUE
 cc      SIG2 = SIG2/NSUM
-      SIG2 = SIG2/DFLOAT(NSUM)
+cxxx      SIG2 = SIG2/DFLOAT(NSUM)
+      SIG2 = SIG2/DBLE(NSUM)
       IF(ISW.EQ.0)  FF = -0.5D0*(NSUM*(DLOG(PI*2*SIG2) + 1) + SDET)
       IF(ISW.EQ.1)  FF = -0.5D0*(NSUM*(DLOG(PI*2) + SIG2) + SDET)
 C

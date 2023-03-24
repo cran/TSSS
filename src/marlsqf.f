@@ -1,7 +1,7 @@
 C     PROGRAM 7.3  MARLSQ
-      SUBROUTINE MARLSQF( Y,N,L,LAG,A,V,LMAX,AIC )
+      SUBROUTINE MARLSQ( Y,N,L,LAG,A,V,LMAX,AIC )
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  MAR model fitting (least squares method)  ...
 C
@@ -25,9 +25,10 @@ cc      DIMENSION  Y(N,L), X(MJ1,L*(LAG+1))
 cxx      DIMENSION  Y(N,L), X((L+1)*(LAG+1),L*(LAG+1))
 cxx      DIMENSION  A(L,L,LAG) , V(L,L)
 C
-      INTEGER :: N, L, LAG, LMAX
-      REAL(8) :: Y(N,L), A(L,L,LAG), V(L,L), AIC
-      REAL(8) :: X((L+1)*(LAG+1),L*(LAG+1))
+      INTEGER N, L, LAG, LMAX
+      DOUBLE PRECISION Y(N,L), A(L,L,LAG), V(L,L), AIC
+c local
+      DOUBLE PRECISION X((L+1)*(LAG+1),L*(LAG+1))
 C
       EXTERNAL   SETMAR
 C
@@ -98,11 +99,12 @@ cxx      DIMENSION  X(MJ1,(M+1)*ID), E(ID,ID), B(ID,ID,M)
 cxx      DIMENSION  A((M+1)*ID), AIC(M+1), SD(M+1), EX(ID)
 cxx      DIMENSION  IND((M+1)*ID), JND((M+1)*ID)
 C
-      INTEGER :: N, ID, M, MJ1, IPR, LMAX
-      REAL(8) :: X(MJ1,(M+1)*ID), B(ID,ID,M), E(ID,ID), AICS
-      INTEGER :: IND((M+1)*ID), JND((M+1)*ID)
-      REAL(8) :: A((M+1)*ID), AIC(M+1), SD(M+1), EX(ID), PI2, SUM,
-     1           AICSUM, AICMIN, SDMIN, AICX
+      INTEGER N, ID, M, MJ1, IPR, LMAX
+      DOUBLE PRECISION X(MJ1,(M+1)*ID), B(ID,ID,M), E(ID,ID), AICS
+c local
+      INTEGER IND((M+1)*ID), JND((M+1)*ID)
+      DOUBLE PRECISION A((M+1)*ID), AIC(M+1), SD(M+1), EX(ID), PI2, SUM,
+     1                 AICSUM, AICMIN, SDMIN, AICX
 C
       DATA  PI2/6.28318531D0/
 C
@@ -228,9 +230,10 @@ cc      DIMENSION  B(MJ2,MJ2,MJ3), E(MJ2,1), EX(1), EE(24,24)
 cc      MJ5 = 24
 cxx      DIMENSION  B(ID,ID,MJ3), E(ID,ID), EX(ID), EE(ID,ID)
 C
-      INTEGER :: ID, LMAX, MJ3 
-      REAL(8) :: B(ID,ID,MJ3), E(ID,ID), EX(ID)
-      REAL(8) :: EE(ID,ID), SUM
+      INTEGER ID, LMAX, MJ3 
+      DOUBLE PRECISION B(ID,ID,MJ3), E(ID,ID), EX(ID)
+c local
+      DOUBLE PRECISION EE(ID,ID), SUM
 C
 cc      CALL  TRIINV( E,ID,MJ2,MJ5,EE )
       CALL  TRIINV( E,ID,EE )
@@ -298,8 +301,8 @@ cc      DIMENSION  X(MJ1,1) , D(1), Z(MJ,1)
 cx      DIMENSION  X(MJ1,1) , Z(MJ,1)
 cxx      DIMENSION  X(MJ1,(LAG+1)*ID) , Z(MJ,ID)
 C
-      INTEGER :: NMK, N0, LAG, ID, MJ, MJ1
-      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID)
+      INTEGER NMK, N0, LAG, ID, MJ, MJ1
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID)
 C
       L = MIN0( NMK,MJ1 )
       KD1 = (LAG+1)*ID
@@ -343,8 +346,8 @@ C
 cc      REAL*8  X(MJ1,1), Z(MJ,1)
 cxx      REAL*8  X(MJ1,(LAG+1)*ID), Z(MJ,ID)
 C
-      INTEGER :: N0, L, LAG, ID, MJ, MJ1, JSW
-      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID)
+      INTEGER N0, L, LAG, ID, MJ, MJ1, JSW
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID)
 C
       KD = LAG*ID
       KD1 = (LAG+1)*ID
@@ -390,9 +393,10 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cc      DIMENSION  X(MJ,1) , Y(MJ1,1)
 cxx      DIMENSION  X(M,M) , Y(M,M)
 C
-      INTEGER :: M
-      REAL(8) :: X(M,M) , Y(M,M)
-      REAL(8) :: SUM
+      INTEGER M
+      DOUBLE PRECISION X(M,M), Y(M,M)
+c local
+      DOUBLE PRECISION SUM
 C
 cxx      DO 10  I=1,M-1
       DO 11  I=1,M-1
@@ -437,8 +441,8 @@ cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cc      DIMENSION  AIC(1), SD(1)
 cxx      DIMENSION  AIC(K+1), SD(K+1)
 C
-      INTEGER :: K, ISW, IMIN 
-      REAL(8) :: AIC(K+1), SD(K+1), AICM, SDM
+      INTEGER K, ISW, IMIN 
+      DOUBLE PRECISION AIC(K+1), SD(K+1), AICM, SDM
 C
 C       SEARCH FOR THE MINIMUM OF AIC(I)
 C
@@ -492,9 +496,10 @@ cxx      IMPLICIT  REAL*8 (A-H,O-Z)
 cc      DIMENSION  X(MJ,1), D(40), IND(40), JND(40)
 cxx      DIMENSION  X(MJ,K), D(MJ), IND(K), JND(K)
 C
-      INTEGER :: MJ, K, L, M, IND(K), JND(K)
-      REAL(8) :: X(MJ,K)
-      REAL(8) :: D(MJ), TOL, F, G, H, S
+      INTEGER MJ, K, L, M, IND(K), JND(K)
+      DOUBLE PRECISION X(MJ,K)
+c local
+      DOUBLE PRECISION D(MJ), TOL, F, G, H, S
 C
       TOL = 1.0D-60
 C
@@ -560,9 +565,10 @@ cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cc      DIMENSION  X(MJ,1), A(1), JND(1)
 cxx      DIMENSION  X(MJ,K+1), A(M), JND(M)
 C
-      INTEGER :: M, K, N, MJ, JND(M)
-      REAL(8) :: X(MJ,K+1), A(M), SIG2, AIC
-      REAL(8) :: PI2, SUM, SD
+      INTEGER M, K, N, MJ, JND(M)
+      DOUBLE PRECISION X(MJ,K+1), A(M), SIG2, AIC
+c local
+      DOUBLE PRECISION PI2, SUM, SD
 C
       DATA  PI2/6.28318531D0/
 C

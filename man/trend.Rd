@@ -39,6 +39,7 @@ trend(y, trend.order = 1, tau2.ini = NULL, delta, plot = TRUE, \dots)
   \item{sigma2}{variance of the observational noise \eqn{\sigma^2}.}
   \item{llkhood}{log-likelihood of the model.}
   \item{aic}{AIC.}
+  \item{cov}{covariance matrix of smoother.}
 }
 \references{
   Kitagawa, G. (2020)

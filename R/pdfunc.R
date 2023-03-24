@@ -45,14 +45,15 @@ pdfunc <- function(model = "norm", mean=0, sigma2 = 1, mu = 0, tau2 = 1, shape,
     stop("the model type is invalid.")
   }
 
-  z <- .Call("densty",
-             as.integer(model.type),
-             as.double(param),
-             as.double(xmin),
-             as.double(xmax),
-             as.integer(k))
+  z <- .Fortran(C_denstyf,
+                as.integer(model.type),
+                as.double(param),
+                as.double(xmin),
+                as.double(xmax),
+                as.integer(k),
+                f = double(k))
 
-  pdfunc.out <- list(model = model, density = z[[1]], interval=c(xmin, xmax),
+  pdfunc.out <- list(model = model, density = z$f, interval=c(xmin, xmax),
                      param=param)
   class(pdfunc.out) <- c("pdfunc")
 

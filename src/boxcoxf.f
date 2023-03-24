@@ -1,7 +1,7 @@
 C     PROGRAM  4.4   BOXCOX
       SUBROUTINE BOXCOXF(Y, N, AICZT, FFZT, AICZ, FFZ, ZMEAN, ZVAR, ZZ)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  Box-Cox transformation
 C
@@ -20,10 +20,11 @@ cxx      DIMENSION Y(N), Z(N), ZZ(N)
 cxx      DIMENSION AICZT(21), FFZT(21), AICZ(21), FFZ(21)
 cxx      DIMENSION ZMEAN(21), ZVAR(21)
 C
-      INTEGER :: N
-      REAL(8) :: Y(N), AICZT(21), FFZT(21), AICZ(21), FFZ(21),
-     1           ZMEAN(21), ZVAR(21), ZZ(N)
-      REAL(8) :: Z(N), YMEAN, YVAR, FFY, AICY, A, ZJACOB, AICM
+      INTEGER N
+      DOUBLE PRECISION Y(N), AICZT(21), FFZT(21), AICZ(21), FFZ(21),
+     1                 ZMEAN(21), ZVAR(21), ZZ(N)
+c local
+      DOUBLE PRECISION Z(N), YMEAN, YVAR, FFY, AICY, A, ZJACOB, AICM
 C
 cc      CALL  READTS( 1,Y,N )
       CALL  GAUSSM( Y,N,YMEAN,YVAR,FFY,AICY )
@@ -35,7 +36,6 @@ cc      WRITE(6,620)
       DO 200 II=10,-10,-1
          I = I+1
       A = II/10.0D0
-cc      CALL  BOXCOX( Y,N,A,Z,ZJACOB )
       CALL  BOXCOX( Y,N,A,Z,ZJACOB )
 C
 cc      CALL  GAUSSM( Z,N,ZMEAN,ZVAR,FFZ,AICZ )
@@ -80,9 +80,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z )
 cxx      DIMENSION  Y(N), Z(N)
 C
-      INTEGER :: N
-      REAL(8) :: Y(N), A, Z(N), ZJACOB 
-      REAL(8) :: SUM
+      INTEGER N
+      DOUBLE PRECISION Y(N), A, Z(N), ZJACOB
+c local
+      DOUBLE PRECISION SUM
 C
       SUM = 0.0D0
       DO 10 I=1,N
@@ -114,9 +115,10 @@ C
 cxx      IMPLICIT REAL*8( A-H,O-Z )
 cxx      DIMENSION Y(N)
 C
-      INTEGER :: N
-      REAL(8) :: Y(N), YMEAN, YVAR, FF, AIC 
-      REAL(8) :: PI, SUM
+      INTEGER N
+      DOUBLE PRECISION Y(N), YMEAN, YVAR, FF, AIC
+c local
+      DOUBLE PRECISION PI, SUM
 C
       DATA  PI/3.1415926535D0/
 C

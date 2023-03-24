@@ -2,7 +2,7 @@ C     PROGRAM 13.1  TVVAR
       SUBROUTINE TVVARF(Y,N0,M,TAU20,IOPT,DELTA,TVVAR,NORDAT,Y2,N,TREND,
      *                  NOISE,TAUMAX,SIG2M,FFMAX,AIC)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  TIME-VARYING VARIANCE  ...
 C
@@ -18,8 +18,6 @@ C        MAXM:    Adjustable dimension of A, B, C
 C        NC:      Number of components
 C     @TEST.FILTER2:  SEP.08,1990
 C     MODIFIED  2/15/93
-C
-cc      !DEC$ ATTRIBUTES DLLEXPORT::TVVARF
 C
 cc      PARAMETER( MJ1=3000,NMAX=MJ1/2,MJ=2,K=1,NDIM=NMAX )
       PARAMETER( K=1 )
@@ -37,13 +35,15 @@ cxx      DIMENSION  XF(M), VF(M,M)
 cxx      DIMENSION  TVVAR(N0/2), TREND(N0/2,3)
 cxx      REAL*8     NORDAT(N0), NOISE(N0/2)
 C
-      INTEGER :: N0, M, IOPT, N
-      REAL(8) :: Y(N0), TAU20, DELTA, TVVAR(N0/2), NORDAT(N0), Y2(N0/2),
-     1           TREND(N0/2,3), NOISE(N0/2), TAUMAX, SIG2M, FFMAX, AIC
-      REAL(8) :: F(M,M), G(M,K), H(M), Q(K,K), XPS(M,N0/2), XFS(M,N0/2),
-     1           XSS(M,N0/2), VPS(M,M,N0/2), VFS(M,M,N0/2),
-     2           VSS(M,M,N0/2), XF(M), VF(M,M), OUTMIN, OUTMAX, SIG2,
-     3           YMIN, YMEAN, VAR, TAU2, R, FF
+      INTEGER N0, M, IOPT, N
+      DOUBLE PRECISION Y(N0), TAU20, DELTA, TVVAR(N0/2), NORDAT(N0),
+     1                 Y2(N0/2), TREND(N0/2,3), NOISE(N0/2), TAUMAX,
+     2                 SIG2M, FFMAX, AIC
+      DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), XPS(M,N0/2),
+     1                 XFS(M,N0/2), XSS(M,N0/2), VPS(M,M,N0/2),
+     2                 VFS(M,M,N0/2), VSS(M,M,N0/2), XF(M), VF(M,M),
+     3                 OUTMIN, OUTMAX, SIG2, YMIN, YMEAN, VAR, TAU2, R,
+     4                 FF
 C
       DATA  OUTMIN, OUTMAX /-1.0D30, 1.0D30/
 C
@@ -162,8 +162,8 @@ cx      DIMENSION  XSS(M,*), Y(*), DATA(N), DATA1(N0)
 cxx      DIMENSION  XSS(M,N), Y(N0), DATA(N), DATA1(N0)
 cc      COMMON  /CMDATA/  TITLE
 C
-      INTEGER :: M, N, N0
-      REAL(8) :: Y(N0), XSS(M,N), DATA(N), DATA1(N0)
+      INTEGER M, N, N0
+      DOUBLE PRECISION Y(N0), XSS(M,N), DATA(N), DATA1(N0)
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  TITLE
@@ -218,9 +218,9 @@ cc      DIMENSION  DATA(1500), VNAME(20), VALUE(20)
 cxx      DIMENSION  XSS(M,N), VSS(M,M,N)
 cxx      DIMENSION  DATA(N), TREND(N,-1:1)
 C
-      INTEGER :: N, M
-      REAL(8) :: Y(N), XSS(M,N), VSS(M,M,N), SIG2, TREND(N,-1:1),
-     1           DATA(N)
+      INTEGER N, M
+      DOUBLE PRECISION Y(N), XSS(M,N), VSS(M,M,N), SIG2, TREND(N,-1:1),
+     1                 DATA(N)
 C
 cc      VNAME(1) = 'M1    = '
 cc      VNAME(2) = 'TAU2  = '
@@ -319,8 +319,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  F(MJ,MJ), G(MJ), H(MJ)
 cxx      DIMENSION  F(M,M), G(M), H(M)
 C
-      INTEGER :: M
-      REAL(8) :: F(M,M), G(M), H(M), R
+      INTEGER M
+      DOUBLE PRECISION F(M,M), G(M), H(M), R
 C
 cc      DO 10  J=1,MJ
 cxx      DO 10  J=1,M
@@ -405,12 +405,13 @@ cxx      DIMENSION  XFS(M,NDIM),    XPS(M,NDIM)
 cxx      DIMENSION  VFS(M,M,NDIM), VPS(M,M,NDIM)
 cxx      DIMENSION  WRK(M,M), WRK1(M,K), VH(M), GAIN(M)
 C
-      INTEGER :: M, K, ISW, NS, NFE, NPE, NDIM
-      REAL(8) :: Y(NPE), XF(M), VF(M,M), F(M,M), G(M,K), H(M), Q(K,K),
-     1           R, OUTMIN, OUTMAX, VFS(M,M,NDIM), VPS(M,M,NDIM),
-     2           XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
-      REAL(8) :: XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M), GAIN(M),
-     1           PI, SDET, SUM, PERR, PVAR
+      INTEGER M, K, ISW, NS, NFE, NPE, NDIM
+      DOUBLE PRECISION Y(NPE), XF(M), VF(M,M), F(M,M), G(M,K), H(M),
+     1                 Q(K,K), R, OUTMIN, OUTMAX, VFS(M,M,NDIM),
+     2                 VPS(M,M,NDIM), XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
+c local
+      DOUBLE PRECISION XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M),
+     1                 GAIN(M), PI, SDET, SUM, PERR, PVAR
 C
       DATA   PI  /3.1415926535D0/
 C
@@ -583,8 +584,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  XF(MJ), VF(MJ,MJ)
 cxx      DIMENSION  XF(M), VF(M,M)
 C
-      INTEGER :: M
-      REAL(8) :: XMEAN, XVAR, XF(M), VF(M,M)
+      INTEGER M
+      DOUBLE PRECISION XMEAN, XVAR, XF(M), VF(M,M)
 C
 cc      DO 10  I=1,MJ
 cc      DO 10  J=1,MJ

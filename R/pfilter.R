@@ -44,25 +44,27 @@ pfilter <- function(y, m = 10000, model = 0, lag = 20, initd = 0, sigma2, tau2,
   if (is.null(ix))
     ix <- -1
 
-  z <- .Call("PfiltC",
-             as.double(y),
-             as.integer(n),
-             as.integer(m),
-             as.integer(model),
-             as.integer(lag),
-             as.integer(initd),
-             as.double(sigma2),
-             as.double(tau2),
-             as.double(alpha),
-             as.double(bigtau2),
-             as.double(init.sigma2),
-             as.double(xmin),
-             as.double(xmax),
-             as.integer(ix))
+  z <- .Fortran(C_pfilter,
+                as.double(y),
+                as.integer(n),
+                as.integer(m),
+                as.integer(model),
+                as.integer(lag),
+                as.integer(initd),
+                as.double(sigma2),
+                as.double(tau2),
+                as.double(alpha),
+                as.double(bigtau2),
+                as.double(init.sigma2),
+                as.double(xmin),
+                as.double(xmax),
+                as.integer(ix),
+                t = double(n * 8),
+                ff = double(1))
 
-  t <- array(z[[1L]], dim = c(n, 8))
+  t <- array(z$t, dim = c(n, 8))
   tdist <- t[, 7:1]
-  ff <- z[[2L]]
+  ff <- z$ff
   message(gettextf("\n log-likelihood\t%12.3f", ff), domain = NA)
 
   pfilter.out <- list(llkhood = ff, smooth.dist = tdist)
@@ -106,7 +108,7 @@ pfilterNL <- function(y, m = 10000, lag = 20, sigma2, tau2, xrange = NULL,
   if (is.null(ix))
     ix <- -1
 
-  z <- .Call("PfiltnlC",
+  z <- .Fortran(C_pfiltern,
              as.double(y),
              as.integer(n),
              as.integer(m),
@@ -115,11 +117,13 @@ pfilterNL <- function(y, m = 10000, lag = 20, sigma2, tau2, xrange = NULL,
              as.double(tau2),
              as.double(xmin),
              as.double(xmax),
-             as.integer(ix))
+             as.integer(ix),
+             t = double(n * 8),
+             ff = double(1))
 
-  t <- array(z[[1L]], dim = c(n, 8))
+  t <- array(z$t, dim = c(n, 8))
   tdist <- t[, 7:1]
-  ff <- z[[2L]]
+  ff <- z$ff
   message(gettextf("\n log-likelihood\t%12.3f", ff), domain = NA)
 
   pfilterNL.out <- list(llkhood = ff, smooth.dist = tdist)
@@ -144,7 +148,8 @@ plot.pfilter <- function(x, ...)
   ylim <- c(mint, maxt)
   n <- dim(t)[1]
   xx <- seq(1,n, length=n)
-  gcol <- c("gray90", "gray80", "gray70", "gray70", "gray80", "gray90")
+#  gcol <- c("gray90", "gray80", "gray70", "gray70", "gray80", "gray90")
+  gcol <- c("white", "gray85", "gray75", "gray75", "gray85", "white")
   mtitle <- "Marginal smoothed distribution of trend"
 
   plot(t[, 1], type = 'l', ylim = ylim, main = mtitle, xlab = "time",
@@ -161,4 +166,3 @@ plot.pfilter <- function(x, ...)
   plot(t[, 4], type = 'l', ylim = ylim, xlab = "", ylab = "", xaxs = 'i',
        yaxs = 'i', lwd = 2, ...)
 }
-

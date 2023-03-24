@@ -1,0 +1,3 @@
+LIBRARY TSSS.dll
+EXPORTS
+ R_init_TSSS

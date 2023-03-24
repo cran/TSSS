@@ -1,8 +1,9 @@
 C     PROGRAM  5.1  LSQR
 cxx      SUBROUTINE LSQRF(Y,N,K,AIC,SIG2,IMIN,A,DATA)
-      SUBROUTINE LSQRF(Y,N,K,MJ1,AIC,SIG2,IMIN,A,DATA)
+cxxx      SUBROUTINE LSQRF(Y,N,K,MJ1,AIC,SIG2,IMIN,A,DATA)
+      SUBROUTINE LSQR(Y,N,K,PERIOD,MJ1,AIC,SIG2,IMIN,A,DATA)
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  The least squares method via Householder transformation  ...
 C
@@ -28,9 +29,10 @@ cc      COMMON     /CMDATA/  TITLE
 cxx      DIMENSION  Y(N), DATA(N), AIC(0:K)
 cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K)
 C
-      INTEGER :: N, K, IMIN
-      REAL(8) :: Y(N), AIC(0:K), SIG2(0:K), A(K,K), DATA(N)
-      REAL(8) :: X(MJ1,K+1)
+      INTEGER N, K, PERIOD, IMIN
+      DOUBLE PRECISION Y(N), AIC(0:K), SIG2(0:K), A(K,K), DATA(N)
+c local
+      DOUBLE PRECISION X(MJ1,K+1)
 C
       EXTERNAL   SETXTP
 C
@@ -40,20 +42,72 @@ cc      CALL  READTS( IDEV,Y,N )
 C
 cc      CALL  REDUCT( SETXTP,Y,D,N,0,K,MJ1,X )
 cx      CALL  REDUCT( SETXTP,Y,N,0,K,MJ1,X )
-      CALL  REDUCT1( SETXTP,Y,N,0,K,MJ1,X )
+cxxx      CALL  REDUCT1( SETXTP,Y,N,0,K,MJ1,X )
+      CALL  REDUCT2( SETXTP,Y,N,0,K,PERIOD,MJ1,X )
 C
 cc      CALL  REGRES( X,K,N,MJ1,MJ2,A,SIG2,AIC,IMIN )
       CALL  REGRES( X,K,N,MJ1,A,SIG2,AIC,IMIN )
 C
 cc      CALL  PRREG( N,K,MJ2,A,SIG2,AIC )
 cxx      CALL  PTTPL( Y,N,A(1,IMIN),IMIN,DATA )
-      CALL  PTTPL( N,A(1,IMIN),IMIN,DATA )
+cxxx      CALL  PTTPL( N,A(1,IMIN),IMIN,DATA )
+      CALL  PTTPL( N,A(1,IMIN),IMIN,PERIOD,DATA )
 C
 cc      STOP
       RETURN
       E N D
-
-      SUBROUTINE  SETXTP( Z,N0,L,K,MJ1,JSW,X )
+C
+cc      SUBROUTINE  REDUCT( SETX,Z,D,NMK,N0,K,MJ1,X )
+      SUBROUTINE  REDUCT2( SETX,Z,NMK,N0,K,PERIOD,MJ1,X )
+C
+C  ...  Successive Householder reduction  ...
+C
+C     Inputs:
+C        SETX:    Name of the subroutine for making X(I,J)
+C        Z(I):    Data vector
+C        D(I):    Working area
+C        NMK:     Number of actually used observations
+C        N0:      Time point of the previous set ofobservations
+C        K:       Heighest order of the model
+C          PERIOD:       Period of one cycle
+C        MJ1:     Adjustable dimension of X
+C     Output:
+C        X(I,J):  data matrix
+C
+cxx      IMPLICIT  REAL*8( A-H,O-Z )
+cc      DIMENSION  X(MJ1,1) , D(1), Z(1)
+cx      DIMENSION  X(MJ1,1) , Z(1)
+cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK)
+      INTEGER NMK, N0, K, MJ1, PERIOD
+      DOUBLE PRECISION Z(N0+NMK), X(MJ1,K+1)
+C
+      L = MIN0( NMK,MJ1 )
+      K1 = K + 1
+      N1 = L
+C
+cxxx      CALL  SETX( Z,N0,L,K,MJ1,0,X )
+      CALL  SETX( Z,N0,L,K,PERIOD,MJ1,0,X )
+cc      CALL  HUSHLD( X,D,MJ1,L,K1 )
+      CALL  HUSHLD( X,MJ1,L,K1 )
+      IF( N1 .GE. NMK )  RETURN
+C
+   10 L = MIN0( NMK-N1,MJ1-K1 )
+C
+      LK = L + K1
+      N2 = N0 + N1
+cxxx      CALL  SETX( Z,N2,L,K,MJ1,1,X )
+      CALL  SETX( Z,N2,L,K,PERIOD,MJ1,1,X )
+cc      CALL  HUSHLD( X,D,MJ1,LK,K1 )
+      CALL  HUSHLD( X,MJ1,LK,K1 )
+      N1 = N1 + L
+      IF( N1.LT.NMK )  GO TO 10
+C
+      RETURN
+C
+      E N D
+C
+cxxx      SUBROUTINE  SETXTP( Z,N0,L,K,MJ1,JSW,X )
+      SUBROUTINE  SETXTP( Z,N0,L,K,PERIOD,MJ1,JSW,X )
 C
 C  ...  Data matrix for trigonometric polynomial regression  ...
 C
@@ -62,6 +116,7 @@ C        Z(I):    Data vector
 C        N0:      Origin of the current observations
 C        L:       Number of current observations
 C        K:       Number of regressors
+C          PERIOD:       Period of one cycle
 C        MJ1:     Adjustable dimension of X
 C        JSW=0:   Make initial data matrix
 C           =1:   Apend L*(K+1) data matrix below the triangular one
@@ -70,11 +125,13 @@ C        X(I,J):  Data matrix
 C
 cc      REAL*8  X(MJ1,1), Z(1), W
 cxx      REAL*8  X(MJ1,K+1), Z(N0+L), W
-      INTEGER :: N0, L, K, MJ1, JSW
-      REAL(8) :: Z(N0+L), X(MJ1,K+1)
-      REAL(8) :: W
+      INTEGER N0, L, K, MJ1, JSW, PERIOD
+      DOUBLE PRECISION Z(N0+L), X(MJ1,K+1)
+c local
+      DOUBLE PRECISION W
 C
-      W = 2*3.1415926536D0/365.0D0
+cxxx      W = 2*3.1415926536D0/365.0D0
+      W = 2*3.1415926536D0/DBLE(period)
       I0 = 0
       IF( JSW .EQ. 1 )     I0 = K+1
 cxx      DO 10  I=1,L
@@ -95,8 +152,8 @@ C
 
 cc      SUBROUTINE PTTPL( Y,N,A,M )
 cxx      SUBROUTINE PTTPL( Y,N,A,M,DATA )
-      SUBROUTINE PTTPL( N,A,M,DATA )
-
+cxxx      SUBROUTINE PTTPL( N,A,M,DATA )
+      SUBROUTINE PTTPL( N,A,M,PERIOD,DATA )
 C
 C  ...  This subroutine draws fitted trigonometric polynomial  ...
 C
@@ -105,6 +162,7 @@ C        Y(I):   Original data
 C        N:      Data length
 C        A(I):   Regression coefficients
 C        M:      Order of regression model
+C          PERIOD:       Period of one cycle
 C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      CHARACTER  VNAME*8
@@ -112,9 +170,10 @@ cc      DIMENSION  Y(N), A(M), DATA(1000)
 cxx      DIMENSION  Y(N), A(M), DATA(N)
 cc      DIMENSION  VNAME(5), VALUE(5)
 C
-      INTEGER :: N, M
-      REAL(8) :: A(M), DATA(N)
-      REAL(8) :: W, SUM
+      INTEGER N, M, PERIOD
+      DOUBLE PRECISION A(M), DATA(N)
+c local
+      DOUBLE PRECISION W, SUM
 C
 cc      WX = 20.0
 cc      WY = 6.0
@@ -133,7 +192,8 @@ cc      CALL  SYMBOL( 0.0,SNGL(WY)+0.1,0.2,'ORIGINAL AND TREND',0.0,18 )
 cc      CALL  NEWPEN( 1 )
 cc      CALL  PLOTY ( Y,N,YMIN,YMAX,WX,WY,IPOS,1 )
 C
-      W = 2*3.1415926536D0/365.0D0
+cxxx      W = 2*3.1415926536D0/365.0D0
+      W = 2*3.1415926536D0/DBLE(period)
       DO 20 I=1,N
       SUM = A(1)
       DO 10 J=1,10

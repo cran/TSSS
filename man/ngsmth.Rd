@@ -56,6 +56,7 @@ ngsmth(y, noisev = 2, tau2, bv = 1.0, noisew = 1, sigma2, bw = 1.0,
 \value{
   An object of class \code{"ngsmth"}, which is a list with the following
    components:
+  \item{llkhood}{log-likelihood.}
   \item{trend}{trend.}
   \item{smt}{smoothed density.}
 }
@@ -75,13 +76,13 @@ par(mar = c(3, 3, 1, 1) + 0.1)
 
 # system noise density : Gaussian (normal)
 s1 <- ngsmth(PfilterSample, noisev = 1, tau2 = 1.4e-02, noisew = 1, sigma2 = 1.048)
-
+s1
 plot(s1, "smt", theta = 25, phi = 30, expand = 0.25, col = "white")
 
 # system noise density : Pearson family
 s2 <- ngsmth(PfilterSample, noisev = 2, tau2 = 2.11e-10, bv = 0.6, noisew = 1,
              sigma2 = 1.042)
-
+s2
 plot(s2, "smt", theta = 25, phi = 30, expand = 0.25, col = "white")
 
 ## seismic data
@@ -96,7 +97,7 @@ z <- tvvar(y, trend.order = 2, tau2.ini = 4.909e-02, delta = 1.0e-06)
 # system noise density : Gaussian (normal)
 s3 <- ngsmth(z$sm, noisev = 1, tau2 = z$tau2, noisew = 2, sigma2 = pi*pi/6,
              k = 190)
-
+s3
 plot(s3, "smt", phi = 50, expand = 0.5, col = 8)
 }
 

@@ -1,9 +1,9 @@
 C     PROGRAM 12.1  SEASON
-      SUBROUTINE SEASONF( Y0,N,M1,M2,M3,M4,PERIOD,JYEAR,MONTH,
+      SUBROUTINE SEASON( Y0,N,M1,M2,M3,M4,PERIOD,JYEAR,MONTH,
      & TAU2,NS,NFE,NPE,AR,LOGT,IOPT,OUTMIN,OUTMAX,NMAX,MJ,
      & FF,OVAR,AIC,XSS,VSS,DEFF,IER1,IER2 ) 
 C
-      INCLUDE 'TSSS_f.h'
+      INCLUDE 'TSSS.h'
 C
 C  ...  SEASONAL ADJUSTMENT BY STATE SPACE MODELING  ...
 C
@@ -56,22 +56,38 @@ cc      COMMON  /CMMODL/  M, XMEAN, XVAR, N, NS, NFE, NPE
 cc      COMMON  / CCC /  ISW, IPR, ISMT, IDIF
 cxx      DIMENSION  Y0(N), DEFF(NMAX)
 C
-      INTEGER :: N, M1, M2, M3, M4, PERIOD, JYEAR, MONTH, NS, NFE, NPE,
-     1           LOGT, IOPT, NMAX, MJ, IER1, IER2
-      REAL(8) :: Y0(N), TAU2(4), AR(M3), OUTMIN, OUTMAX, FF, OVAR, AIC,
-     1           XSS(MJ,NMAX), VSS(MJ,MJ,NMAX), DEFF(NMAX)
-      INTEGER :: M(NC), MTYPE(NC)
-      REAL(8) :: XMEAN(NC), XVAR(MAXM,NC), AA(M3+3), PAR(M3),
-     1           A(MAXM,NC), B(MAXM,NC), C(MAXM,NC), Q(NC,NC),
-     2           XPS(MJ,NMAX), XFS(MJ,NMAX), VPS(MJ,MJ,NMAX),
-     3           VFS(MJ,MJ,NMAX), XF(MJ), VF(MJ,MJ), Y(N), REG(NMAX,7),
-     4           SIG2, ALIMIT
+      INTEGER N, M1, M2, M3, M4, PERIOD, JYEAR, MONTH, NS, NFE, NPE,
+     1        LOGT, IOPT, NMAX, MJ, IER1, IER2
+      DOUBLE PRECISION Y0(N), TAU2(4), AR(M3), OUTMIN, OUTMAX, FF, OVAR,
+     1                 AIC, XSS(MJ,NMAX), VSS(MJ,MJ,NMAX), DEFF(NMAX)
+c local
+      INTEGER M(NC), MTYPE(NC)
+      DOUBLE PRECISION XMEAN(NC), XVAR(MAXM,NC), AA(M3+3), PAR(M3),
+     1                 A(MAXM,NC), B(MAXM,NC), C(MAXM,NC), Q(NC,NC),
+     2                 XPS(MJ,NMAX), XFS(MJ,NMAX), VPS(MJ,MJ,NMAX),
+     3                 VFS(MJ,MJ,NMAX), XF(MJ), VF(MJ,MJ), Y(N),
+     4                 REG(NMAX,7), SIG2, ALIMIT
 C
       EXTERNAL  FFSEAS
 C
       XSS = 0.0D0
       VSS = 0.0D0
       DEFF = 0.0D0
+C
+      XMEAN = 0.0D0
+      XVAR = 0.0D0
+      AA = 0.0D0
+      PAR = 0.0D0
+      A = 0.0D0
+      B = 0.0D0
+      C = 0.0D0
+      Q = 0.0D0
+      XPS = 0.0D0
+      XFS = 0.0D0
+      VPS = 0.0D0
+      VFS = 0.0D0
+      XF = 0.0D0
+      VF = 0.0D0
 C
 C  ...  Read Time Series  ...
 C
@@ -117,6 +133,13 @@ cc    5    Y(I) = DLOG10( Y(I) )
 cxx    5       Y(I) = DLOG10( Y(I) )
             Y(I) = DLOG10( Y(I) )
     5    CONTINUE
+c 2023/3/4
+      ELSE IF ( LOGT.EQ.2 ) THEN
+         IER1 = -1
+         DO 6 I=1,N
+            IF( Y(I).LE.0 ) RETURN
+            Y(I) = DLOG( Y(I) )
+    6    CONTINUE
       END IF
       IER1 = 0
 C
@@ -159,7 +182,7 @@ cc      IF( IOPT.EQ.1 )  CALL  DAVIDN( FFSEAS,AA,NP+M3,2 )
       IF( IOPT.EQ.1 )  THEN
          CALL  DAVIDN1( FFSEAS,AA,NP+M3,2,
      *   Y,N,M1,M2,M3,M4,PERIOD,REG,OUTMIN,OUTMAX,ALIMIT,ISW,IDIF,
-     *   M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,IER2 )
+     *   M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,IER1,IER2 )
          if( ier2.ne.0 ) return
       END IF
 C
@@ -238,9 +261,10 @@ cxx      DIMENSION  XSS(MJ,NMAX), REG(NMAX,7)
 cc      COMMON     /CMDATA/  TITLE
 cxx      DIMENSION  DEFF(NMAX)
 C
-      INTEGER :: M1, M2, M3, M4, LPER, NMAX, MJ 
-      REAL(8) :: XSS(MJ,NMAX), DEFF(NMAX), REG(NMAX,7)
-      REAL(8) :: SUM
+      INTEGER M1, M2, M3, M4, LPER, NMAX, MJ 
+      DOUBLE PRECISION XSS(MJ,NMAX), DEFF(NMAX), REG(NMAX,7)
+c local
+      DOUBLE PRECISION SUM
 C
       NP = ID(M1) + ID(M2) + ID(M3)
       M12  = M1 + M2*(LPER-1)
@@ -356,15 +380,17 @@ cxx      DIMENSION  VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX)
 cxx      DIMENSION  WRK(MJ,MJ), VH(MJ), GAIN(MJ)
 cxx      DIMENSION  I0(NCM), MTYPE(NCM)
 C
-      INTEGER :: NMAX, MMAX, NCM, NC, NS, N, NPE, MJ, NDIM, MTYPE(NCM),
-     1           M(NCM), IER
-      REAL(8) :: Y(NDIM), XF(MJ), VF(MJ,MJ), A(MMAX,NCM), B(MMAX,NCM),
-     1           C(MMAX,NCM), Q(NCM,NCM), SIG2, REG(NMAX,7), OUTMIN,
-     2           OUTMAX, VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX), XFS(MJ,NMAX),
-     3           XPS(MJ,NMAX), FF, OVAR
-      INTEGER :: I0(NCM)
-      REAL(8) :: XP(MJ), VP(MJ,MJ), WRK(MJ,MJ), VH(MJ), GAIN(MJ), PI,
-     1           SDET, SUM, PVAR, PERR
+      INTEGER NMAX, MMAX, NCM, NC, NS, N, NPE, MJ, NDIM, MTYPE(NCM),
+     1        M(NCM), IER
+      DOUBLE PRECISION Y(NDIM), XF(MJ), VF(MJ,MJ), A(MMAX,NCM),
+     1                 B(MMAX,NCM), C(MMAX,NCM), Q(NCM,NCM), SIG2,
+     2                 REG(NMAX,7), OUTMIN, OUTMAX, VFS(MJ,MJ,NMAX),
+     3                 VPS(MJ,MJ,NMAX), XFS(MJ,NMAX), XPS(MJ,NMAX), FF,
+     4                 OVAR
+c local
+      INTEGER I0(NCM)
+      DOUBLE PRECISION XP(MJ), VP(MJ,MJ), WRK(MJ,MJ), VH(MJ), GAIN(MJ),
+     1                 PI, SDET, SUM, PVAR, PERR
 C
       DATA   PI  /3.1415926535D0/
 C
@@ -434,6 +460,7 @@ cxx      DO 140  L=1,NC
       DO 140  J=1,M(L)
 cxx  140 VP(I,I0(L)+J) = VP(I,I0(L)+J) + WRK(I,L)*B(J,L)
       VP(I,I0(L)+J) = VP(I,I0(L)+J) + WRK(I,L)*B(J,L)
+
   140 CONTINUE
   141 CONTINUE
   142 CONTINUE
@@ -575,10 +602,12 @@ cxx      DIMENSION  M(NC), A(MAXM,NC), XMEAN(NC), XVAR(MAXM,NC)
 cc      DIMENSION  XF(MJ), VF(MJ,MJ), I0(10)
 cxx      DIMENSION  XF(MJ), VF(MJ,MJ), I0(NC)
 C
-      INTEGER :: NC, M(NC), MJ, MAXM
-      REAL(8) :: A(MAXM,NC), XMEAN(NC), XVAR(MAXM,NC), XF(MJ), VF(MJ,MJ)
-      INTEGER :: I0(NC)
-      REAL(8) :: SUM
+      INTEGER NC, M(NC), MJ, MAXM
+      DOUBLE PRECISION A(MAXM,NC), XMEAN(NC), XVAR(MAXM,NC), XF(MJ),
+     1                 VF(MJ,MJ)
+c local
+      INTEGER I0(NC)
+      DOUBLE PRECISION SUM
 C
       I0(1) = 0
       DO 5 I=2,NC
@@ -663,11 +692,12 @@ cc      DIMENSION  Y(N), XMEAN(NC), XVAR(MAXM,NC), DUM(1), COV(0:10)
 cxx      DIMENSION  Y(N), XMEAN(NC), XVAR(MAXM,NC), DUM(1), COV(0:M3)
 cc      COMMON  /C92827/  M1, M2, M3, M4, MPER
 C
-      INTEGER :: M1, M2, M3, M4, MPER, M(NC), L, NC, MTYPE(NC), MAXM,
-     1           MM, N, ier
-      REAL(8) :: TAU2(4), AR(M3), Y(N), A(MAXM,NC), B(MAXM,NC),
-     1           C(MAXM,NC), Q(NC,NC), XMEAN(NC), XVAR(MAXM,NC)
-      REAL(8) :: DUM(1), COV(0:M3), YMEAN, YVAR
+      INTEGER M1, M2, M3, M4, MPER, M(NC), L, NC, MTYPE(NC), MAXM, MM,
+     1        N, ier
+      DOUBLE PRECISION TAU2(4), AR(M3), Y(N), A(MAXM,NC), B(MAXM,NC),
+     1                 C(MAXM,NC), Q(NC,NC), XMEAN(NC), XVAR(MAXM,NC)
+c local
+      DOUBLE PRECISION DUM(1), COV(0:M3), YMEAN, YVAR
 C
       ier = 0
       L = 0
@@ -821,15 +851,16 @@ cxx      DIMENSION  VPS(MJ,MJ,NMAX), VFS(MJ,MJ,NMAX)
 cxx      DIMENSION  XF(MJ), VF(MJ,MJ), MTYPE(NC)
 cxx      DIMENSION  Y(N), REG(NMAX,7)
 C
-      INTEGER :: N, M1, M2, M3, M4, NPER, K, NS, NFE, NPE, NMAX,
-     1           MJ, MAXM, NC, IFG, ier, M(NC)
-      REAL(8) :: Y(N), REG(NMAX,7), AA(K), OUTMIN, OUTMAX, ALIMIT,
-     1           XMEAN(NC), XVAR(MAXM,NC), FF
-      INTEGER :: MTYPE(NC)
-      REAL(8) :: TAU2(4), PAR(M3), AR(M3), A(MAXM,NC), B(MAXM,NC),
-     1           C(MAXM,NC), Q(NC,NC), XPS(MJ,NMAX), XFS(MJ,NMAX),
-     2           VPS(MJ,MJ,NMAX), VFS(MJ,MJ,NMAX), XF(MJ), VF(MJ,MJ),
-     3           SIG2, OVAR
+      INTEGER N, M1, M2, M3, M4, NPER, K, NS, NFE, NPE, NMAX, MJ, MAXM,
+     1        NC, IFG, ier, M(NC)
+      DOUBLE PRECISION Y(N), REG(NMAX,7), AA(K), OUTMIN, OUTMAX, ALIMIT,
+     1                 XMEAN(NC), XVAR(MAXM,NC), FF
+c local
+      INTEGER MTYPE(NC)
+      DOUBLE PRECISION TAU2(4), PAR(M3), AR(M3), A(MAXM,NC), B(MAXM,NC),
+     1                 C(MAXM,NC), Q(NC,NC), XPS(MJ,NMAX), XFS(MJ,NMAX),
+     2                 VPS(MJ,MJ,NMAX), VFS(MJ,MJ,NMAX), XF(MJ),
+     3                 VF(MJ,MJ), SIG2, OVAR
 C
 cc      COMMON  /C92827/  M1, M2, M3, M4, NPER
 cc      COMMON  /C92826/   Y(160), REG(160,7)
@@ -840,12 +871,21 @@ cc      NMAX= 300
 cc      MJ  = 25
 cc      MAXM= 22
 cc      NC  = 9
+c
+C avoid floating-point exceptions
+      INTEGER IFPLIM
+cc      IFPLIM = 709
+      IFPLIM = 87
+c
       NP  = ID(M1) + ID(M2) + ID(M3)
+      IFG = 0
       ier = 0
 C
       DO 10 I=1,K
+         IF( DABS(AA(I)).GT.IFPLIM ) IER = 400
 cxx   10 IF( DABS(AA(I)).GT.20.0D0 )  GO TO 100
-      IF( DABS(AA(I)).GT.20.0D0 )  GO TO 100
+cxx      IF( DABS(AA(I)).GT.20.0D0 )  GO TO 100
+      IF( DABS(AA(I)).GT.30.0D0 )  GO TO 100
    10 CONTINUE
       DO 20 I=1,NP
 cxx   20 TAU2(I) = DEXP( AA(I) )/(1.0D0 + DEXP( AA(I) ))
@@ -893,9 +933,10 @@ C
 cxx      REAL*8  TDAY
 cxx      DIMENSION  TDAY(MJ,7), IX(12)
 C
-      INTEGER :: JYEAR, MONTH, N, MJ
-      REAL(8) :: TDAY(MJ,7)
-      INTEGER :: IX(12)
+      INTEGER JYEAR, MONTH, N, MJ
+      DOUBLE PRECISION TDAY(MJ,7)
+c local
+      INTEGER IX(12)
 C
       DATA   IX  /3,0,3,2,3,2,3,3,2,3,2,3/
 C
@@ -937,7 +978,7 @@ C
 cc      SUBROUTINE  DAVIDN( FUNCT,X,N,NDIF )
       SUBROUTINE  DAVIDN1( FUNCT,X,N,NDIF,
      * YY,NN,M1,M2,M3,M4,NPER,REG,OUTMIN,OUTMAX,ALIMIT,ISW,IDIF,
-     * M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,ier )
+     * M,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,IG,ier )
 C
 C  ...  6/20/83, 12/19/92
 C
@@ -949,13 +990,14 @@ cxx      DIMENSION  H(N,N), WRK(N), S(N)
 cxx      DIMENSION  YY(NN), REG(NMAX,7)
 cxx      DIMENSION  M(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
-      INTEGER :: N, NDIF, NN, M1, M2, M3, M4, NPER, ISW, IDIF, NS, NFE,
-     1           NPE, NMAX, MJ, MAXM, NC, M(NC), ier
-      REAL(8) :: X(N), YY(NN), REG(NMAX,7), OUTMIN, OUTMAX, ALIMIT,
-     1           XMEAN(NC), XVAR(MAXM,NC)
-      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N), TAU2,
-     1           EPS1, EPS2, RAMDA, CONST1, XM, SUM, S1, S2, SS, STEM,
-     2           ED, XMB
+      INTEGER N, NDIF, NN, M1, M2, M3, M4, NPER, ISW, IDIF, NS, NFE,
+     1        NPE, NMAX, MJ, MAXM, NC, M(NC), IG, ier
+      DOUBLE PRECISION X(N), YY(NN), REG(NMAX,7), OUTMIN, OUTMAX,
+     1                 ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
+c local
+      DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1                 TAU2, EPS1, EPS2, RAMDA, CONST1, XM, SUM, S1, S2,
+     2                 SS, STEM, ED, XMB
 C
 cc      COMMON     / CCC /  ISW, IPR, ISMT, IDIF
 cc      COMMON     / DDD /  XM , AIC , SD
@@ -1161,11 +1203,12 @@ cc      DIMENSION  A(M) , G(M) , B(20),GD(5)
 cxx      DIMENSION  A(M) , G(M) , B(M)
 cxx      DIMENSION  Y(N), REG(NMAX,7), MM(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
-      INTEGER :: M, IFG, IDIF, N, M1, M2, M3, M4, NPER, NS, NFE, NPE,
+      INTEGER M, IFG, IDIF, N, M1, M2, M3, M4, NPER, NS, NFE, NPE,
      1           ISW, NMAX, MJ, MAXM, NC, MM(NC), ier
-      REAL(8) :: A(M), F, G(M), Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
-     1           ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
-      REAL(8) :: B(M), CONST, FF, FB
+      DOUBLE PRECISION A(M), F, G(M), Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
+     1                ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
+c local
+      DOUBLE PRECISION B(M), CONST, FF, FB
 C
 cc      COMMON  / CCC /  ISW , IPR, ISMT, IDIF
 cc      COMMON  /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
@@ -1176,6 +1219,7 @@ cc      CALL  FUNCT( M,A,F,GD,IFG )
       CALL FUNCT( Y,N,M1,M2,M3,M4,NPER,REG,M,A,OUTMIN,OUTMAX,
      * ALIMIT,MM,XMEAN,XVAR,NS,NFE,NPE,NMAX,MJ,MAXM,NC,F,IFG,ier )
       if( ier.ne.0 ) return
+
       FB = F
       IF( ISW .GE. 1 )   RETURN
 C
@@ -1226,13 +1270,14 @@ cxx      DIMENSION  X(K), H(K), X1(K)
 cxx      DIMENSION  Y(N), REG(NMAX,7)
 cxx      DIMENSION  M(NC), XMEAN(NC), XVAR(MAXM,NC)
 C
-      INTEGER :: K, IG, N, M1, M2, M3, M4, NPER, NS, NFE, NPE, ISW,
-     1           NMAX, MJ, MAXM, NC, M(NC), ier
-      REAL(8) :: X(K), H(K), RAM, EE, Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
-     1           ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
-      INTEGER :: ire510
-      REAL(8) :: X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2, E3,
-     1           A1, A2, A3, B1, B2
+      INTEGER K, IG, N, M1, M2, M3, M4, NPER, NS, NFE, NPE, ISW, NMAX,
+     1        MJ, MAXM, NC, M(NC), ier
+      DOUBLE PRECISION X(K), H(K), RAM, EE, Y(N), REG(NMAX,7), OUTMIN,
+     1                 OUTMAX, ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
+c local
+      INTEGER ire510
+      DOUBLE PRECISION X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2,
+     1                 E3, A1, A2, A3, B1, B2
 C
 C     IPR = 7
 C     C1 = 1.0D-7
