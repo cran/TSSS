@@ -1,4 +1,4 @@
-2c40a747746291c4bab99c2aff128866 *DESCRIPTION
+d2919bbd7e0d2f3eb122ba0ca03d936f *DESCRIPTION
 46ccb96b8284b049619fb1b41f831c91 *NAMESPACE
 bea902e3b40e2e97a13ca5aed69b7a1a *NEWS.md
 ea16a53ac360568a951308ecea87482c *R/arfit.R
@@ -20,7 +20,7 @@ abdc5bcc253c766ff7000dab5022f81b *R/pfilter.R
 872e019f1b81fa54944517052fdd1589 *R/simulate.R
 bdcd7341af4befc171e8a7f5aa34770d *R/trend.R
 c28a945f511d810abd0ecf5e456d77cf *R/tsmooth.R
-955e45f21204c8fe2f57814d9c95eeed *R/tvvar.R
+9d41ece7c47aee9a6b52322fbc363069 *R/tvvar.R
 f257382018d5abae14a472d740afba66 *R/unicor.R
 e411e6975a5f64bf6b95f9ab76410dcf *data/BLSALLFOOD.rda
 020c8c6118a72f5ca32e0bfd8193f1be *data/HAKUSAN.rda
@@ -92,7 +92,7 @@ cbeed55c97a384e586d45a6d360424a5 *src/TSSS.h
 469cca10b8b55d582f034145181190d8 *src/arfitf.f
 b3b6091b7ee9cda9f39b4fb697e5c87c *src/armaf.f
 99f3fd9e417803fd3595167afd498b67 *src/armafit2f.f
-1fb76a95f0ecd03bdf1a4736c8e665e1 *src/armaftf.f
+a77088e106979f56e13f6f544668d4a6 *src/armaftf.f
 ccd0e6dca2ea8085f52182d0f9ae1a80 *src/boxcoxf.f
 661ee1a93f2cf38202d05cd33f471ad3 *src/chebyshev.c
 4a76f88e86424159384c20716d90ae6b *src/comsub.f

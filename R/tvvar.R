@@ -149,12 +149,12 @@ tvar <- function (y, trend.order = 2, ar.order = 2, span, outlier = NULL,
   class(tvar.out) <- "tvvar"
 
   if (plot)
-    plot.parcor(parcor, span)
+    plotParcor(parcor, span)
 
   return(tvar.out)
 }
 
-plot.parcor <- function(parcor, span)
+plotParcor <- function(parcor, span)
 {
   ar.order <- dim(parcor)[1]
   n <- dim(parcor)[2]

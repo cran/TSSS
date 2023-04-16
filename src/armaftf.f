@@ -34,8 +34,9 @@ C
       DOUBLE PRECISION Y0(N), AR0(M), CMA0(L), SIG2, FLK, AIC, AR(M),
      1                 CMA(L)
 c local
+      INTEGER NSUM
       DOUBLE PRECISION Y(N), AA(M+L), PAR(MLMAX), ALIMIT, OUTMIN,
-     1                 OUTMAX, SUM, YMEAN
+     1                 OUTMAX, YMEAN
       EXTERNAL  FFARMA
 C
 C  ...  Read Model Orders  ...
@@ -77,7 +78,8 @@ cccxx   10 SUM = SUM + Y(I)
 cc      SUM = SUM + Y(I)
 cc   10 CONTINUE
 cc      YMEAN = SUM/N
-      CALL  MEAN( Y,N,-1.0D30,1.0D30,SUM,YMEAN )
+cxx      CALL  MEAN( Y,N,-1.0D30,1.0D30,SUM,YMEAN )
+      CALL  MEAN( Y,N,-1.0D30,1.0D30,NSUM,YMEAN )
       DO 20 I=1,N
 cxx   20 Y(I) = Y(I) - YMEAN
       Y(I) = Y(I) - YMEAN
