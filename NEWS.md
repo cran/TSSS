@@ -1,3 +1,20 @@
+# TSSS 1.3.4-4
+
+* Collected legacy Fortran code (DCMPLX, DREAL, DIMAG, DCABS, DCONJG).
+
+
+# TSSS 1.3.4-3
+
+* Added error handling when `lag` is too large compared to as.integer(period/2) to `lsqr()`.
+
+
+# TSSS 1.3.4-2
+
+* Fixed the LTO (Link-Time Optimization) problems with Fortran source code reported in CRAN package check results.
+
+* Fixed an issue with the S3 method that was reported as NOTE in the pre-test.
+
+
 # TSSS 1.3.4
 
 * Removed C wrapper functions and registered entry points for the routines accessed by the `.Fortran` interface to call Fortran subroutines.

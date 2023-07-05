@@ -4,6 +4,11 @@ lsqr <- function(y, lag = NULL, period = 365, plot = TRUE, ...)
   n <- length(y)                 # length of data
   if (is.null(lag))
     lag <- as.integer(sqrt(n))   # number of sine and cosine terms
+  if (as.integer(period/2) < lag) {
+    lag <- as.integer(period/2)
+    warning(gettextf("lag is corrected to %d. \n
+            Maximum number of lag should be less than or equal to floor(period/2).", lag), domain = NA)
+  }
   k <- 2 * lag + 1
 
   mj <- n

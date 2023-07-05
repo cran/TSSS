@@ -181,7 +181,7 @@ C
       DO 20 II=0,NF
 cxx   20 ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
 cxxx      ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
-      ZA(II,I,J) = CMPLX( FC(II),FS(II), kind(0d0) )
+      ZA(II,I,J) = CMPLX( FC(II),FS(II), KIND=8 )
    20 CONTINUE
    30 CONTINUE
    31 CONTINUE
@@ -216,7 +216,8 @@ cxx      DO 80 I=1,L
       SUM = 0.0D0
       DO 70 IJ=1,L
 cxx   70 SUM = SUM + WRK(I,IJ)*DCONJG( ZB(J,IJ) )
-      SUM = SUM + WRK(I,IJ)*DCONJG( ZB(J,IJ) )
+cxx      SUM = SUM + WRK(I,IJ)*DCONJG( ZB(J,IJ) )
+      SUM = SUM + WRK(I,IJ)*CONJG( ZB(J,IJ) )
    70 CONTINUE
 cxx   80 P(II,I,J) = SUM
       P(II,I,J) = SUM
@@ -228,11 +229,15 @@ C
 cxx      DO 90 I=1,L-1
       DO 91 I=1,L-1
       DO 90 J=I+1,L
-        AMP(II,I,J) = DSQRT( DREAL(P(II,I,J))**2 + DIMAG(P(II,I,J))**2)
-        ANG(II,I,J) = DATAN( DIMAG(P(II,I,J))/DREAL(P(II,I,J)) )
-        IF( DIMAG(P(II,I,J)).GT.0.0D0.AND.DREAL(P(II,I,J)).LT.0.0D0 )
+cxx        AMP(II,I,J) = DSQRT( DREAL(P(II,I,J))**2 + DIMAG(P(II,I,J))**2)
+cxx        ANG(II,I,J) = DATAN( DIMAG(P(II,I,J))/DREAL(P(II,I,J)) )
+        AMP(II,I,J) = DSQRT( REAL(P(II,I,J))**2 + AIMAG(P(II,I,J))**2)
+        ANG(II,I,J) = DATAN( AIMAG(P(II,I,J))/REAL(P(II,I,J)) )
+cxx        IF( DIMAG(P(II,I,J)).GT.0.0D0.AND.DREAL(P(II,I,J)).LT.0.0D0 )
+        IF( AIMAG(P(II,I,J)).GT.0.0D0 .AND. REAL(P(II,I,J)).LT.0.0D0 )
      *        ANG(II,I,J) = ANG(II,I,J) + 3.1415926535D0
-        IF( DIMAG(P(II,I,J)).LT.0.0D0.AND.DREAL(P(II,I,J)).LT.0.0D0 )
+cxx        IF( DIMAG(P(II,I,J)).LT.0.0D0.AND.DREAL(P(II,I,J)).LT.0.0D0 )
+        IF( AIMAG(P(II,I,J)).LT.0.0D0 .AND. REAL(P(II,I,J)).LT.0.0D0 )
      *        ANG(II,I,J) = ANG(II,I,J) - 3.1415926535D0
    90 CONTINUE
    91 CONTINUE
@@ -244,9 +249,10 @@ cxx      DO 100 I=1,L-1
       DO 100 J=I+1,L
 cxx        COH(II,I,J) = (DREAL(P(II,I,J))**2 + DIMAG(P(II,I,J))**2)/
 cxx     *                (P(II,I,I)*P(II,J,J))
-        COH(II,I,J) = DREAL((DREAL(P(II,I,J))**2 + DIMAG(P(II,I,J))**2)/
+cxx        COH(II,I,J) = DREAL((DREAL(P(II,I,J))**2 + DIMAG(P(II,I,J))**2)/
+cxx     *                (P(II,I,I)*P(II,J,J)))
+        COH(II,I,J) = DBLE((REAL(P(II,I,J))**2 + AIMAG(P(II,I,J))**2)/
      *                (P(II,I,I)*P(II,J,J)))
-
   100 CONTINUE
   101 CONTINUE
 C
@@ -256,7 +262,8 @@ C
       FSUM = 0.0D0
       DO 110 J=1,L
 cxx      FSUM = FSUM + ZB(I,J)*DCONJG( ZB(I,J) )*E(J,J)
-      FSUM = FSUM + DREAL(ZB(I,J)*DCONJG( ZB(I,J) )*E(J,J))
+cxx      FSUM = FSUM + DREAL(ZB(I,J)*DCONJG( ZB(I,J) )*E(J,J))
+      FSUM = FSUM + REAL(ZB(I,J)*CONJG( ZB(I,J) )*E(J,J))
 cxx  110 FNC(II,I,J) = FSUM
       FNC(II,I,J) = FSUM
   110 CONTINUE
@@ -295,7 +302,8 @@ C
       XMAX = 0.1D-10
       IMAX = 0
       DO 10 I=L,M
-      IF( CDABS( X(I,L) ).GT.CDABS( XMAX ) )  THEN
+cxx      IF( CDABS( X(I,L) ).GT.CDABS( XMAX ) )  THEN
+      IF( ABS( X(I,L) ).GT.ABS( XMAX ) )  THEN
          XMAX = X(I,L)
          IMAX = I
       END IF
