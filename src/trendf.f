@@ -21,7 +21,8 @@ C     @TEST.FILTER2:  SEP.08,1990
 C     MODIFIED  2/15/93
 C
 cc      PARAMETER( NMAX=1000,MJ=2,K=1,NDIM=NMAX,IDEV=1 )
-      PARAMETER( K=1 )
+cxxx      PARAMETER( K=1 )
+      INTEGER, PARAMETER :: K=1
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(NMAX)
 cc      DIMENSION  F(MJ,MJ), G(MJ), H(MJ), Q(K,K)
@@ -39,6 +40,7 @@ C
       DOUBLE PRECISION Y(N), TAU20, DELTA, TAUMAX, SIG2M, FFMAX, AIC,
      1                 XSS(M,N), RS(N)
 c local
+      INTEGER II, NDIM, NS, NFE, NPE, MJ 
       DOUBLE PRECISION F(M,M), G(M), H(M), Q(K,K), XPS(M,N), XFS(M,N),
      1                 VPS(M,M,N), VFS(M,M,N), VSS(M,M,N), XF(M),
      2                 VF(M,M), OUTMIN, OUTMAX, SIG2, YMEAN, VAR, TAU2,
@@ -149,6 +151,8 @@ cc      COMMON  /CMDATA/  TITLE
 C
       INTEGER MJ, N
       DOUBLE PRECISION Y(N), XSS(MJ,N), DATA(N)
+c local
+      INTEGER I
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  TITLE

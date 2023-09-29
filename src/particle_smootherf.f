@@ -94,6 +94,7 @@ cc      DIMENSION  TT(7)
       DOUBLE PRECISION Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2,
      *                 TAU2, ALPHA, BIGTAU2, SIG2I, XMIN, XMAX, FF
 c local
+      INTEGER I, II, IJ, I0, J, JJ
       DOUBLE PRECISION PI, TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM, 
 ccx     1           RUNIFT
      1                 GAUS2, random, BIGTAU, GB, ymin, ymax
@@ -294,6 +295,7 @@ cc      DIMENSION  Y(N)
       INTEGER N
       DOUBLE PRECISION Y(N)
 c local
+      INTEGER I, J, JJ, L
       DOUBLE PRECISION YY
 C
       IF( Y(2).LT.Y(1) )  THEN
@@ -328,7 +330,9 @@ cc      DIMENSION  P(M), Q(1000), QQ(0:1000), PROB(7), T(7)
       INTEGER M
       DOUBLE PRECISION P(M), T(7), XMIN, XMAX
 c local
-      PARAMETER(K = 1000)
+cxxx      PARAMETER(K = 1000)
+      INTEGER, PARAMETER :: K = 1000
+      INTEGER I, J
       DOUBLE PRECISION Q(K), QQ(0:K), PROB(7), PP, DX
 cc      DATA  PROB /0.0013, 0.0227, 0.1587, 0.5000, 0.8413, 0.9773,
 cc     *            0.9987/

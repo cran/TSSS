@@ -27,8 +27,7 @@ data(Haibara)
 ## put histograms on the diagonal
 panel.hist <- function(x, ...)
 {
-    usr <- par("usr"); on.exit(par(usr))
-#    par(usr = c(usr[1:2], 0, 1.4))
+    usr <- par("usr")
     par(usr = c(usr[1:2], 0, 1.3))
     nB <- 15; nB1 <- nB + 1
     xmin <- min(x, na.rm = TRUE)

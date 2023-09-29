@@ -28,6 +28,7 @@ C
       INTEGER N, L, LAG, LMAX
       DOUBLE PRECISION Y(N,L), A(L,L,LAG), V(L,L), AIC
 c local
+      INTEGER MJ, MJ1, MJ2, MJ3, MJ4, N0, NMK, IPR
       DOUBLE PRECISION X((L+1)*(LAG+1),L*(LAG+1))
 C
       EXTERNAL   SETMAR
@@ -102,7 +103,8 @@ C
       INTEGER N, ID, M, MJ1, IPR, LMAX
       DOUBLE PRECISION X(MJ1,(M+1)*ID), B(ID,ID,M), E(ID,ID), AICS
 c local
-      INTEGER IND((M+1)*ID), JND((M+1)*ID)
+      INTEGER I, II, IJ, IMIN, J, JJ, K, KK, K0, MJ2, MJ3, MD, MD2,
+     1        IND((M+1)*ID), JND((M+1)*ID)
       DOUBLE PRECISION A((M+1)*ID), AIC(M+1), SD(M+1), EX(ID), PI2, SUM,
      1                 AICSUM, AICMIN, SDMIN, AICX
 C
@@ -233,6 +235,7 @@ C
       INTEGER ID, LMAX, MJ3 
       DOUBLE PRECISION B(ID,ID,MJ3), E(ID,ID), EX(ID)
 c local
+      INTEGER I, II, J, JJ
       DOUBLE PRECISION EE(ID,ID), SUM
 C
 cc      CALL  TRIINV( E,ID,MJ2,MJ5,EE )
@@ -303,6 +306,8 @@ cxx      DIMENSION  X(MJ1,(LAG+1)*ID) , Z(MJ,ID)
 C
       INTEGER NMK, N0, LAG, ID, MJ, MJ1
       DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID)
+c local
+      INTEGER KD1, L, LK, N1, N2
 C
       L = MIN0( NMK,MJ1 )
       KD1 = (LAG+1)*ID
@@ -348,6 +353,8 @@ cxx      REAL*8  X(MJ1,(LAG+1)*ID), Z(MJ,ID)
 C
       INTEGER N0, L, LAG, ID, MJ, MJ1, JSW
       DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID)
+c local
+      INTEGER II, I0, I1, I2, J, JJ, J1, J2, KD, KD1
 C
       KD = LAG*ID
       KD1 = (LAG+1)*ID
@@ -396,6 +403,7 @@ C
       INTEGER M
       DOUBLE PRECISION X(M,M), Y(M,M)
 c local
+      INTEGER I, II, J, JJ
       DOUBLE PRECISION SUM
 C
 cxx      DO 10  I=1,M-1
@@ -443,6 +451,8 @@ cxx      DIMENSION  AIC(K+1), SD(K+1)
 C
       INTEGER K, ISW, IMIN 
       DOUBLE PRECISION AIC(K+1), SD(K+1), AICM, SDM
+c local
+      INTEGER I
 C
 C       SEARCH FOR THE MINIMUM OF AIC(I)
 C
@@ -499,6 +509,7 @@ C
       INTEGER MJ, K, L, M, IND(K), JND(K)
       DOUBLE PRECISION X(MJ,K)
 c local
+      INTEGER I, II, J, JJ, J1, NN
       DOUBLE PRECISION D(MJ), TOL, F, G, H, S
 C
       TOL = 1.0D-60
@@ -568,6 +579,7 @@ C
       INTEGER M, K, N, MJ, JND(M)
       DOUBLE PRECISION X(MJ,K+1), A(M), SIG2, AIC
 c local
+      INTEGER I, II, J, L
       DOUBLE PRECISION PI2, SUM, SD
 C
       DATA  PI2/6.28318531D0/

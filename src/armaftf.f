@@ -34,7 +34,7 @@ C
       DOUBLE PRECISION Y0(N), AR0(M), CMA0(L), SIG2, FLK, AIC, AR(M),
      1                 CMA(L)
 c local
-      INTEGER NSUM
+      INTEGER I, IOPT, NSUM
       DOUBLE PRECISION Y(N), AA(M+L), PAR(MLMAX), ALIMIT, OUTMIN,
      1                 OUTMAX, YMEAN
       EXTERNAL  FFARMA
@@ -154,6 +154,7 @@ C
       INTEGER M, L, MLMAX, IOPT
       DOUBLE PRECISION AR(M), CMA(L), OUTMIN, OUTMAX
 c local
+      INTEGER I
       DOUBLE PRECISION PAR(MLMAX)
 C
       DO 10 I=1,M
@@ -210,6 +211,7 @@ C
       DOUBLE PRECISION Y(N), VF(M,M), A(M), B(M), OUTMIN, OUTMAX, FF,
      1                 OVAR
 c local
+      INTEGER I, II, J, NSUM
       DOUBLE PRECISION XF(M), XP(M), VP(M,M), WRK(M,M), VH(M), GAIN(M),
      1                 PI, SDET, PVAR, PERR
 C
@@ -338,6 +340,7 @@ C
       INTEGER M, L, MM, IER 
       DOUBLE PRECISION AR(M), CMA(L), XF(MM), VF(MM,MM)
 c local
+      INTEGER I, I1, J, J1, JMIN
       DOUBLE PRECISION COV(0:MM), G(0:MM), SUM
 C
 cc      MM = MAX0( M,L+1 )
@@ -440,6 +443,8 @@ cxx      DIMENSION  AR(M), CMA(L)
 C
       INTEGER M, L, MM
       DOUBLE PRECISION AR(M), CMA(L), A(MM), B(MM), C(MM)
+c local
+      INTEGER I
 C
 cc      MM = MAX0( M,L+1 )
 cxx      DO 10  I=1,MM
@@ -498,6 +503,7 @@ C
       DOUBLE PRECISION AA(K), FF, Y(N), OUTMIN, OUTMAX, ALIMIT, FLK,
      1                 SIG2
 c local
+      INTEGER I
       DOUBLE PRECISION PAR(MM), AR(M), CMA(L), A(MM), B(MM), C(MM),
      1                 XF(MM), VF(MM,MM)
 C avoid floating-point exceptions
@@ -561,6 +567,7 @@ C
       INTEGER N, NDIF, NN, M, L, MLMAX, IER
       DOUBLE PRECISION X(N), YY(NN), OUTMIN, OUTMAX, ALIMIT, FLK, SIG2
 c local
+      INTEGER I, IDIF, IPR, ICOUNT, ICC, IG, ISW, J
       DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
      1                 TAU2, EPS1, EPS2, RAMDA, CONST1, SUM, S1, S2,
      2                 STEM, SS, ED, XM, XMB
@@ -767,6 +774,7 @@ C
       DOUBLE PRECISION A(M), F, G(M), Y(N), OUTMIN, OUTMAX, ALIMIT,
      1                 FLK, SIG2
 c local
+      INTEGER I, II
       DOUBLE PRECISION B(M), CONST, FB, FF
       EXTERNAL FUNCT
 C
@@ -833,7 +841,7 @@ C
       DOUBLE PRECISION X(K), H(K), RAM, EE, Y(N), OUTMIN, OUTMAX,
      1                 ALIMIT, FLK, SIG2
 c local
-      INTEGER ire510
+      INTEGER I, IRET, ISUB, IFG, ire510
       DOUBLE PRECISION X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2,
      1                 E3, A1, A2, A3, B1, B2
       EXTERNAL FUNCT

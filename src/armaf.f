@@ -40,6 +40,7 @@ C
       DOUBLE PRECISION A(M), B(L), SIG2, G(0:KMAX), COV(0:K), PAR(K),
      1                 SP(0:NF), ROOTA(M,2), ROOTB(L,2)
 c local
+      INTEGER MAR, JER1, JER2
       DOUBLE PRECISION WRK1(0:K), WRK2(0:K), WRK3(K,K)
 C
 cc      WRITE( 6,* )  'K = ?'
@@ -94,6 +95,7 @@ C
       INTEGER M, MJ, IER
       DOUBLE PRECISION A(M), ROOT(MJ,2)
 c local
+      INTEGER I, MMAX
       DOUBLE PRECISION C(M+1)
 C
       IER = 0
@@ -138,6 +140,8 @@ C
       INTEGER M, IER 
       DOUBLE PRECISION A(M+1), ROOTR(M), ROOTI(M)
 c local
+      INTEGER I, IFIT, ISW, ICT, ITEM, IN, J, JSW, K, KX, KXX, KJI,
+     1        K2, L
       DOUBLE PRECISION B(M+3), XPR, YPR, X, XO, Y, YO, UX, UY, U, V,
      1                 XT, YT, XT2, YT2, FI, SUM, DX, DY, TEM, ALPH
 C

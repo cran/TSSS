@@ -1,3 +1,10 @@
+# TSSS 1.3.4-5
+
+* Fixed usage of KIND in Fortran file for warning reported in CRAN package check results.
+
+* Specified all variable types explicitly instead of using implicit variable types.
+
+
 # TSSS 1.3.4-4
 
 * Collected legacy Fortran code (DCMPLX, DREAL, DIMAG, DCABS, DCONJG).

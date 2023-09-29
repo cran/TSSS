@@ -30,7 +30,7 @@ C
       DOUBLE PRECISION A(L,L,M), E(L,L), AMP(0:NF,L,L), ANG(0:NF,L,L),
      1                 COH(0:NF,L,L), FNC(0:NF,L,L), FRNC(0:NF,L,L)
 c local
-      COMPLEX(KIND(0d0)) P(0:NF,L,L)
+      COMPLEX(KIND(0.0D0)) P(0:NF,L,L)
 c
       AMP(:,:,:) = 0.0d0
       ANG(:,:,:) = 0.0d0
@@ -85,6 +85,8 @@ cxx      DIMENSION  COH(0:NF,L,L)
 C
       INTEGER L, NF
       DOUBLE PRECISION FNC(0:NF,L,L), FRNC(0:NF,L,L)
+c local
+      INTEGER I, II, J
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  M, L, NF
@@ -161,10 +163,11 @@ C
       INTEGER M, L, NF
       DOUBLE PRECISION A(L,L,M), E(L,L), FNC(0:NF,L,L), AMP(0:NF,L,L),
      1                 ANG(0:NF,L,L), COH(0:NF,L,L)
-      COMPLEX(KIND(0d0)) P(0:NF,L,L)
+      COMPLEX(KIND(0.0D0)) P(0:NF,L,L)
 c local
+      INTEGER I, II, IJ, J
       DOUBLE PRECISION C(0:M), FC(0:NF), FS(0:NF), FSUM
-      COMPLEX(KIND(0d0)) ZA(0:NF,L,L), ZB(L,L), WRK(L,L), ZDET, SUM
+      COMPLEX(KIND(0.0D0)) ZA(0:NF,L,L), ZB(L,L), WRK(L,L), ZDET, SUM
 C
 cxx      DO 30 I=1,L
       DO 31 I=1,L
@@ -181,7 +184,7 @@ C
       DO 20 II=0,NF
 cxx   20 ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
 cxxx      ZA(II,I,J) = DCMPLX( FC(II),FS(II) )
-      ZA(II,I,J) = CMPLX( FC(II),FS(II), KIND=8 )
+      ZA(II,I,J) = CMPLX( FC(II),FS(II),KIND(0.0D0) )
    20 CONTINUE
    30 CONTINUE
    31 CONTINUE
@@ -292,10 +295,10 @@ cc      DIMENSION  X(MJ,MJ), IND(100)
 cxx      DIMENSION  X(M,M), IND(M)
 C
       INTEGER M
-      COMPLEX(KIND(0d0)) DET, X(M,M)
+      COMPLEX(KIND(0.0D0)) DET, X(M,M)
 c local
-      INTEGER IND(M)
-      COMPLEX(KIND(0d0)) XMAX, XTEMP
+      INTEGER I, IMAX, J, JJ, L, IND(M)
+      COMPLEX(KIND(0.0D0)) XMAX, XTEMP
 C
       DET = 1.0D0
       DO 60 L=1,M

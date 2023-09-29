@@ -34,7 +34,8 @@ C        NC:      Number of components
 C     @TEST.FILTER2O    NOV.29,1990, SEP.02,1992
 C
 cc      PARAMETER( NMAX=160,MJ=20,MAXM=22,NC=10)
-      PARAMETER( MAXM=22,NC=9 )
+cxxx      PARAMETER( MAXM=22,NC=9 )
+      INTEGER, PARAMETER :: MAXM=22, NC=9
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      INTEGER*4  PERIOD
 cc      DIMENSION  M(10), TAU2(10), TAU20(10)
@@ -61,7 +62,7 @@ C
       DOUBLE PRECISION Y0(N), TAU2(4), AR(M3), OUTMIN, OUTMAX, FF, OVAR,
      1                 AIC, XSS(MJ,NMAX), VSS(MJ,MJ,NMAX), DEFF(NMAX)
 c local
-      INTEGER M(NC), MTYPE(NC)
+      INTEGER I, ISW, IDIF, J, L, MM, NP, M(NC), MTYPE(NC), ID
       DOUBLE PRECISION XMEAN(NC), XVAR(MAXM,NC), AA(M3+3), PAR(M3),
      1                 A(MAXM,NC), B(MAXM,NC), C(MAXM,NC), Q(NC,NC),
      2                 XPS(MJ,NMAX), XFS(MJ,NMAX), VPS(MJ,MJ,NMAX),
@@ -264,6 +265,7 @@ C
       INTEGER M1, M2, M3, M4, LPER, NMAX, MJ 
       DOUBLE PRECISION XSS(MJ,NMAX), DEFF(NMAX), REG(NMAX,7)
 c local
+      INTEGER I, J, M12, M123, NP, ID
       DOUBLE PRECISION SUM
 C
       NP = ID(M1) + ID(M2) + ID(M3)
@@ -388,7 +390,7 @@ C
      3                 VPS(MJ,MJ,NMAX), XFS(MJ,NMAX), XPS(MJ,NMAX), FF,
      4                 OVAR
 c local
-      INTEGER I0(NCM)
+      INTEGER I, II, I0(NCM), J, L, MM, NSUM
       DOUBLE PRECISION XP(MJ), VP(MJ,MJ), WRK(MJ,MJ), VH(MJ), GAIN(MJ),
      1                 PI, SDET, SUM, PVAR, PERR
 C
@@ -606,7 +608,7 @@ C
       DOUBLE PRECISION A(MAXM,NC), XMEAN(NC), XVAR(MAXM,NC), XF(MJ),
      1                 VF(MJ,MJ)
 c local
-      INTEGER I0(NC)
+      INTEGER I, I1, I0(NC), J, J1, L
       DOUBLE PRECISION SUM
 C
       I0(1) = 0
@@ -692,11 +694,12 @@ cc      DIMENSION  Y(N), XMEAN(NC), XVAR(MAXM,NC), DUM(1), COV(0:10)
 cxx      DIMENSION  Y(N), XMEAN(NC), XVAR(MAXM,NC), DUM(1), COV(0:M3)
 cc      COMMON  /C92827/  M1, M2, M3, M4, MPER
 C
-      INTEGER M1, M2, M3, M4, MPER, M(NC), L, NC, MTYPE(NC), MAXM, MM,
-     1        N, ier
+      INTEGER M1, M2, M3, M4, MPER, NC, L, MAXM, MM, N, M(NC),
+     1        MTYPE(NC), ier
       DOUBLE PRECISION TAU2(4), AR(M3), Y(N), A(MAXM,NC), B(MAXM,NC),
      1                 C(MAXM,NC), Q(NC,NC), XMEAN(NC), XVAR(MAXM,NC)
 c local
+      INTEGER I, MSUM
       DOUBLE PRECISION DUM(1), COV(0:M3), YMEAN, YVAR
 C
       ier = 0
@@ -856,7 +859,7 @@ C
       DOUBLE PRECISION Y(N), REG(NMAX,7), AA(K), OUTMIN, OUTMAX, ALIMIT,
      1                 XMEAN(NC), XVAR(MAXM,NC), FF
 c local
-      INTEGER MTYPE(NC)
+      INTEGER I, IFPLIM, L, MM, MTYPE(NC), NP, ID
       DOUBLE PRECISION TAU2(4), PAR(M3), AR(M3), A(MAXM,NC), B(MAXM,NC),
      1                 C(MAXM,NC), Q(NC,NC), XPS(MJ,NMAX), XFS(MJ,NMAX),
      2                 VPS(MJ,MJ,NMAX), VFS(MJ,MJ,NMAX), XF(MJ),
@@ -873,7 +876,6 @@ cc      MAXM= 22
 cc      NC  = 9
 c
 C avoid floating-point exceptions
-      INTEGER IFPLIM
 cc      IFPLIM = 709
       IFPLIM = 87
 c
@@ -936,7 +938,7 @@ C
       INTEGER JYEAR, MONTH, N, MJ
       DOUBLE PRECISION TDAY(MJ,7)
 c local
-      INTEGER IX(12)
+      INTEGER I, II, I0, I1, I2, IE, J, JJ, JS, IX(12)
 C
       DATA   IX  /3,0,3,2,3,2,3,3,2,3,2,3/
 C
@@ -995,6 +997,7 @@ C
       DOUBLE PRECISION X(N), YY(NN), REG(NMAX,7), OUTMIN, OUTMAX,
      1                 ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
 c local
+      INTEGER I, ICC, IPR, ICOUNT, J
       DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
      1                 TAU2, EPS1, EPS2, RAMDA, CONST1, XM, SUM, S1, S2,
      2                 SS, STEM, ED, XMB
@@ -1208,6 +1211,7 @@ C
       DOUBLE PRECISION A(M), F, G(M), Y(N), REG(NMAX,7), OUTMIN, OUTMAX,
      1                ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
 c local
+      INTEGER I, II
       DOUBLE PRECISION B(M), CONST, FF, FB
 C
 cc      COMMON  / CCC /  ISW , IPR, ISMT, IDIF
@@ -1275,7 +1279,7 @@ C
       DOUBLE PRECISION X(K), H(K), RAM, EE, Y(N), REG(NMAX,7), OUTMIN,
      1                 OUTMAX, ALIMIT, XMEAN(NC), XVAR(MAXM,NC)
 c local
-      INTEGER ire510
+      INTEGER I, IFG, IRET, ISUB, ire510
       DOUBLE PRECISION X1(K), CONST2, HNORM, RAM1, RAM2, RAM3, E1, E2,
      1                 E3, A1, A2, A3, B1, B2
 C

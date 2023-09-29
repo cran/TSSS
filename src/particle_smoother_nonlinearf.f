@@ -82,6 +82,7 @@ cc      DIMENSION  TT(7)
       DOUBLE PRECISION Y(N), T(N,8), PS(M,0:LAG), PST(M,0:LAG), SIG2,
      *                 TAU2, XMIN, XMAX, FF
 c local
+      INTEGER I, II, IJ, I0, J, JJ
       DOUBLE PRECISION TAU, F(M), P(M), S(M), TT(7), RNOR, RR, SUM,
 ccx     *           RUNIFT
      *                 GAUS2, random 

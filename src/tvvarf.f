@@ -20,7 +20,8 @@ C     @TEST.FILTER2:  SEP.08,1990
 C     MODIFIED  2/15/93
 C
 cc      PARAMETER( MJ1=3000,NMAX=MJ1/2,MJ=2,K=1,NDIM=NMAX )
-      PARAMETER( K=1 )
+cxxx      PARAMETER( K=1 )
+      INTEGER, PARAMETER :: K=1
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(MJ1), Y2(NMAX)
 cc      DIMENSION  F(MJ,MJ), G(MJ), H(MJ), Q(K,K)
@@ -39,6 +40,8 @@ C
       DOUBLE PRECISION Y(N0), TAU20, DELTA, TVVAR(N0/2), NORDAT(N0),
      1                 Y2(N0/2), TREND(N0/2,3), NOISE(N0/2), TAUMAX,
      2                 SIG2M, FFMAX, AIC
+c local
+      INTEGER I, II, J, NS, NFE, NPE, NDIM
       DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), XPS(M,N0/2),
      1                 XFS(M,N0/2), XSS(M,N0/2), VPS(M,M,N0/2),
      2                 VFS(M,M,N0/2), VSS(M,M,N0/2), XF(M), VF(M,M),
@@ -164,6 +167,8 @@ cc      COMMON  /CMDATA/  TITLE
 C
       INTEGER M, N, N0
       DOUBLE PRECISION Y(N0), XSS(M,N), DATA(N), DATA1(N0)
+c local
+      INTEGER I, J
 C
 cc      WRITE(6,600)
 cc      WRITE(6,610)  TITLE
@@ -221,6 +226,8 @@ C
       INTEGER N, M
       DOUBLE PRECISION Y(N), XSS(M,N), VSS(M,M,N), SIG2, TREND(N,-1:1),
      1                 DATA(N)
+c local
+      INTEGER I, J
 C
 cc      VNAME(1) = 'M1    = '
 cc      VNAME(2) = 'TAU2  = '
@@ -410,6 +417,7 @@ C
      1                 Q(K,K), R, OUTMIN, OUTMAX, VFS(M,M,NDIM),
      2                 VPS(M,M,NDIM), XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
 c local
+      INTEGER I, II, J, JJ, NSUM
       DOUBLE PRECISION XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M),
      1                 GAIN(M), PI, SDET, SUM, PERR, PVAR
 C
@@ -586,6 +594,8 @@ cxx      DIMENSION  XF(M), VF(M,M)
 C
       INTEGER M
       DOUBLE PRECISION XMEAN, XVAR, XF(M), VF(M,M)
+c local
+      INTEGER I
 C
 cc      DO 10  I=1,MJ
 cc      DO 10  J=1,MJ

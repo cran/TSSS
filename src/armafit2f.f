@@ -34,7 +34,7 @@ c
      1                 TAIC(0:MMAX, 0:LMAX), AR(MMAX, 0:MMAX, 0:LMAX),
      2                 CMA(LMAX, 0:MMAX, 0:LMAX)
 c local
-      INTEGER IPRAM, IOPT, IDIF, NSUM
+      INTEGER I, J, M, L, IPRAM, IOPT, IDIF, NSUM
       DOUBLE PRECISION Y(N), PI, SUM, YMEAN, YVAR, ALIMIT, OUTMIN,
      1                 OUTMAX, PAR(MLMAX), AA(MMAX+LMAX), SIG2, FLK,
      2                 AIC, SAA(MMAX+LMAX, 0:MMAX, 0:LMAX)
@@ -242,6 +242,8 @@ C        YSUM:    sum of non-outlier observations
 C
       INTEGER N
       DOUBLE PRECISION Y(N), OUTMIN, OUTMAX, YSUM
+c local
+      INTEGER I
 C
       YSUM = 0.0D0
       DO 10 I=1,N

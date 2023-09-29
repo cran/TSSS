@@ -31,6 +31,7 @@ C
       INTEGER N, K, N0, N1, N2, NE, MMIN
       DOUBLE PRECISION Y(N), AICS(N2-N1), AICMIN
 c local
+      INTEGER I, NS, M, MJ
       DOUBLE PRECISION AIC1(N2-N1), AIC2(N2-N1)
 C
 cc      READ( 5,* )  K, N0, N1, N2, NE
@@ -64,7 +65,7 @@ cxx   20 AICS(I) = AIC1(I) + AIC2(I)
 C
       AICMIN = 1.0D30
 c-----
-      NMIN = 1
+      MMIN = 1
 c-----
       DO 60 I=1,M
       IF( AICS(I) .GT. AICMIN )  GO TO 60
@@ -105,6 +106,7 @@ C
       INTEGER N, N0, N1, M, NS, K, MJ
       DOUBLE PRECISION Z(N), AIC(M)
 c local
+      INTEGER I, II, IMIN, NMK
       DOUBLE PRECISION SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
       EXTERNAL  SETXAR
 C
@@ -151,6 +153,7 @@ C
       INTEGER N2, N, M, NS, K, MJ
       DOUBLE PRECISION Z(N), AIC(M)
 c local
+      INTEGER I, II, J, IMIN, NMK
       DOUBLE PRECISION SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
       EXTERNAL  SETXAR
 C
@@ -195,6 +198,7 @@ C
       INTEGER MJ1, N, K
       DOUBLE PRECISION X(MJ1,K)
 c local
+      INTEGER I, II, II1, J
       DOUBLE PRECISION D(MJ1), TOL, D1, H, G, S
 C
            TOL = 1.0D-30

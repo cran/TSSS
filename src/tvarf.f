@@ -37,7 +37,7 @@ C
       DOUBLE PRECISION Y(N), TAU20, DELTA, TAUMAX, SIG2, FF, AIC,
      1                 TAR(M,N/NOBS), PAR(M,N/NOBS)
 c local
-      INTEGER MM(M), LLOUT(N/NOBS)
+      INTEGER I, II, INUM, J, MJ, NDIM, NN, MM(M), LLOUT(N/NOBS)
       DOUBLE PRECISION A(K,M), XPS(M*K,N/NOBS), XFS(M*K,N/NOBS),
      1                 XSS(M*K,N/NOBS), VPS(M*K,M*K,N/NOBS),
      2                 VFS(M*K,M*K,N/NOBS), VSS(M*K,M*K,N/NOBS),
@@ -194,6 +194,7 @@ C
      1                 VFS(MJ,MJ,NDIM), VPS(MJ,MJ,NDIM), XFS(MJ,NDIM),
      2                 XPS(MJ,NDIM), FF, SIG2
 c local
+      INTEGER I, II, I1, I2, J, JJ, J2, MK, NS, NE, NSUM
       DOUBLE PRECISION XP(MJ), VP(MJ,MJ), VH(MJ), GAIN(MJ), PI, SDET,
      1                 SUM, PERR, PVAR
 C
@@ -393,6 +394,8 @@ cxx      DIMENSION  XF(MJ), VF(MJ,MJ)
 C
       INTEGER M, K, MJ
       DOUBLE PRECISION XF(MJ), VF(MJ,MJ)
+c local
+      INTEGER I, MK
 C
       MK = M*K
 cxx      DO 10  J=1,MK
@@ -437,6 +440,7 @@ C
       INTEGER N, NOBS, MJ, M, K
       DOUBLE PRECISION XSS(MJ,N/NOBS), TAR(M,N/NOBS), WRK(M,N/NOBS)
 c local
+      INTEGER I, II, NN
       DOUBLE PRECISION AR(M), PAR(M), FN
 C
 cc      VNAME(1) = 'M     = '

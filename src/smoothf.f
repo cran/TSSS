@@ -30,7 +30,8 @@ C     @TEST.FILTER2:  SEP.08,1990, SEP.02,1992
 C     MODIFIED  2/15/93
 C
 cc      PARAMETER( NMAX=1000,MJ=20,K=1,ISW=1,IDEV=1 )
-      PARAMETER( ISW=1 )
+cxxx      PARAMETER( ISW=1 )
+      INTEGER, PARAMETER :: ISW=1
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(NMAX), YMISS(NMAX)
 cc      DIMENSION  F(MJ,MJ), G(MJ), H(MJ), Q(K,K)
@@ -51,6 +52,7 @@ C
      1                 VF(M,M), OUTMIN, OUTMAX, XSS(M,NPE),
      2                 VSS(M,M,NPE), FLK, AIC
 c local
+      INTEGER I, J, MJ, NMAX, NDIM, NS
       DOUBLE PRECISION YMISS(N), XPS(M,NPE), XFS(M,NPE), VPS(M,M,NPE),
      1                 VFS(M,M,NPE), YMEAN, YVAR, FF, SIG2
 C
@@ -177,6 +179,7 @@ C
      1                 Q(K,K),R, OUTMIN, OUTMAX, VFS(M,M,NDIM),
      2                 VPS(M,M,NDIM),XFS(M,NDIM), XPS(M,NDIM), FF, SIG2
 c local
+      INTEGER I, II, J, JJ, NSUM
       DOUBLE PRECISION XP(M), VP(M,M), WRK(M,M), WRK1(M,K), VH(M),
      1                 GAIN(M), PVAR, PERR, PI, SDET, SUM
 C

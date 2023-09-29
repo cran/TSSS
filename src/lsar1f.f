@@ -38,6 +38,7 @@ C
       DOUBLE PRECISION Y(N), SDS(NB), AICS(NB), SDP(NB), AICP(NB),
      1                 AS(LAG,NB), SIG2S(NB)
 c local
+      INTEGER I, II, IF, L, LK, MF, MJ1, NF, NS, NBLOCK
       DOUBLE PRECISION X(3*(LAG+1),LAG+1), U(LAG+1,LAG+1), A(LAG),
      1                 SIG2, AICF
 c
@@ -145,6 +146,7 @@ C
       DOUBLE PRECISION Z(N), X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG), SDF,
      1                 SDS, AICS, SDP, AICP, AICF
 c local
+      INTEGER I, K1, K2, L, MJ2, NN0, NN1, NP
       DOUBLE PRECISION B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG),
      1                 AIC0
 C
@@ -252,6 +254,8 @@ cxx      DIMENSION  X(MJ1,K) , Y(MJ2,K)
 C
       INTEGER K, II, JJ, MJ1, MJ2 
       DOUBLE PRECISION X(MJ1,K) , Y(MJ2,K)
+c local
+      INTEGER I, I1, I2, J
 C
 cxx      DO 10  I=1,K
       DO 11  I=1,K

@@ -37,10 +37,11 @@ cxx      DIMENSION X(MJ2,LAG+1)
 cxx      DIMENSION AIC(0:LAG), A(LAG,LAG), B(LAG+1), PAR(LAG)
 cxx      DIMENSION FE(N), BE(N)
 c
-      INTEGER N, LAG, NF, MJ2, ISW
+      INTEGER N, LAG, NF, MJ2, ISW, MAR
       DOUBLE PRECISION Y(N), SIG2(0:LAG), AIC(0:LAG), A(LAG,LAG), 
      1                 PAR(LAG), SP(0:NF)
 c local
+      INTEGER I, NSUM
       DOUBLE PRECISION COV(0:LAG,4), X(MJ2,LAG+1), B(LAG+1), FE(N),
      1                 BE(N), OUTMIN, OUTMAX, YMEAN
 c
@@ -116,10 +117,11 @@ cxx      DIMENSION  SIG2(0:K), AIC(0:K), PARCOR(K)
 cc      DIMENSION  A(50), B(50), FA(50), BA(50)
 cxx      DIMENSION  A(K), B(K), FA(K), BA(K)
 C
-      INTEGER K, N, MAR
+      INTEGER K, N, ISW, MAR
       DOUBLE PRECISION Y(N), FE(N), BE(N), SIG2(0:K), AIC(0:K),
      1                 PARCOR(K)
 c local
+      INTEGER I, L, M
       DOUBLE PRECISION A(K), B(K), FA(K), BA(K), PI, SUM, AICM, FB, FF,
      1                 BB, FE0, X
 C

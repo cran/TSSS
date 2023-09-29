@@ -29,7 +29,7 @@ cc      COMMON     /CMDATA/  TITLE
 cxx      DIMENSION  Y(N), DATA(N), AIC(0:K)
 cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K)
 C
-      INTEGER N, K, PERIOD, IMIN
+      INTEGER N, K, PERIOD, MJ1, IMIN
       DOUBLE PRECISION Y(N), AIC(0:K), SIG2(0:K), A(K,K), DATA(N)
 c local
       DOUBLE PRECISION X(MJ1,K+1)
@@ -80,6 +80,8 @@ cx      DIMENSION  X(MJ1,1) , Z(1)
 cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK)
       INTEGER NMK, N0, K, MJ1, PERIOD
       DOUBLE PRECISION Z(N0+NMK), X(MJ1,K+1)
+c local
+      INTEGER K1, L, LK, N1, N2
 C
       L = MIN0( NMK,MJ1 )
       K1 = K + 1
@@ -128,6 +130,7 @@ cxx      REAL*8  X(MJ1,K+1), Z(N0+L), W
       INTEGER N0, L, K, MJ1, JSW, PERIOD
       DOUBLE PRECISION Z(N0+L), X(MJ1,K+1)
 c local
+      INTEGER I, II, I0, J
       DOUBLE PRECISION W
 C
 cxxx      W = 2*3.1415926536D0/365.0D0
@@ -173,6 +176,7 @@ C
       INTEGER N, M, PERIOD
       DOUBLE PRECISION A(M), DATA(N)
 c local
+      INTEGER I, J
       DOUBLE PRECISION W, SUM
 C
 cc      WX = 20.0

@@ -54,7 +54,10 @@ cxx      IMPLICIT  REAL*8(A-H,O-Z)
 cc      DIMENSION  PAR(K), A(K), AA(50)
 cxx      DIMENSION  PAR(K), A(K), AA(K)
       INTEGER K
-      DOUBLE PRECISION PAR(K), A(K), AA(K)
+      DOUBLE PRECISION PAR(K), A(K)
+c local
+      INTEGER II, J
+      DOUBLE PRECISION AA(K)
 C
       DO 30  II=1,K
       A(II)  = PAR(II)
@@ -95,6 +98,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION G(LGP1),FC(LF1),FS(LF1)
       INTEGER LGP1, LF1
       DOUBLE PRECISION G(LGP1),FC(LF1),FS(LF1)
+c local
+      INTEGER I, I2, K, LG, LG3, LG4, LF
       DOUBLE PRECISION PI, ALF, T, AK, TK, CK, SK, CK2, UM0, UM1, UM2
       LG=LGP1-1
       LF=LF1-1
@@ -150,6 +155,8 @@ cc      DIMENSION  A(K), PAR(K), G(50)
 cxx      DIMENSION  A(K), PAR(K), G(K)
       INTEGER K
       DOUBLE PRECISION A(K), PAR(K)
+c local
+      INTEGER I, II, I2
       DOUBLE PRECISION G(K), S
 C
       DO 10  I=1,K
@@ -201,6 +208,8 @@ cc      DIMENSION  X(MJ1,1), A(MJ2,MJ2), SIG2(0:MJ2), AIC(0:MJ2)
 cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
       INTEGER K, N, MJ1, IMIN
       DOUBLE PRECISION X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
+c local
+      INTEGER M
       DOUBLE PRECISION AICM
 C
       A(1:K, 1:K) = 0.0D0
@@ -239,6 +248,8 @@ cc      DIMENSION  X(MJ1,1), AIC(0:K), SIG2(0:K)
 cxx      DIMENSION  X(MJ1,K+1), AIC(0:K), SIG2(0:K)
       INTEGER N, K, MJ1
       DOUBLE PRECISION X(MJ1,K+1), SIG2(0:K), AIC(0:K)
+c local
+      INTEGER I
       DOUBLE PRECISION PI2, PVAR
       DATA  PI2/6.28318531D0/
 C
@@ -273,6 +284,8 @@ cc      DIMENSION  X(MJ1,1), D(MJ1)
 cxx      DIMENSION  X(MJ1,K), D(MJ1)
       INTEGER MJ1, N, K
       DOUBLE PRECISION X(MJ1,K)
+c local
+      INTEGER I, II, J
       DOUBLE PRECISION D(MJ1), TOL, H, G, F, S
 C
       TOL = 1.0D-60
@@ -334,6 +347,8 @@ cc      DIMENSION  X(MJ,1), A(1)
 cxx      DIMENSION  X(MJ,K+1), A(M)
       INTEGER M, K, MJ
       DOUBLE PRECISION X(MJ,K+1), A(M)
+c local
+      INTEGER I, J
       DOUBLE PRECISION SUM
 C
       A(M) = X(M,K+1)/X(M,M)
@@ -375,6 +390,8 @@ cx      DIMENSION  X(MJ1,1) , Z(1)
 cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK+K)
       INTEGER NMK, N0, K, MJ1
       DOUBLE PRECISION Z(N0+NMK+K), X(MJ1,K+1)
+c local
+      INTEGER L, LK, K1, N1, N2
 C
       L = MIN0( NMK,MJ1 )
       K1 = K + 1
@@ -420,6 +437,8 @@ cc      REAL*8  X(MJ1,1), Z(1)
 cxx      REAL*8  X(MJ1,K+1), Z(N0+L+K)
       INTEGER N0, L, K, MJ1, JSW
       DOUBLE PRECISION Z(N0+L+K), X(MJ1,K+1)
+c local
+      INTEGER I, II, I0, J, JJ
 C
       I0 = 0
       IF( JSW .EQ. 1 )     I0 = K+1
@@ -460,6 +479,8 @@ cxx      DIMENSION  PARCOR(MAXM), A(MAXM,MAXM)
       INTEGER N, MAXM, MAR
       DOUBLE PRECISION C(0:MAXM), SIG2(0:MAXM), AIC(0:MAXM),
      1                 PARCOR(MAXM), A(MAXM,MAXM)
+c local
+      INTEGER I, J, M
       DOUBLE PRECISION CONST, AICMIN, SUM
 C
       CONST = N*(DLOG(2*3.1415926535D0) + 1)
@@ -516,6 +537,8 @@ cc      DIMENSION SP(0:NF), H(0:500), FR(0:500), FI(0:500)
 cxx      DIMENSION SP(0:NF), H(0:M+L), FR(0:NF), FI(0:NF)
       INTEGER M, L, NF
       DOUBLE PRECISION A(M), B(L), SIG2, SP(0:NF)
+c local
+      INTEGER I
       DOUBLE PRECISION H(0:M+L), FR(0:NF), FI(0:NF)
 C
       H(0) = 1.0D0
@@ -568,6 +591,8 @@ cxx      IMPLICIT REAL*8 (A-H,O-Z)
 cxx      DIMENSION  X(N), FC(M), FS(M)
       INTEGER N, M
       DOUBLE PRECISION X(N), FC(M), FS(M)
+c local
+      INTEGER I, J
       DOUBLE PRECISION PI, W, CI, SI, T0, T1, T2
       DATA  PI/3.14159265358979D0/
 C
@@ -605,6 +630,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  Y(N)
       INTEGER N
       DOUBLE PRECISION Y(N), YMEAN, VAR, SUM
+c local
+      INTEGER I
 C
       SUM = 0.0D0
       DO 10 I=1,N
@@ -659,6 +686,8 @@ cxx      DIMENSION  WRK(M,M), SGAIN(M,M)
       DOUBLE PRECISION F(M,M), VFS(M,M,NDIM), VPS(M,M,NDIM),
      1                 XFS(M,NDIM), XPS(M,NDIM), VSS(M,M,NDIM),
      2                 XSS(M,NDIM)
+c local
+      INTEGER I, II, J, IJ, NZERO
       DOUBLE PRECISION XS(M), VS(M,M), VP(M,M), WRK(M,M), SGAIN(M,M),
      1                 VDET, SUM
 C
@@ -818,7 +847,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  A(MJ,MJ), IND(50)
 cxx      DIMENSION  A(M,M), IND(M+1)
       INTEGER M, IND(M+1)
-      DOUBLE PRECISION A(M,M), DET, EPS, AMAX, SUM
+      DOUBLE PRECISION A(M,M), DET
+c local
+      INTEGER I, I0, IMAX, J, L, LMAX, MS
+      DOUBLE PRECISION EPS, AMAX, SUM
 C
       EPS = 1.0D-10
 C
@@ -940,6 +972,8 @@ cxx      DIMENSION  YMEAN(ID), NSUM(ID)
       INTEGER N, ID, LAG, NSUM(ID)
       DOUBLE PRECISION Y(N,ID), OUTMIN(ID), OUTMAX(ID), C(0:LAG,ID,ID),
      1                 R(0:LAG,ID,ID), YMEAN(ID), SUM
+c local
+      INTEGER I, II, J, L, NNN
 C
       DO 10 J=1,ID
 cxx   10 CALL  MEAN( Y(1,J),N,OUTMIN(J),OUTMAX(J),NSUM(J),YMEAN(J) )
@@ -999,6 +1033,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION Y(N)
       INTEGER N, NSUM
       DOUBLE PRECISION Y(N), OUTMIN, OUTMAX, YMEAN, YSUM
+c local
+      INTEGER I
 C
       NSUM = 0
       YSUM = 0.0D0
@@ -1026,6 +1062,8 @@ cxx      IMPLICIT REAL*8 (A-H,O-Z)
 cxx      DIMENSION  C(0:MAXLAG), R(0:MAXLAG)
       INTEGER MAXLAG
       DOUBLE PRECISION C(0:MAXLAG), R(0:MAXLAG)
+c local
+      INTEGER LAG
 C
       DO 10 LAG=0,MAXLAG
 cxx   10 R(LAG) = C(LAG)/C(0)
@@ -1051,6 +1089,8 @@ cxx      IMPLICIT REAL*8( A-H,O-Z )
 cxx      DIMENSION Y(N), C(0:MAXLAG )
       INTEGER N, MAXLAG
       DOUBLE PRECISION Y(N), OUTMIN, OUTMAX, C(0:MAXLAG ), YMEAN, SUM
+c local
+      INTEGER I, LAG, NSUM
 C
 C  ...  sample mean  ...
 C
@@ -1129,6 +1169,8 @@ cxx      IMPLICIT REAL*8 (A-H,O-Z)
 cxx      DIMENSION  C(0:MAXLAG), CERR(0:MAXLAG), RERR(0:MAXLAG)
       INTEGER N, MAXLAG
       DOUBLE PRECISION C(0:MAXLAG), CERR(0:MAXLAG), RERR(0:MAXLAG), SUM
+c local
+      INTEGER LAG
 C
       SUM = C(0)**2
       CERR(0)   = DSQRT( 2*SUM/N )
@@ -1164,6 +1206,8 @@ cxx      DIMENSION  PE(0:NP), SPE(0:NP)
 cxx      DIMENSION  W(0:1,2)
       INTEGER NP, IWINDW, IFG
       DOUBLE PRECISIONPE(0:NP), SPE(0:NP), W(0:1,2), PMIN
+c local
+      INTEGER I
       DATA  W/0.5D0, 0.25D0, 0.54D0, 0.23D0/
 C
       IF( IWINDW.EQ.0 )  THEN
@@ -1224,6 +1268,8 @@ cxx      DIMENSION  F(M,M), G(M,K), H(M), Q(K,K), AR(M3), R(1,1)
       INTEGER M1, M2, M3, IPER, M, K 
       DOUBLE PRECISION AR(M3), TAU1, TAU2, TAU3, SIG2, F(M,M), G(M,K),
      1                 H(M), Q(K,K), R(1,1)
+c local
+      INTEGER I, L1, L12, M12, ID
 C
 cc      M = M1 + M2*(IPER-1) + M3
 cc      K = ID(M1) + ID(M2) + ID(M3)
@@ -1310,6 +1356,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  X(MJ,MJ), Y(NJ,NJ)
       INTEGER MJ, N, NJ
       DOUBLE PRECISION X(MJ,MJ), Y(NJ,NJ), SUM1, SUM2
+c local
+      INTEGER I, J, K
 C
 cxx      DO 10 I=1,N
 cxx      DO 10 J=1,N
@@ -1359,6 +1407,8 @@ cxx      DIMENSION  A(M), B(L), COV(0:K), G(0:KMAX), X(M+1,M+1)
 cxx      DIMENSION  Z(M+1), UL(M+1,M+1), IPS(M+1)
       INTEGER M, L, K, KMAX, IER, IPS(M+1)
       DOUBLE PRECISION A(M), B(L), SIG2, COV(0:K)
+c local
+      INTEGER I, J
       DOUBLE PRECISION G(0:KMAX), X(M+1,M+1), Z(M+1), UL(M+1,M+1), SUM
 C
 cc      KMAX = MAX(M,L,K)
@@ -1469,6 +1519,8 @@ cxx      DIMENSION A(N,N),UL(N,N),SCALES(N),IPS(N)
       INTEGER N, IPS(N), IER
       DOUBLE PRECISION A(N,N), UL(N,N), SCALES(N), RNORM, BIG, SIZE,
      1                 PIVOT, TM
+c local
+      INTEGER I, J, K, INDEX
 C
       IER = 0
 C
@@ -1550,6 +1602,8 @@ cc      DIMENSION A(*), B(*), G(0:K)
 cxx      DIMENSION A(M), B(L), G(0:K)
       INTEGER M, L, K
       DOUBLE PRECISION A(M), B(L), G(0:K), SUM
+c local
+      INTEGER I, J
 C
       G(0) = 1.0
       DO  20 I=1,K
@@ -1585,6 +1639,8 @@ cc      DIMENSION UL(MJ,*),B(*),X(*),IPS(100)
 cxx      DIMENSION UL(N,N),B(N),X(N),IPS(N)
       INTEGER N, IPS(N)
       DOUBLE PRECISION UL(N,N), B(N),X(N), SUM
+c local
+      INTEGER I, J
 C
       DO 20 I=1,N
       SUM = 0.0D0
@@ -1649,6 +1705,8 @@ cxx      DIMENSION  I0(NC)
       DOUBLE PRECISION A(MMAX,NC), VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX),
      1                 VSS(MJ,MJ,NMAX), XFS(MJ,NMAX), XPS(MJ,NMAX),
      2                 XSS(MJ,NMAX)
+c local
+      INTEGER I, II, IJ, J, L, MM, NSS, NZERO
       DOUBLE PRECISION XS(MJ), VS(MJ,MJ), VP(MJ,MJ), WRK(MJ,MJ),
      1                 SGAIN(MJ,MJ), SUM, VDET
 C
@@ -1806,6 +1864,7 @@ C
 C  ...  ID = 1:    IF K > 0                                             
 C       ID = 0:    OTHERWISE                                            
 C                                                                       
+      INTEGER K, ID
       ID = 0                                                            
       IF( K .GT. 0 )  ID = 1                                            
       RETURN                                                            

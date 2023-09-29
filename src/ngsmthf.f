@@ -34,7 +34,7 @@ C
       DOUBLE PRECISION Y(N), TAU2, BV, SIG2, BW, TREND(NPE,7),
      1                 SS(K,NPE), FF
 c local
-      INTEGER LOC(NPE)
+      INTEGER I, J, LOC(NPE)
       DOUBLE PRECISION F(K), Q(-K:K), YM(2), ST(7), DX, XMIN, XMAX,
      1                 OUTMIN, OUTMAX, SSUM
 C
@@ -168,10 +168,11 @@ cxx      DIMENSION  P(K), F(K), S(K), T(K), Y(N), Q(-K:K), LOC(NPE)
 cxx      REAL*4     PS(K,NPE), SS(K,NPE)
 cxx      DIMENSION     PS(K,NPE), SS(K,NPE)
 C
-      INTEGER NOISEW, N, K, LOC(NPE), NS, NFE, NPE
+      INTEGER NOISEW, N, K, NS, NFE, NPE, LOC(NPE)
       DOUBLE PRECISION SIG2, BW, Y(N), F(K), DX, XMIN, Q(-K:K), FF,
      1                 SS(K,NPE), OUTMIN, OUTMAX
 c local
+      INTEGER I, II, J
       DOUBLE PRECISION P(K), S(K), T(K), PS(K,NPE), PSUM, FINT, TSUM
 C
 cc      COMMON   /C91215/  NOISEV, NOISEW, INITD, ITF, ITH
@@ -273,6 +274,7 @@ C
       INTEGER K
       DOUBLE PRECISION P(K), XMIN, DX, Y(7)
 c local
+      INTEGER I, II, J
       DOUBLE PRECISION PROB(7), P1(K), PP
 C
       DATA  PROB /0.0013D0, 0.0227D0, 0.1587D0, 0.5000D0, 0.8413D0,
@@ -304,6 +306,7 @@ C
       INTEGER K
       DOUBLE PRECISION Q(-K:K), S(K), P(K)
 c local
+      INTEGER I, J, J1, J2
       DOUBLE PRECISION SUM
 C
       DO 20 I=1,K
@@ -328,6 +331,7 @@ C
       INTEGER K
       DOUBLE PRECISION Q(-K:K), P(K), R(K), S(K), T(K)
 c local
+      INTEGER I, J, J1, J2
       DOUBLE PRECISION SUM
 C
       DO 20 I=1,K
@@ -350,6 +354,7 @@ C
       INTEGER K
       DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
 c local
+      INTEGER I, J
       DOUBLE PRECISION USERV, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
@@ -381,6 +386,7 @@ C
       INTEGER K
       DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
 c local
+      INTEGER I, J
       DOUBLE PRECISION GAUSS, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
@@ -412,6 +418,7 @@ C
       INTEGER K
       DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
 c local
+      INTEGER I, J
       DOUBLE PRECISION PEARSN, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
@@ -443,6 +450,7 @@ C
       INTEGER K
       DOUBLE PRECISION DX, TAU2, BV, Q(-K:K)
 c local
+      INTEGER I, J
       DOUBLE PRECISION TWOEXP, PARAM(3), X0, X, SUM
 C
 cc      EXTERNAL   FUNCT
@@ -473,6 +481,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  P(K)
       INTEGER K
       DOUBLE PRECISION P(K), DX, SUM
+c local
+      INTEGER I
 C
       SUM = 0.0D0
       DO 10 I=1,K
@@ -496,6 +506,7 @@ C
       INTEGER K, INITD 
       DOUBLE PRECISION P(K), P1, P2, XMIN, DX
 c local
+      INTEGER I
       DOUBLE PRECISION USERI, GAUSS, PARAM(3), X
 C
       PARAM(1) = P1
@@ -526,6 +537,7 @@ C
       INTEGER NOISEW, K, LSHIFT
       DOUBLE PRECISION SIG2, BW, P(K), XMIN, DX, Y, F(K)
 c local
+      INTEGER I
       DOUBLE PRECISION USERW, GAUSS, PEARSN, TWOEXP, DBLEXP, PARAM(3)
 C
       PARAM(2) = SIG2
@@ -586,6 +598,7 @@ C
       INTEGER K, II, N, LOC(N)
       DOUBLE PRECISION F(K), T(K)
 c local
+      INTEGER I, IMAX, J
       DOUBLE PRECISION PMAX
 C
 C  ...  FIND THE POSTERIOR MODE AND SHIFT ORIGIN  ...
@@ -623,6 +636,7 @@ C
       INTEGER K, N, LOC(N)
       DOUBLE PRECISION F(K,N)
 c local
+      INTEGER I, II, I1, I2, J, NDIF, NN, N0
       DOUBLE PRECISION FF(-K:2*K)
 C
 cc      COMMON   /C91214/  X0, X1, F0, F1, YM(10)
@@ -716,6 +730,7 @@ C
       INTEGER N
       DOUBLE PRECISION X(N), XMIN0, XMAX0, DXL
 c local
+      INTEGER I
       DOUBLE PRECISION XMIN, XMAX, DX, DIF
 C
       XMIN = 1.0D30

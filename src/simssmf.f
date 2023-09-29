@@ -30,6 +30,7 @@ C
       INTEGER M1, M2, M3, M, K, N, INI, PERIOD
       DOUBLE PRECISION SIG2, TAU1, TAU2, TAU3, AR(M3), X(M), Y(N)
 c local
+      INTEGER INI0
       DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), R(1,1)
 C
 cc      MM = 0
@@ -99,6 +100,7 @@ C
       DOUBLE PRECISION F(M,M), G(M,K), H(L,M), Q(K,K), R(L,L), X(M),
      1                 Y(NN,L)
 c local
+      INTEGER I, II, J
       DOUBLE PRECISION SQ(K,K), SR(L,L), XT(M), T(L), V(K), W(L)
 C
 C  ...  CHOLESKY DECOMPOSITION OF Q AND R  ...
@@ -181,6 +183,7 @@ C
       INTEGER K
       DOUBLE PRECISION Q(K,K), V(K)
 c local
+      INTEGER I, IC, J
       DOUBLE PRECISION RGAUSS, W(K), V2, S, SUM
 C
       IC = 0

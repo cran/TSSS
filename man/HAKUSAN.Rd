@@ -30,8 +30,7 @@ HAKUSAN234 <- HAKUSAN[, c(2,3,4)]
 ## put histograms on the diagonal
 panel.hist <- function(x, ...)
 {
-    usr <- par("usr"); on.exit(par(usr))
-#    par(usr = c(usr[1:2], 0, 1.4))
+    usr <- par("usr")
     par(usr = c(usr[1:2], 0, 1.3))
     nB <- 20; nB1 <- nB + 1
     xmin <- min(x)

@@ -24,6 +24,7 @@ C
       DOUBLE PRECISION Y(N), AICZT(21), FFZT(21), AICZ(21), FFZ(21),
      1                 ZMEAN(21), ZVAR(21), ZZ(N)
 c local
+      INTEGER I, II, J
       DOUBLE PRECISION Z(N), YMEAN, YVAR, FFY, AICY, A, ZJACOB, AICM
 C
 cc      CALL  READTS( 1,Y,N )
@@ -83,6 +84,7 @@ C
       INTEGER N
       DOUBLE PRECISION Y(N), A, Z(N), ZJACOB
 c local
+      INTEGER I
       DOUBLE PRECISION SUM
 C
       SUM = 0.0D0
@@ -118,6 +120,7 @@ C
       INTEGER N
       DOUBLE PRECISION Y(N), YMEAN, YVAR, FF, AIC
 c local
+      INTEGER I
       DOUBLE PRECISION PI, SUM
 C
       DATA  PI/3.1415926535D0/

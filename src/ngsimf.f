@@ -24,7 +24,8 @@ C        NN:   MAXIMUM DATA LENGTH
 C     MODIFIED  2/16/93
 C
 cc      PARAMETER( MJ=20,NN=1000 )
-      PARAMETER( L=1 )
+cxxx      PARAMETER( L=1 )
+      INTEGER, PARAMETER :: L=1
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      INTEGER    PERIOD
 cc      DIMENSION  X(MJ), F(MJ,MJ), G(MJ,MJ), H(MJ)
@@ -37,6 +38,7 @@ C
       DOUBLE PRECISION WMIN, WMAX, PARAMW(3), VMIN, VMAX, PARAMV(3),
      1                 AR(M3), X(M), Y(N)
 c local
+      INTEGER INI
       DOUBLE PRECISION F(M,M), G(M,K), H(M), Q(K,K), R(L,L), TAU1, TAU2,
      1                 TAU3, SIG2
 C
@@ -128,6 +130,7 @@ C
       DOUBLE PRECISION PV(3), PW(3), X0, X1, Y0, Y1, F(M,M), G(M,K),
      1                 H(L,M), Q(K,K), R(L,L), X(M), Y(N,L)
 c local
+      INTEGER I, II, J
       DOUBLE PRECISION GAUSS, PEARSN, DBLEXP, USERV1, USERW1, SQ(K,K),
      1                 SR(L,L), XT(M), T(L), V(K), W(L), FV(0:400),
      2                 FW(0:400), XV(0:400), XW(0:400), DXV, DXW
@@ -237,6 +240,7 @@ C
       INTEGER NOISE, K
       DOUBLE PRECISION F(0:400), X(0:400), DX, Q(K,K), V(K)
 c local
+      INTEGER I, J
       DOUBLE PRECISION RNG, RNG2, W(K), SUM
 C
       DO 10 I=1,K
@@ -276,6 +280,7 @@ C
       DOUBLE PRECISION FUNCT, PARAM(3), XMIN, XMAX, F(0:400), X(0:400),
      1                 DX
 c local
+      INTEGER I, K
       DOUBLE PRECISION P(0:400)
       EXTERNAL FUNCT
 C
@@ -320,6 +325,7 @@ cxx      DIMENSION  F(0:400), P(0:400), X(0:400), PARAM(3)
 C
       DOUBLE PRECISION FUNCT, XMIN, XMAX, F(0:400), X(0:400), DX
 c local
+      INTEGER I, K
       DOUBLE PRECISION P(0:400)
       EXTERNAL FUNCT
 C
@@ -361,6 +367,7 @@ C
 ccxx      INTEGER IX
       DOUBLE PRECISION F(0:400), X(0:400), DX
 c local
+      INTEGER I
 cxx      DOUBLE PRECISION RUNI, U, V
       DOUBLE PRECISION U, V, random
 
@@ -393,6 +400,7 @@ C
 cxx      IMPLICIT REAL*8( A-H,O-Z)
 C
 ccxx      INTEGER IX, NOISE
+      INTEGER NOISE
 cxx      DOUBLE PRECISION RUNI, PI, U
       DOUBLE PRECISION PI, U, random
 C

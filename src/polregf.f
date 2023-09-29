@@ -16,7 +16,8 @@ C        LAG:     Number of sine and cosine terms
 C     @TEST.PN51:
 C
 cc      PARAMETER( MJ=1000,MJ1=200,MJ2=21,ISW=2,IDEV=1 )
-      PARAMETER( MJ1=200 )
+cxxx      PARAMETER( MJ1=200 )
+      INTEGER, PARAMETER :: MJ1=200
 cxx      IMPLICIT   REAL*8 (A-H,O-Z)
 cc      DIMENSION  Y(MJ), AIC(0:MJ2)
 cc      DIMENSION  X(MJ1,MJ2), D(MJ1), A(MJ2,MJ2), SIG2(0:MJ2)
@@ -26,6 +27,7 @@ C
       INTEGER N, K, IMIN
       DOUBLE PRECISION Y(N), A(K,K), SIG2(0:K), AIC(0:K), DATA(N)
 c local
+      INTEGER I,J
       DOUBLE PRECISION X(MJ1,K+1), SUM, XX
 C
       EXTERNAL   SETXPL
@@ -80,6 +82,8 @@ cx      DIMENSION  X(MJ1,1) , Z(1)
 cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK)
       INTEGER NMK, N0, K, MJ1
       DOUBLE PRECISION Z(N0+NMK), X(MJ1,K+1)
+c local
+      INTEGER K1, L, LK, N1, N2
 C
       L = MIN0( NMK,MJ1 )
       K1 = K + 1
@@ -127,6 +131,7 @@ C
       INTEGER N0, L, K, MJ1, JSW
       DOUBLE PRECISION Z(N0+L), X(MJ1,K+1)
 c local
+      INTEGER I, II, I0, J
       DOUBLE PRECISION SUM
 C
       I0 = 0

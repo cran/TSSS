@@ -14,6 +14,8 @@ C
       INTEGER IDISTG, IDISTF, NINT(4)
       DOUBLE PRECISION PG(2), PF(2), XMIN, XMAX, DX(4), FKLI(4),
      1                 GINT(4), GAUSS, CAUCHY
+c local
+      INTEGER II
 C
       EXTERNAL  GAUSS
       EXTERNAL  CAUCHY
@@ -77,7 +79,8 @@ C
       INTEGER NINT
       DOUBLE PRECISION DISTG, DISTF, PARAMG(2), PARAMF(2), XMIN, XMAX,
      1                 DX, FKLI, GINT
-c local
+c local 
+      INTEGER I
       DOUBLE PRECISION XX, GX, FX 
 C
 cxxx      DX = (XMAX-XMIN)/DFLOAT(NINT)

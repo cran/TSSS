@@ -17,13 +17,16 @@ C        MJ:      adjustable dimension of COV
 C     @TEST.PN31:  5/16/89, 12/5/90, 12/21/90, 8/5/91, 7/19/92
 C
 cc      PARAMETER( NMAX=3000,NF=512,IDEV=1,JDEV=6,IWINDW=1 )
-      PARAMETER( NF=1024 )
+cxxx      PARAMETER( NF=1024 )
+      INTEGER, PARAMETER :: NF=1024
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION  Y(NMAX), PE(0:NF), SPE(0:NF)
 cxx      DIMENSION  Y(N), PE(0:NF), SPE(0:NF)
 C
       INTEGER N, IWINDW, NP, IFG
       DOUBLE PRECISION Y(N), PE(0:NF), SPE(0:NF)
+c local
+      INTEGER LAG, NN
 C
 cc      CALL  READTS( IDEV,Y,N )
 C
@@ -64,6 +67,7 @@ C
       INTEGER N, NN, N2
       DOUBLE PRECISION Y(N), P(0:1024)
 c local
+      INTEGER I, II, NP, NPOOL, ND
       DOUBLE PRECISION X(1024), FY(1024), WK(1024)
 C
       IF(NN.LE.0) THEN
@@ -138,6 +142,7 @@ C
       INTEGER N, ISW
       DOUBLE PRECISION X(N), FX(N), WRK(N/4)
 c local
+      INTEGER I, IFG, JFG, K, K2, NP, N2, N4, M, M2
       DOUBLE PRECISION PI2
 C
       DATA  PI2 /6.2831853071796D0/
@@ -214,6 +219,8 @@ cxx      DIMENSION  X(L,M),  Y(M,L)
 C
       INTEGER M, L
       DOUBLE PRECISION X(L,M), Y(M,L)
+c local
+      INTEGER I, J
 C
       IF( M.GE.L )  THEN
 cxx      DO 10  J=1,L
@@ -245,6 +252,7 @@ C
       INTEGER K, M, MJ1, MJ2
       DOUBLE PRECISION X(MJ1,MJ2), SINE(M,K), Y(M,K,4)
 c local
+      INTEGER I, J
       DOUBLE PRECISION SUM1, SUM2
 C
       DO 10  I=1,M
@@ -280,6 +288,7 @@ C
       INTEGER K, M
       DOUBLE PRECISION X(K,2,M,2), SINE(M,K), Y(K,4,M)
 c local
+      INTEGER I, J
       DOUBLE PRECISION SUM1, SUM2
 C
 cxx      DO 10  J=1,M

@@ -91,6 +91,7 @@ C
       DOUBLE PRECISION C(0:LAG,L,L), AMIN(LAG,L,L), VMIN(L,L),
      1                 AIC(0:LAG)
 c local
+      INTEGER I, IJ, J, K, M, MJ2
       DOUBLE PRECISION A(LAG,L,L), A0(LAG,L,L), B(LAG,L,L), B0(LAG,L,L),
      1                 V(L,L), U(L,L), W(L,L), UDET, VDET, AICMIN, SUM,
      2                 SUM1, SUM2, PI2
@@ -242,7 +243,7 @@ C
       INTEGER M, MJ
       DOUBLE PRECISION X(MJ,MJ), DET
 c local
-      INTEGER IND(M)
+      INTEGER I, IMAX, J, JJ, L, IND(M)
       DOUBLE PRECISION XMAX, XTEMP
 C
       DET = 1.0D0

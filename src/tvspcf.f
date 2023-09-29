@@ -29,6 +29,8 @@ cc      DATA    VAR /3000*1.0D0/
 C
       INTEGER N, M, NOBS, NF, IVAR
       DOUBLE PRECISION SIG2, AR(M,N), VAR(N*NOBS), SP(0:NF,N)
+c local
+      INTEGER NN
 C
 cc      OPEN( IDEV1,FILE='A:$LASERLIB$TEMP3.DAT' )
 cc      READ(IDEV1,1) TITLE
@@ -92,6 +94,7 @@ C
       INTEGER M, N, NOBS, NF
       DOUBLE PRECISION A(M,N), SIG2, VAR(N*NOBS), SP(0:NF,N)
 c local
+      INTEGER I, J
       DOUBLE PRECISION B
 C
 cc      ANGLE = 70.0
